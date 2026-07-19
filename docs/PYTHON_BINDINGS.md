@@ -47,6 +47,28 @@ Each component tuple contains `(portfolio_weight, decimal_market_return)`.
 Invalid values raise `NavlensValidationError`, a `ValueError` subclass, while
 the financial validation remains implemented only in Rust.
 
+## Prediction contracts
+
+Python estimators hand their result to the canonical Rust prediction contract:
+
+```python
+from navlens import ModelDescriptor, create_return_prediction
+
+model = ModelDescriptor("ridge-baseline", "0.1.0", "market-v1")
+prediction = create_return_prediction(
+    expected_return=0.0062,
+    lower_bound=-0.0041,
+    upper_bound=0.0158,
+    confidence_level=0.90,
+    model=model,
+)
+```
+
+`MarketDate`, `UtcTimestamp`, and `PredictionRequest` separately represent the
+market horizon and auditable UTC data cut-offs. Rust rejects a target that does
+not follow the prediction date and data timestamps later than generation time.
+The binding performs no duplicate validation.
+
 ## Boundary rules
 
 - PyO3 modules map inputs, outputs, and exceptions only.

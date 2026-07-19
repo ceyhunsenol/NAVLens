@@ -17,6 +17,9 @@ extension-module = ["pyo3/extension-module"]
 
 [dependencies]
 navlens-application = { path = "../navlens-application" }
+navlens-calendar = { path = "../navlens-calendar" }
+navlens-core = { path = "../navlens-core" }
+navlens-prediction = { path = "../navlens-prediction" }
 pyo3 = { version = "0.29.0", features = ["abi3-py311"] }
 
 [lints]

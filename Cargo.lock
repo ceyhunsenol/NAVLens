@@ -169,6 +169,9 @@ name = "navlens-python"
 version = "0.1.0"
 dependencies = [
  "navlens-application",
+ "navlens-calendar",
+ "navlens-core",
+ "navlens-prediction",
  "pyo3",
 ]
 

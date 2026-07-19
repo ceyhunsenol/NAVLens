@@ -13,6 +13,7 @@
 /*.egg-info/
 __pycache__/
 *.py[cod]
+/python/navlens/_native.pdb
 /.coverage
 /coverage.xml
 /htmlcov/

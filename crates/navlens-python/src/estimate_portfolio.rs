@@ -1,4 +1,4 @@
-use crate::error::application_error;
+use crate::error::validation_error;
 use crate::portfolio_return_estimate::PortfolioReturnEstimate;
 use navlens_application::{
     EstimatePortfolioReturnCommand, WeightedMarketReturnInput,
@@ -12,7 +12,7 @@ pub(crate) fn estimate_portfolio_return(
     components: Vec<(f64, f64)>,
     daily_expense_rate: f64,
 ) -> PyResult<PortfolioReturnEstimate> {
-    execute(components, daily_expense_rate).map_err(application_error)
+    execute(components, daily_expense_rate).map_err(validation_error)
 }
 
 fn execute(
