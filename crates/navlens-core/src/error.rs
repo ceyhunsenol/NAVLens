@@ -4,8 +4,13 @@ use std::fmt::{Display, Formatter};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum CoreError {
     EmptyPortfolio,
-    NegativeWeight(f64),
+    EmptyFundId,
+    ExpenseRateOutOfRange(f64),
+    FundIdContainsControlCharacter,
+    FundIdContainsWhitespace,
+    FundIdTooLong(usize),
     NonFiniteNumber,
+    PortfolioWeightOutOfRange(f64),
     WeightsDoNotSumToOne(f64),
 }
 
@@ -13,10 +18,30 @@ impl Display for CoreError {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::EmptyPortfolio => formatter.write_str("portfolio cannot be empty"),
-            Self::NegativeWeight(weight) => {
-                write!(formatter, "weight cannot be negative: {weight}")
+            Self::EmptyFundId => formatter.write_str("fund identifier cannot be empty"),
+            Self::ExpenseRateOutOfRange(rate) => {
+                write!(
+                    formatter,
+                    "expense rate must be between zero and one; got {rate}"
+                )
             }
+            Self::FundIdContainsControlCharacter => {
+                formatter.write_str("fund identifier cannot contain control characters")
+            }
+            Self::FundIdContainsWhitespace => {
+                formatter.write_str("fund identifier cannot contain whitespace")
+            }
+            Self::FundIdTooLong(length) => write!(
+                formatter,
+                "fund identifier cannot exceed 64 characters; got {length}"
+            ),
             Self::NonFiniteNumber => formatter.write_str("number must be finite"),
+            Self::PortfolioWeightOutOfRange(weight) => {
+                write!(
+                    formatter,
+                    "portfolio weight must be between zero and one; got {weight}"
+                )
+            }
             Self::WeightsDoNotSumToOne(sum) => {
                 write!(formatter, "portfolio weights must sum to one; got {sum}")
             }

@@ -2,8 +2,12 @@
 
 mod decimal_return;
 mod error;
+mod expense_rate;
+mod fund_id;
 mod portfolio;
 
 pub use decimal_return::DecimalReturn;
 pub use error::CoreError;
-pub use portfolio::{PortfolioComponent, PortfolioEstimate};
+pub use expense_rate::ExpenseRate;
+pub use fund_id::FundId;
+pub use portfolio::{PortfolioComponent, PortfolioEstimate, PortfolioWeight};

@@ -1,10 +1,10 @@
-use crate::{CoreError, DecimalReturn, PortfolioComponent};
+use crate::{CoreError, DecimalReturn, ExpenseRate, PortfolioComponent};
 
 /// Input to the transparent weighted-return baseline estimator.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PortfolioEstimate<'a> {
     pub components: &'a [PortfolioComponent],
-    pub daily_expense_rate: DecimalReturn,
+    pub daily_expense_rate: ExpenseRate,
 }
 
 impl PortfolioEstimate<'_> {
@@ -26,14 +26,8 @@ impl PortfolioEstimate<'_> {
         let mut gross_return = 0.0;
 
         for component in self.components {
-            if !component.weight.is_finite() {
-                return Err(CoreError::NonFiniteNumber);
-            }
-            if component.weight < 0.0 {
-                return Err(CoreError::NegativeWeight(component.weight));
-            }
-            weight_sum += component.weight;
-            gross_return += component.weight * component.market_return.value();
+            weight_sum += component.weight.value();
+            gross_return += component.weight.value() * component.market_return.value();
         }
 
         if (weight_sum - 1.0).abs() > WEIGHT_TOLERANCE {
