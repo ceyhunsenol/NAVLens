@@ -1,6 +1,6 @@
 use navlens_core::{
     ConfidenceLevel, CoreError, DecimalReturn, ExpenseRate, FundId, PortfolioComponent,
-    PortfolioEstimate, PortfolioWeight, PredictionInterval,
+    PortfolioEstimate, PortfolioWeight, PredictionInterval, UnitPrice, calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -114,4 +114,27 @@ fn validates_prediction_intervals() {
             upper: -0.01,
         })
     );
+}
+
+#[test]
+fn calculates_decimal_return_from_unit_prices() {
+    let previous = UnitPrice::new(100.0).expect("valid previous price");
+    let current = UnitPrice::new(101.0).expect("valid current price");
+
+    let result = calculate_decimal_return(previous, current).expect("finite return");
+
+    assert!((result.value() - 0.01).abs() < 1e-12);
+}
+
+#[test]
+fn rejects_invalid_unit_prices() {
+    assert_eq!(
+        UnitPrice::new(0.0),
+        Err(CoreError::UnitPriceNotPositive(0.0))
+    );
+    assert_eq!(
+        UnitPrice::new(-1.0),
+        Err(CoreError::UnitPriceNotPositive(-1.0))
+    );
+    assert_eq!(UnitPrice::new(f64::NAN), Err(CoreError::NonFiniteNumber));
 }

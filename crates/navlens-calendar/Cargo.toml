@@ -8,8 +8,8 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+navlens-core = { path = "../navlens-core" }
 time = { version = "0.3.53", default-features = false, features = ["std"] }
 
 [lints]
 workspace = true
-

@@ -13,6 +13,7 @@ pub enum CoreError {
     NonFiniteNumber,
     PortfolioWeightOutOfRange(f64),
     PredictionIntervalBounds { lower: f64, upper: f64 },
+    UnitPriceNotPositive(f64),
     WeightsDoNotSumToOne(f64),
 }
 
@@ -52,6 +53,12 @@ impl Display for CoreError {
                 formatter,
                 "prediction interval lower bound {lower} exceeds upper bound {upper}"
             ),
+            Self::UnitPriceNotPositive(price) => {
+                write!(
+                    formatter,
+                    "unit price must be strictly positive; got {price}"
+                )
+            }
             Self::WeightsDoNotSumToOne(sum) => {
                 write!(formatter, "portfolio weights must sum to one; got {sum}")
             }

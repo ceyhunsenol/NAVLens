@@ -102,6 +102,27 @@ metrics are reported beside a mean `DummyRegressor` benchmark. Its residual
 interval is a transparent baseline for research comparison, not a production
 uncertainty guarantee.
 
+## Canonical price-to-return conversion
+
+Raw or normalized provider prices cross into explicit Rust types before Python
+feature engineering. Rust validates positive prices, fund identifiers, and
+chronological dates, then owns the decimal-return formula:
+
+```python
+from navlens import MarketDate, PriceObservation, UnitPrice, calculate_price_returns
+
+prices = [
+    PriceObservation(MarketDate(2026, 1, 2), UnitPrice(100.0)),
+    PriceObservation(MarketDate(2026, 1, 5), UnitPrice(101.0)),
+]
+returns = calculate_price_returns("ABC", prices)
+assert returns[0].return_decimal == 0.01
+```
+
+Each result is dated with the current price date. Python must consume these
+decimal returns instead of calling `pandas.Series.pct_change` or implementing
+the price ratio independently.
+
 ## Boundary rules
 
 - PyO3 modules map inputs, outputs, and exceptions only.

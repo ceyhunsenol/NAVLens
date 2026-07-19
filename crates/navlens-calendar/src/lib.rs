@@ -3,9 +3,11 @@
 mod error;
 mod market_calendar;
 mod market_date;
+mod pricing;
 mod session;
 
 pub use error::CalendarError;
 pub use market_calendar::MarketCalendar;
 pub use market_date::MarketDate;
+pub use pricing::{DatedDecimalReturn, PriceObservation, PriceSeries, PricingError};
 pub use session::{SessionKind, SessionOverride};

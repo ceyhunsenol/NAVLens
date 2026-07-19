@@ -7,6 +7,7 @@ mod expense_rate;
 mod fund_id;
 mod portfolio;
 mod prediction;
+mod unit_price;
 
 pub use confidence_level::ConfidenceLevel;
 pub use decimal_return::DecimalReturn;
@@ -15,3 +16,4 @@ pub use expense_rate::ExpenseRate;
 pub use fund_id::FundId;
 pub use portfolio::{PortfolioComponent, PortfolioEstimate, PortfolioWeight};
 pub use prediction::PredictionInterval;
+pub use unit_price::{UnitPrice, calculate_decimal_return};
