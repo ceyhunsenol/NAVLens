@@ -23,6 +23,11 @@ dev = [
     "pytest>=8.4,<10",
     "ruff>=0.12,<1",
 ]
+research = [
+    "numpy>=2.0,<3",
+    "pandas>=2.2,<4",
+    "scikit-learn>=1.6,<2",
+]
 
 [tool.maturin]
 manifest-path = "crates/navlens-python/Cargo.toml"

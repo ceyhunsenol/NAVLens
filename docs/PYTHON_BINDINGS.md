@@ -12,7 +12,7 @@ development package:
 ```text
 python -m venv .venv
 .venv/Scripts/python -m pip install --upgrade pip
-.venv/Scripts/python -m pip install -e ".[dev]"
+.venv/Scripts/python -m pip install -e ".[dev,research]"
 ```
 
 On Unix-like systems, use `.venv/bin/python` instead. Maturin reads
@@ -68,6 +68,39 @@ prediction = create_return_prediction(
 market horizon and auditable UTC data cut-offs. Rust rejects a target that does
 not follow the prediction date and data timestamps later than generation time.
 The binding performs no duplicate validation.
+
+## Linear baseline research workflow
+
+The optional `research` dependencies provide NumPy, pandas, and scikit-learn.
+The first baseline consumes chronological decimal returns that have already
+crossed the canonical Rust financial boundary; it does not recalculate returns
+from NAV values in Python:
+
+```python
+import pandas as pd
+
+from navlens.estimators import predict_next_return
+from navlens.training import train_linear_baseline
+
+returns = pd.Series(
+    [0.0010, -0.0004, 0.0012, 0.0003, 0.0015],
+    index=pd.date_range("2026-01-02", periods=5, freq="B"),
+)
+artifact = train_linear_baseline(
+    returns,
+    lookback=2,
+    model_version="0.1.0",
+    confidence_level=0.80,
+)
+prediction = predict_next_return(artifact, returns)
+```
+
+Each feature row contains only observations preceding its target. The artifact
+records its feature-schema version, target definition, training window, model
+version, confidence level, and evaluation metrics. Linear-regression training
+metrics are reported beside a mean `DummyRegressor` benchmark. Its residual
+interval is a transparent baseline for research comparison, not a production
+uncertainty guarantee.
 
 ## Boundary rules
 
