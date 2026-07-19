@@ -20,11 +20,27 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        run: rustup toolchain install stable --profile minimal --component rustfmt,clippy
+      - name: Show Rust toolchain
+        run: |
+          rustc --version
+          cargo --version
+          cargo fmt --version
 
-      - name: Use Rust toolchain
-        run: rustup default stable
+      - name: Install Clippy
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if rustup component add clippy; then
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              echo "Clippy installation failed; retrying in $((attempt * 10)) seconds..."
+              sleep $((attempt * 10))
+            fi
+          done
+
+          exit 1
 
       - name: Check formatting
         run: cargo fmt --all -- --check
@@ -34,4 +50,3 @@ jobs:
 
       - name: Run Clippy
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
-
