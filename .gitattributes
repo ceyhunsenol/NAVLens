@@ -1,0 +1,18 @@
+# Keep source and documentation line endings consistent across platforms.
+* text=auto eol=lf
+
+# Windows-native command scripts use CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files must never be modified by line-ending normalization.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.parquet binary
+*.zip binary
+

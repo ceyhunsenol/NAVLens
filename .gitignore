@@ -1,0 +1,10 @@
+/target/
+/.venv/
+/.pytest_cache/
+/dist/
+__pycache__/
+*.py[cod]
+*.parquet
+*.sqlite3
+.env
+
