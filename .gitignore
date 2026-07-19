@@ -1,10 +1,41 @@
 /target/
+*.profraw
+
+# Python environments, caches, and build output
 /.venv/
 /.pytest_cache/
+/.ruff_cache/
+/.mypy_cache/
+/.pyright/
+/.tox/
 /dist/
+/build/
+/*.egg-info/
 __pycache__/
 *.py[cod]
+/.coverage
+/coverage.xml
+/htmlcov/
+
+# JavaScript/TypeScript dependencies and build output
+/node_modules/
+/.next/
+/.turbo/
+/.pnpm-store/
+/coverage/
+*.tsbuildinfo
+*.log
+
+# Local IDE and operating-system state
+/.idea/
+/.vs/
+/.codebase-memory/
+.DS_Store
+Thumbs.db
+
+# Local data and secrets
 *.parquet
 *.sqlite3
 .env
-
+.env.*
+!.env.example

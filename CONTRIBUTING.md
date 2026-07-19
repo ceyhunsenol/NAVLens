@@ -31,6 +31,9 @@ cargo clippy --workspace --all-targets -- -D warnings
 ```
 
 Python and web checks will be added when those workspaces are introduced.
+VS Code users can install the workspace recommendations from
+`.vscode/extensions.json`; shared formatting and language-server settings are
+defined in `.vscode/settings.json`.
 
 ## Pull-request checklist
 
