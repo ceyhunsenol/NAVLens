@@ -225,6 +225,7 @@ The intended crates and their allowed roles are:
 | --- | --- | --- |
 | `navlens-core` | Domain types and calculations | standard library, narrowly approved domain crates |
 | `navlens-calendar` | Pricing days, business days, settlement | `navlens-core` |
+| `navlens-prediction` | Model-independent prediction contracts and provenance | `navlens-core`, `navlens-calendar` |
 | `navlens-backtest` | Evaluation engine and metrics | `navlens-core` |
 | `navlens-application` | Use cases and ports | domain crates |
 | `navlens-infrastructure` | Database/provider implementations | application and domain crates |

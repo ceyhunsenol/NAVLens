@@ -30,6 +30,7 @@ The initial workspace contains:
 - `navlens-core`: portfolio-return estimation and validated domain types.
 - `navlens-backtest`: regression and direction-accuracy metrics.
 - `navlens-calendar`: deterministic market sessions and next-open-date rules.
+- `navlens-prediction`: model-independent prediction and provenance contracts.
 - `navlens-application`: transport-independent use-case orchestration.
 - `navlens-cli`: executable command-line adapter.
 

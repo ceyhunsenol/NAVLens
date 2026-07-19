@@ -151,6 +151,14 @@ name = "navlens-core"
 version = "0.1.0"
 
 [[package]]
+name = "navlens-prediction"
+version = "0.1.0"
+dependencies = [
+ "navlens-calendar",
+ "navlens-core",
+]
+
+[[package]]
 name = "num-conv"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

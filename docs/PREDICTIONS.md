@@ -3,6 +3,22 @@
 NAVLens predictions distinguish a point estimate from an uncertainty interval.
 Neither value is a guarantee of a future fund return.
 
+`navlens-prediction` owns the model-independent contract shared by Rust
+applications and future Python bindings. It composes canonical types from
+`navlens-core` and `navlens-calendar`; it does not train or execute models.
+
+## Request and audit times
+
+`PredictionRequest` identifies the fund, prediction market date, target market
+date, generation timestamp, and latest included data timestamp. Market dates and
+UTC instants remain separate because converting an instant to a market date
+requires an explicit market time-zone and cut-off policy.
+
+The target date must follow the prediction date. `data_as_of` must not be later
+than `generated_at`, preventing a prediction from claiming access to future
+data. UTC timestamps use signed Unix seconds at the domain boundary; formatting
+and Python datetime conversion belong to adapters.
+
 ## Decimal units
 
 Returns and interval bounds use decimal units:
@@ -33,6 +49,14 @@ A series may contain point-only observations, but all intervals within one
 series must use the same confidence level. Mixing nominal confidence levels
 would make aggregate coverage misleading and is rejected.
 
+## Provenance
+
+`ReturnPrediction` combines the expected decimal return, its inclusive
+`PredictionInterval`, and a `ModelDescriptor`. The expected return must fall
+inside the interval. The descriptor records a non-blank model name, model
+version, and feature-set version so a result can be reproduced and compared
+without knowing which Python library produced it.
+
 ## Interpretation
 
 Nominal confidence and observed coverage are different. A model producing
@@ -41,7 +65,6 @@ to determine whether observed coverage is close to that level. Wider intervals
 can increase coverage without improving usefulness, so coverage and width must
 be reported together.
 
-NAVLens will display the model version, data snapshot, target date, and nominal
-confidence beside every probabilistic prediction once those metadata layers are
-implemented.
-
+NAVLens transports the model version, feature-set version, data cut-off, target
+date, and nominal confidence with every probabilistic prediction. Persistence
+and UI display of that metadata remain future adapter responsibilities.

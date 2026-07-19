@@ -1,0 +1,15 @@
+[package]
+name = "navlens-prediction"
+description = "Model-independent prediction contracts for NAVLens"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+navlens-calendar = { path = "../navlens-calendar" }
+navlens-core = { path = "../navlens-core" }
+
+[lints]
+workspace = true

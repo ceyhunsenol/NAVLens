@@ -5,6 +5,7 @@ members = [
     "crates/navlens-backtest",
     "crates/navlens-calendar",
     "crates/navlens-cli",
+    "crates/navlens-prediction",
 ]
 resolver = "3"
 
