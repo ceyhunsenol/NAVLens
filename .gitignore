@@ -35,6 +35,8 @@ __pycache__/
 Thumbs.db
 
 # Local data and secrets
+/data/raw/
+/data/processed/
 *.parquet
 *.sqlite3
 .env
