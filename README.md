@@ -29,6 +29,7 @@ The initial workspace contains:
 
 - `navlens-core`: portfolio-return estimation and validated domain types.
 - `navlens-backtest`: regression and direction-accuracy metrics.
+- `navlens-calendar`: deterministic market sessions and next-open-date rules.
 
 Run the Rust test suite with:
 

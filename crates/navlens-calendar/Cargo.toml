@@ -1,0 +1,15 @@
+[package]
+name = "navlens-calendar"
+description = "Deterministic market-session calendar rules for NAVLens"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+time = { version = "0.3.53", default-features = false, features = ["std"] }
+
+[lints]
+workspace = true
+

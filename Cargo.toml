@@ -2,6 +2,7 @@
 members = [
     "crates/navlens-core",
     "crates/navlens-backtest",
+    "crates/navlens-calendar",
 ]
 resolver = "3"
 
@@ -10,7 +11,7 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/navlens/navlens"
-rust-version = "1.85"
+rust-version = "1.88"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
@@ -18,4 +19,3 @@ unsafe_code = "forbid"
 [workspace.lints.clippy]
 all = "warn"
 pedantic = "warn"
-
