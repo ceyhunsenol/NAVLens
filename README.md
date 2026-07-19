@@ -31,6 +31,11 @@ The initial workspace contains:
 - `navlens-backtest`: regression and direction-accuracy metrics.
 - `navlens-calendar`: deterministic market sessions and next-open-date rules.
 
+Focused documentation:
+
+- [`docs/BACKTESTING.md`](docs/BACKTESTING.md): chronological guarantees,
+  metrics, and current leakage-protection limits.
+
 Run the Rust test suite with:
 
 ```shell

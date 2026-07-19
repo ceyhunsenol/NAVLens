@@ -47,6 +47,11 @@ defined in `.vscode/settings.json`.
 - [ ] Time-series code prevents future-data leakage.
 - [ ] New dependencies have a clear layer-specific justification.
 - [ ] Public behavior and assumptions are documented.
+- [ ] Focused documentation changed with the behavior and separates current
+      guarantees from future plans.
+- [ ] Existing graph symbols and call paths were checked before adding a new
+      implementation of a rule, formula, metric, or mapper.
+- [ ] No duplicate implementation or alternate path bypasses a canonical owner.
 - [ ] Financial outputs state their units and data timestamp.
 - [ ] Files, functions, classes, and implementations remain below the structure
       guardrails or the pull request documents a justified exception.

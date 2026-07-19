@@ -186,6 +186,42 @@ Split immediately when at least one condition is true:
 Do not split merely to create one-line forwarding files. A useful module owns a
 cohesive concept and improves dependency visibility.
 
+## Duplication and extraction
+
+- A domain rule, formula, validation, metric, or mapping contract has one
+  canonical implementation.
+- Cross-language callers use bindings or serialized outputs; they MUST NOT copy
+  financial algorithms into another language.
+- Before implementing behavior, search the knowledge graph for an existing
+  owner and related call paths.
+- Copy-paste followed by small edits is forbidden for production behavior.
+- Similar-looking code is not automatically the same abstraction. Do not create
+  generic `utils`, `common`, or base classes merely to remove a few repeated
+  lines.
+- Extract code when the repeated behavior has the same meaning, invariants, and
+  reason to change. Put it in the innermost layer that legitimately owns it.
+- Two independent concepts MAY remain structurally similar when combining them
+  would couple unrelated responsibilities.
+- Tests MAY repeat small setup when extraction would hide intent. Shared test
+  builders and fixtures must remain test-only.
+- A new dependency or helper must not provide an alternate path around the
+  canonical domain operation.
+
+When duplication is discovered, first identify ownership, then migrate callers,
+then remove the duplicate. Do not leave both implementations active.
+
+## Documentation alongside code
+
+- Public types and functions require Rustdoc, Python docstrings, or TypeScript
+  API documentation that explains units, invariants, and errors.
+- A behavior change updates its focused document in the same pull request.
+- A boundary or dependency-direction change requires an ADR.
+- README remains a concise entry point; detailed behavior belongs under `docs/`.
+- Documentation MUST distinguish implemented guarantees from planned behavior.
+- Examples and commands in documentation are treated as testable interfaces and
+  must be kept current.
+- Comments explain why a decision exists; they do not narrate obvious code.
+
 ## Enforcement
 
 - Reviewers treat guardrail violations as design feedback, not cosmetic issues.
@@ -195,4 +231,3 @@ cohesive concept and improves dependency visibility.
 - CI MUST run the checks for every affected workspace.
 - Architecture-specific checks SHOULD be automated when practical; an automated
   check does not replace responsibility review.
-
