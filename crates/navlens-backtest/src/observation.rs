@@ -1,6 +1,6 @@
 use crate::BacktestError;
 use navlens_calendar::MarketDate;
-use navlens_core::DecimalReturn;
+use navlens_core::{DecimalReturn, PredictionInterval};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Observation {
@@ -8,6 +8,7 @@ pub struct Observation {
     target_date: MarketDate,
     predicted_return: DecimalReturn,
     actual_return: DecimalReturn,
+    prediction_interval: Option<PredictionInterval>,
 }
 
 impl Observation {
@@ -34,6 +35,7 @@ impl Observation {
             target_date,
             predicted_return,
             actual_return,
+            prediction_interval: None,
         })
     }
 
@@ -55,5 +57,16 @@ impl Observation {
     #[must_use]
     pub const fn actual_return(self) -> DecimalReturn {
         self.actual_return
+    }
+
+    #[must_use]
+    pub const fn with_prediction_interval(mut self, interval: PredictionInterval) -> Self {
+        self.prediction_interval = Some(interval);
+        self
+    }
+
+    #[must_use]
+    pub const fn prediction_interval(self) -> Option<PredictionInterval> {
+        self.prediction_interval
     }
 }

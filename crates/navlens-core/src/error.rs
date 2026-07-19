@@ -3,6 +3,7 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum CoreError {
+    ConfidenceLevelOutOfRange(f64),
     EmptyPortfolio,
     EmptyFundId,
     ExpenseRateOutOfRange(f64),
@@ -11,12 +12,17 @@ pub enum CoreError {
     FundIdTooLong(usize),
     NonFiniteNumber,
     PortfolioWeightOutOfRange(f64),
+    PredictionIntervalBounds { lower: f64, upper: f64 },
     WeightsDoNotSumToOne(f64),
 }
 
 impl Display for CoreError {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::ConfidenceLevelOutOfRange(level) => write!(
+                formatter,
+                "confidence level must be strictly between zero and one; got {level}"
+            ),
             Self::EmptyPortfolio => formatter.write_str("portfolio cannot be empty"),
             Self::EmptyFundId => formatter.write_str("fund identifier cannot be empty"),
             Self::ExpenseRateOutOfRange(rate) => {
@@ -42,6 +48,10 @@ impl Display for CoreError {
                     "portfolio weight must be between zero and one; got {weight}"
                 )
             }
+            Self::PredictionIntervalBounds { lower, upper } => write!(
+                formatter,
+                "prediction interval lower bound {lower} exceeds upper bound {upper}"
+            ),
             Self::WeightsDoNotSumToOne(sum) => {
                 write!(formatter, "portfolio weights must sum to one; got {sum}")
             }

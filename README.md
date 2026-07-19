@@ -35,6 +35,8 @@ Focused documentation:
 
 - [`docs/BACKTESTING.md`](docs/BACKTESTING.md): chronological guarantees,
   metrics, and current leakage-protection limits.
+- [`docs/PREDICTIONS.md`](docs/PREDICTIONS.md): point estimates, uncertainty
+  intervals, and coverage interpretation.
 
 Run the Rust test suite with:
 

@@ -40,6 +40,8 @@ impl BacktestSeries {
             }
         }
 
+        validate_confidence_levels(&observations)?;
+
         Ok(Self {
             fund_id,
             observations,
@@ -55,4 +57,28 @@ impl BacktestSeries {
     pub fn observations(&self) -> &[Observation] {
         &self.observations
     }
+}
+
+fn validate_confidence_levels(observations: &[Observation]) -> Result<(), BacktestError> {
+    let mut expected = None;
+
+    for observation in observations {
+        let Some(interval) = observation.prediction_interval() else {
+            continue;
+        };
+        let confidence = interval.confidence_level();
+
+        match expected {
+            Some(level) if level != confidence => {
+                return Err(BacktestError::MixedConfidenceLevels {
+                    expected: level,
+                    actual: confidence,
+                });
+            }
+            None => expected = Some(confidence),
+            Some(_) => {}
+        }
+    }
+
+    Ok(())
 }

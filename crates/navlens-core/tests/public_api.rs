@@ -1,6 +1,6 @@
 use navlens_core::{
-    CoreError, DecimalReturn, ExpenseRate, FundId, PortfolioComponent, PortfolioEstimate,
-    PortfolioWeight,
+    ConfidenceLevel, CoreError, DecimalReturn, ExpenseRate, FundId, PortfolioComponent,
+    PortfolioEstimate, PortfolioWeight, PredictionInterval,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -85,5 +85,33 @@ fn validates_fund_identifiers() {
     assert_eq!(
         FundId::new("ABC 123"),
         Err(CoreError::FundIdContainsWhitespace)
+    );
+}
+
+#[test]
+fn validates_confidence_levels() {
+    let confidence = ConfidenceLevel::new(0.9).expect("valid confidence level");
+    assert!((confidence.value() - 0.9).abs() < f64::EPSILON);
+    assert_eq!(
+        ConfidenceLevel::new(1.0),
+        Err(CoreError::ConfidenceLevelOutOfRange(1.0))
+    );
+}
+
+#[test]
+fn validates_prediction_intervals() {
+    let confidence = ConfidenceLevel::new(0.9).expect("valid confidence level");
+    let interval = PredictionInterval::new(decimal_return(-0.01), decimal_return(0.03), confidence)
+        .expect("valid prediction interval");
+
+    assert!(interval.contains(decimal_return(0.02)));
+    assert!(!interval.contains(decimal_return(0.04)));
+    assert!((interval.width() - 0.04).abs() < f64::EPSILON);
+    assert_eq!(
+        PredictionInterval::new(decimal_return(0.03), decimal_return(-0.01), confidence),
+        Err(CoreError::PredictionIntervalBounds {
+            lower: 0.03,
+            upper: -0.01,
+        })
     );
 }
