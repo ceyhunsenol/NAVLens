@@ -32,6 +32,7 @@ The initial workspace contains:
 - `navlens-calendar`: deterministic market sessions and next-open-date rules.
 - `navlens-prediction`: model-independent prediction and provenance contracts.
 - `navlens-application`: transport-independent use-case orchestration.
+- `navlens-python`: PyO3 mappings for the installable Python package.
 - `navlens-cli`: executable command-line adapter.
 
 Focused documentation:

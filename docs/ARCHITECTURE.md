@@ -229,7 +229,7 @@ The intended crates and their allowed roles are:
 | `navlens-backtest` | Evaluation engine and metrics | `navlens-core` |
 | `navlens-application` | Use cases and ports | domain crates |
 | `navlens-infrastructure` | Database/provider implementations | application and domain crates |
-| `navlens-python` | PyO3 mapping only | domain/backtest crates |
+| `navlens-python` | PyO3 mapping only | application and domain crates |
 | `navlens-api` | Axum transport and composition root | application and infrastructure |
 | `navlens-cli` | CLI transport and composition root | application and infrastructure |
 
