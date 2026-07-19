@@ -1,26 +1,23 @@
-use crate::{BacktestError, BacktestMetrics, Observation};
+use crate::{BacktestMetrics, BacktestSeries};
 
-/// Computes aggregate metrics for chronological observations.
-///
-/// # Errors
-/// Returns [`BacktestError::NoObservations`] when the input is empty.
-pub fn evaluate(observations: &[Observation]) -> Result<BacktestMetrics, BacktestError> {
-    if observations.is_empty() {
-        return Err(BacktestError::NoObservations);
-    }
-
+/// Computes aggregate metrics for a validated chronological series.
+#[must_use]
+pub fn evaluate(series: &BacktestSeries) -> BacktestMetrics {
+    let observations = series.observations();
     let mut absolute_error_sum = 0.0;
+    let mut error_sum = 0.0;
     let mut squared_error_sum = 0.0;
     let mut correct_directions = 0usize;
 
     for observation in observations {
-        let predicted = observation.predicted.value();
-        let actual = observation.actual.value();
+        let predicted = observation.predicted_return().value();
+        let actual = observation.actual_return().value();
         let error = predicted - actual;
         absolute_error_sum += error.abs();
+        error_sum += error;
         squared_error_sum += error * error;
 
-        if predicted.total_cmp(&0.0) == actual.total_cmp(&0.0) {
+        if direction(predicted) == direction(actual) {
             correct_directions += 1;
         }
     }
@@ -30,10 +27,28 @@ pub fn evaluate(observations: &[Observation]) -> Result<BacktestMetrics, Backtes
     #[allow(clippy::cast_precision_loss)]
     let direction_accuracy = correct_directions as f64 / count;
 
-    Ok(BacktestMetrics {
+    BacktestMetrics {
         sample_count: observations.len(),
         mean_absolute_error: absolute_error_sum / count,
+        mean_error: error_sum / count,
         root_mean_squared_error: (squared_error_sum / count).sqrt(),
         direction_accuracy,
-    })
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Direction {
+    Negative,
+    Flat,
+    Positive,
+}
+
+fn direction(value: f64) -> Direction {
+    if value > 0.0 {
+        Direction::Positive
+    } else if value < 0.0 {
+        Direction::Negative
+    } else {
+        Direction::Flat
+    }
 }

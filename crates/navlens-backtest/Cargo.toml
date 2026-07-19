@@ -8,8 +8,8 @@ repository.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+navlens-calendar = { path = "../navlens-calendar" }
 navlens-core = { path = "../navlens-core" }
 
 [lints]
 workspace = true
-
