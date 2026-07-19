@@ -1,0 +1,20 @@
+[package]
+name = "navlens-cli"
+description = "Command-line interface for NAVLens"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "navlens"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.6.2", features = ["derive"] }
+navlens-application = { path = "../navlens-application" }
+
+[lints]
+workspace = true
+

@@ -30,6 +30,8 @@ The initial workspace contains:
 - `navlens-core`: portfolio-return estimation and validated domain types.
 - `navlens-backtest`: regression and direction-accuracy metrics.
 - `navlens-calendar`: deterministic market sessions and next-open-date rules.
+- `navlens-application`: transport-independent use-case orchestration.
+- `navlens-cli`: executable command-line adapter.
 
 Focused documentation:
 
@@ -37,6 +39,7 @@ Focused documentation:
   metrics, and current leakage-protection limits.
 - [`docs/PREDICTIONS.md`](docs/PREDICTIONS.md): point estimates, uncertainty
   intervals, and coverage interpretation.
+- [`docs/CLI.md`](docs/CLI.md): executable commands and application flow.
 
 Run the Rust test suite with:
 

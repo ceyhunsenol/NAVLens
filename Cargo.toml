@@ -1,8 +1,10 @@
 [workspace]
 members = [
+    "crates/navlens-application",
     "crates/navlens-core",
     "crates/navlens-backtest",
     "crates/navlens-calendar",
+    "crates/navlens-cli",
 ]
 resolver = "3"
 
