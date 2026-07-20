@@ -100,7 +100,9 @@ evaluation pipeline:
 navlens-backtest-tefas AAL --days 365 --lookback 5
 ```
 
-The command reports source provenance, model configuration, decimal-unit Rust
-metrics, and one CSV-compatible row for every out-of-sample prediction. It uses
-the existing raw-response cache and does not introduce a second TEFAS client,
-return calculation, estimator implementation, or metric implementation.
+The command compares linear regression, historical mean, and last return on
+identical out-of-sample dates. It reports source provenance, model
+configuration, a compact decimal-unit Rust metrics table, and one
+CSV-compatible row for every linear-model prediction. It uses the existing
+raw-response cache and does not introduce a second TEFAS client, return
+calculation, or metric implementation.

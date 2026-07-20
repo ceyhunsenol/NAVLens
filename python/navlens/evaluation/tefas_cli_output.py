@@ -1,5 +1,6 @@
 """Human-readable output for TEFAS walk-forward backtests."""
 
+from .comparison import ModelComparisonEntry
 from .records import WalkForwardRecord
 from .tefas_backtest import TefasBacktestResult
 
@@ -29,12 +30,36 @@ def format_tefas_backtest_result(result: TefasBacktestResult) -> str:
                 f"interval_mean_width_decimal={metrics.interval.mean_width}",
             ]
         )
+    lines.extend(_format_comparison(result.comparison.entries))
     lines.append(
         "prediction_date,target_date,predicted_return_decimal,actual_return_decimal,"
         "lower_bound_decimal,upper_bound_decimal"
     )
     lines.extend(_format_record(record) for record in result.evaluation.records)
     return "\n".join(lines)
+
+
+def _format_comparison(entries: tuple[ModelComparisonEntry, ...]) -> list[str]:
+    lines = [
+        "comparison_model,mae_decimal,rmse_decimal,direction_accuracy,"
+        "interval_coverage,interval_mean_width_decimal"
+    ]
+    lines.extend(_format_comparison_entry(entry) for entry in entries)
+    return lines
+
+
+def _format_comparison_entry(entry: ModelComparisonEntry) -> str:
+    metrics = entry.result.metrics
+    interval = metrics.interval
+    values = (
+        f"{entry.model_name}@{entry.model_version}",
+        metrics.mean_absolute_error,
+        metrics.root_mean_squared_error,
+        metrics.direction_accuracy,
+        interval.coverage if interval is not None else "",
+        interval.mean_width if interval is not None else "",
+    )
+    return ",".join(str(value) for value in values)
 
 
 def _format_record(record: WalkForwardRecord) -> str:

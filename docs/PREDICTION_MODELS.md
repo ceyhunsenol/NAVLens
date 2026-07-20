@@ -18,8 +18,8 @@ by the taxonomy in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 | Model identifier | Status | Inputs | Purpose |
 | --- | --- | --- | --- |
 | `linear-regression-baseline` | Implemented, experimental | Last `N` canonical fund returns | First trainable reference model |
-| `historical-mean-baseline` | Planned | Earlier canonical fund returns | Naive level benchmark |
-| `last-return-baseline` | Planned | Most recent canonical fund return | Naive persistence benchmark |
+| `historical-mean-baseline` | Implemented, experimental | Earlier canonical fund returns | Naive level benchmark |
+| `last-return-baseline` | Implemented, experimental | Most recent canonical fund return | Naive persistence benchmark |
 
 No holdings-aware, market-aware, macroeconomic, calendar-aware, or news model
 is implemented yet.
@@ -117,6 +117,10 @@ Those in-sample values MUST NOT be presented as evidence of forecasting
 performance. Model comparisons use identical out-of-sample walk-forward dates
 and Rust metrics.
 
+The TEFAS command runs the linear, historical-mean, and last-return baselines
+over the same initial training window and target dates. It prints a compact
+comparison table before the detailed linear-model prediction records.
+
 ### Known limitations
 
 - Autocorrelation in recent returns is the only predictive signal available.
@@ -127,6 +131,23 @@ and Rust metrics.
 - One fund or one period cannot establish general model quality.
 - Chronological slicing does not yet prove publication-time correctness for
   future holdings or external feature sources.
+
+## Naive comparison baselines
+
+`historical-mean-baseline` predicts the arithmetic mean of every canonical
+return available in its expanding history. Its feature schema is
+`historical-returns-mean-v1`; its interval radius is the configured quantile of
+absolute deviations from that historical mean.
+
+`last-return-baseline` repeats the most recently published canonical return.
+Its feature schema is `last-return-v1`; its interval radius is the configured
+quantile of absolute differences between consecutive historical returns.
+
+Both are intentionally simple reference points, not claims about fund-market
+behaviour. They implement `WalkForwardEstimator`, cross the Rust
+`ReturnPrediction` validation boundary, and are evaluated by the same Rust
+metrics as the trainable baseline. A trainable model that cannot consistently
+beat these references has not demonstrated useful incremental signal.
 
 ## Model admission rules
 
@@ -147,13 +168,5 @@ A new estimator is accepted only when all of the following are satisfied:
     layer.
 12. This catalog is updated in the same change.
 
-## Next comparison milestone
-
-The next implemented models will be `historical-mean-baseline` and
-`last-return-baseline`. They will use the same `WalkForwardEstimator` boundary,
-dates, target, Rust validation, and Rust metrics as linear regression. Until
-that comparison exists, a high score from `linear-regression-baseline` MUST NOT
-be interpreted as proof that it adds predictive value.
-
 Machine-readable run manifests and persisted comparison artifacts are planned
-but are not implemented yet.
+but are not implemented yet. They are the next comparison milestone.

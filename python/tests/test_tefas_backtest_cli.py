@@ -66,6 +66,10 @@ def test_main_runs_full_tefas_backtest_pipeline(monkeypatch, capsys, tmp_path: P
     assert "predictions=3" in output
     assert "mae_decimal=" in output
     assert "direction_accuracy=" in output
+    assert "comparison_model,mae_decimal,rmse_decimal" in output
+    assert "linear-regression-baseline@0.1.0" in output
+    assert "historical-mean-baseline@0.1.0" in output
+    assert "last-return-baseline@0.1.0" in output
     assert "prediction_date,target_date,predicted_return_decimal" in output
 
 
