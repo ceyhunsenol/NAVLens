@@ -9,7 +9,7 @@ and training as separate capabilities.
 CSV file
   -> navlens.sources.csv.parser
   -> CsvPriceRecord
-  -> navlens.sources.csv.normalizer
+  -> navlens.sources.price_observations
   -> Rust PriceObservation / UnitPrice
   -> Rust calculate_price_returns
   -> navlens.datasets.pandas_returns
@@ -46,8 +46,15 @@ Training receives `returns`; it never opens this file itself.
 - Only small synthetic test fixtures are committed.
 - External data is not relicensed under the repository's MIT license.
 
-## Planned provider path
+## TEFAS source boundary
 
-A future TEFAS source will own HTTP transport and provider response parsing. It
-will produce the same normalized Rust price contracts, so datasets, features,
-estimators, and financial calculations will not change.
+TEFAS does not provide a documented public API. NAVLens calls the JSON price
+endpoint used by the website through an isolated Python adapter. The client
+owns HTTP transport, the parser owns provider fields, and the shared source
+normalizer performs the single Python-to-Rust price mapping.
+
+The aggregate one-month, three-month, and similar return columns on the TEFAS
+fund-returns page are not dated unit prices and cannot feed this pipeline as
+prices. See [`TEFAS_DATA_ACCESS.md`](TEFAS_DATA_ACCESS.md) for the verified
+boundary and provenance requirements, and
+[`ADR-0006`](adr/0006-tefas-data-access.md) for the decision.

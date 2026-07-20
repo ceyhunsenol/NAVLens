@@ -1,7 +1,7 @@
 """CSV price-source adapter."""
 
+from ..price_observations import to_price_observations
 from .errors import CsvPriceSourceError
-from .normalizer import to_price_observations
 from .parser import read_price_records
 from .records import CsvPriceRecord
 

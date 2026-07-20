@@ -42,6 +42,10 @@ Focused documentation:
 - [`docs/PREDICTIONS.md`](docs/PREDICTIONS.md): point estimates, uncertainty
   intervals, and coverage interpretation.
 - [`docs/CLI.md`](docs/CLI.md): executable commands and application flow.
+- [`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md): source, normalization, and
+  dataset boundaries.
+- [`docs/TEFAS_DATA_ACCESS.md`](docs/TEFAS_DATA_ACCESS.md): supported TEFAS
+  export workflow and automation limits.
 
 Run the Rust test suite with:
 
