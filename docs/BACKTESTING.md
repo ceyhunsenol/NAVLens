@@ -56,3 +56,7 @@ as chronological validation, not complete future-data-leakage prevention.
   metrics.
 - Python may orchestrate experiments but must not reimplement these metrics.
 
+The public Python package exposes `BacktestObservation` and
+`evaluate_backtest` as thin PyO3 mappings. This lets walk-forward research use
+the canonical Rust chronology checks and metrics without duplicating them in
+Python.

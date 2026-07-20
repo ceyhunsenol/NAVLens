@@ -1,8 +1,11 @@
 //! Thin `PyO3` mappings for the public `NAVLens` Python package.
 
+mod backtest_metrics;
+mod backtest_observation;
 mod dated_decimal_return;
 mod error;
 mod estimate_portfolio;
+mod evaluate_backtest;
 mod market_date;
 mod model_descriptor;
 mod portfolio_return_estimate;
@@ -13,9 +16,12 @@ mod return_prediction;
 mod unit_price;
 mod utc_timestamp;
 
+use backtest_metrics::{PyBacktestMetrics, PyIntervalMetrics};
+use backtest_observation::PyBacktestObservation;
 use dated_decimal_return::PyDatedDecimalReturn;
 use error::NavlensValidationError;
 use estimate_portfolio::estimate_portfolio_return;
+use evaluate_backtest::evaluate_backtest as evaluate_backtest_fn;
 use market_date::PyMarketDate;
 use model_descriptor::PyModelDescriptor;
 use portfolio_return_estimate::PortfolioReturnEstimate;
@@ -41,9 +47,13 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyModelDescriptor>()?;
     module.add_class::<PyPredictionRequest>()?;
     module.add_class::<PyReturnPrediction>()?;
+    module.add_class::<PyBacktestObservation>()?;
+    module.add_class::<PyIntervalMetrics>()?;
+    module.add_class::<PyBacktestMetrics>()?;
     module.add_class::<PortfolioReturnEstimate>()?;
     module.add_function(wrap_pyfunction!(estimate_portfolio_return, module)?)?;
     module.add_function(wrap_pyfunction!(create_return_prediction, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
+    module.add_function(wrap_pyfunction!(evaluate_backtest_fn, module)?)?;
     Ok(())
 }

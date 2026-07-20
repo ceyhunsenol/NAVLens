@@ -17,6 +17,7 @@ extension-module = ["pyo3/extension-module"]
 
 [dependencies]
 navlens-application = { path = "../navlens-application" }
+navlens-backtest = { path = "../navlens-backtest" }
 navlens-calendar = { path = "../navlens-calendar" }
 navlens-core = { path = "../navlens-core" }
 navlens-prediction = { path = "../navlens-prediction" }

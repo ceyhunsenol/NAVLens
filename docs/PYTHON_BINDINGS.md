@@ -123,6 +123,29 @@ Each result is dated with the current price date. Python must consume these
 decimal returns instead of calling `pandas.Series.pct_change` or implementing
 the price ratio independently.
 
+## Canonical backtest evaluation
+
+Python research code may assemble dated model outputs, but Rust validates the
+series and calculates every published backtest metric:
+
+```python
+from navlens import BacktestObservation, MarketDate, evaluate_backtest
+
+observation = BacktestObservation(
+    MarketDate(2026, 1, 2),
+    MarketDate(2026, 1, 5),
+    prediction,
+    actual_return=0.0071,
+)
+metrics = evaluate_backtest("AAL", [observation])
+print(metrics.mean_absolute_error)
+```
+
+`BacktestObservation` reuses the validated `ReturnPrediction` contract, so
+point estimates and prediction intervals do not cross the boundary as an
+untyped tuple. The adapter only maps values into `BacktestSeries` and delegates
+to `navlens-backtest`; it contains no metric formulas.
+
 ## Boundary rules
 
 - PyO3 modules map inputs, outputs, and exceptions only.

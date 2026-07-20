@@ -1,7 +1,10 @@
 """Public Python API backed by the NAVLens Rust core."""
 
 from ._native import (
+    BacktestMetrics,
+    BacktestObservation,
     DatedDecimalReturn,
+    IntervalMetrics,
     MarketDate,
     ModelDescriptor,
     NavlensValidationError,
@@ -14,10 +17,14 @@ from ._native import (
     calculate_price_returns,
     create_return_prediction,
     estimate_portfolio_return,
+    evaluate_backtest,
 )
 
 __all__ = [
+    "BacktestMetrics",
+    "BacktestObservation",
     "DatedDecimalReturn",
+    "IntervalMetrics",
     "MarketDate",
     "ModelDescriptor",
     "NavlensValidationError",
@@ -30,4 +37,5 @@ __all__ = [
     "calculate_price_returns",
     "create_return_prediction",
     "estimate_portfolio_return",
+    "evaluate_backtest",
 ]

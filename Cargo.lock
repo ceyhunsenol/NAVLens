@@ -170,6 +170,7 @@ name = "navlens-python"
 version = "0.1.0"
 dependencies = [
  "navlens-application",
+ "navlens-backtest",
  "navlens-calendar",
  "navlens-core",
  "navlens-prediction",

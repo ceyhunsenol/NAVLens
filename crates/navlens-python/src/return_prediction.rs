@@ -9,7 +9,7 @@ use pyo3::prelude::*;
     name = "ReturnPrediction",
     frozen,
     module = "navlens._native",
-    skip_from_py_object
+    from_py_object
 )]
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct PyReturnPrediction {
@@ -49,6 +49,12 @@ fn build_return_prediction(
     let interval = PredictionInterval::new(lower_bound, upper_bound, confidence_level)?;
 
     Ok(ReturnPrediction::new(expected_return, interval, model)?)
+}
+
+impl PyReturnPrediction {
+    pub(crate) fn into_inner(self) -> ReturnPrediction {
+        self.inner
+    }
 }
 
 #[pymethods]
