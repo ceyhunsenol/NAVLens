@@ -37,6 +37,8 @@ The initial workspace contains:
 
 Focused documentation:
 
+- [`docs/PREDICTION_MODELS.md`](docs/PREDICTION_MODELS.md): implemented model
+  cards, planned baselines, limitations, and admission rules.
 - [`docs/BACKTESTING.md`](docs/BACKTESTING.md): chronological guarantees,
   metrics, and current leakage-protection limits.
 - [`docs/PREDICTIONS.md`](docs/PREDICTIONS.md): point estimates, uncertainty

@@ -102,6 +102,10 @@ metrics are reported beside a mean `DummyRegressor` benchmark. Its residual
 interval is a transparent baseline for research comparison, not a production
 uncertainty guarantee.
 
+See [`PREDICTION_MODELS.md`](PREDICTION_MODELS.md) for the authoritative model
+card, current limitations, status, and requirements for adding another
+estimator.
+
 ## Canonical price-to-return conversion
 
 Raw or normalized provider prices cross into explicit Rust types before Python

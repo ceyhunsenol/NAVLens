@@ -68,6 +68,10 @@ workflow. Each step trains only on returns through its `prediction_date`, then
 predicts the next published NAV return at `target_date`. The actual target and
 all later returns are excluded from that training call.
 
+The authoritative model inputs, interval method, limitations, status, and
+admission rules are recorded in
+[`PREDICTION_MODELS.md`](PREDICTION_MODELS.md).
+
 ```python
 from navlens.evaluation import LinearBaselineWalkForward, run_walk_forward
 
