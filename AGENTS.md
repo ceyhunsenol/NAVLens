@@ -28,7 +28,7 @@ Use text search only for literals, configuration, documentation, unsupported
 file types, or when the graph is stale or insufficient. Refresh the index after
 material structural changes.
 
-Project graph identifier: `C-Users-devex-Documents-NAVLens`.
+Project graph identifier: `NAVLens`.
 
 ## Quality gates
 
