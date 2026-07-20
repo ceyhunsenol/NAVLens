@@ -46,7 +46,8 @@ records.
 - The provider endpoint and payload names live only in the TEFAS client/query
   modules.
 - `AcquireTefasPrices` runs with concurrency one, verifies cached payload
-  checksums, and applies bounded retries with explicit delays.
+  checksums, spaces consecutive live requests by the configured minimum
+  interval, and applies bounded retries with explicit delays.
 - Transport and payload failures are reported through distinct source errors.
 - Borsa Istanbul data products are a separate source and require their own
   access and licensing review.

@@ -2,7 +2,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from threading import Lock
 from time import sleep
@@ -50,6 +50,7 @@ class AcquireTefasPrices:
         self._policy = policy or TefasAccessPolicy()
         self._sleep = sleeper
         self._lock = Lock()
+        self._last_fetch_at: datetime | None = None
 
     def acquire(
         self, request: TefasPriceRequest, as_of: date, acquired_at: datetime
@@ -60,13 +61,19 @@ class AcquireTefasPrices:
         paths = price_cache_paths(self._raw_root, request, as_of)
         with self._lock:
             cached = is_cache_fresh(paths, acquired_at, self._policy.cache_ttl)
-            response = load_response(paths) if cached else self._fetch(request, as_of)
+            response = load_response(paths) if cached else self._fetch(request, as_of, acquired_at)
             if not cached:
                 store_response(paths, response, request, acquired_at)
         records = parse_price_records(response.payload, request)
         return TefasAcquisitionResult(tuple(records), paths.payload, cached)
 
-    def _fetch(self, request: TefasPriceRequest, as_of: date) -> TefasHttpResponse:
+    def _fetch(
+        self,
+        request: TefasPriceRequest,
+        as_of: date,
+        requested_at: datetime,
+    ) -> TefasHttpResponse:
+        self._wait_for_request_slot(requested_at)
         for attempt in range(1, self._policy.maximum_attempts + 1):
             try:
                 return self._client.fetch_price_response(request, as_of)
@@ -76,3 +83,13 @@ class AcquireTefasPrices:
                 delay = max(self._policy.minimum_interval, self._policy.retry_delay(attempt))
                 self._sleep(delay.total_seconds())
         raise AssertionError("unreachable retry state")
+
+    def _wait_for_request_slot(self, requested_at: datetime) -> None:
+        if self._last_fetch_at is None:
+            self._last_fetch_at = requested_at
+            return
+        elapsed = requested_at - self._last_fetch_at
+        delay = max(self._policy.minimum_interval - elapsed, timedelta(0))
+        if delay:
+            self._sleep(delay.total_seconds())
+        self._last_fetch_at = requested_at + delay

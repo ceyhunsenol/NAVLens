@@ -39,11 +39,21 @@ def tefas_cli_arguments_from_namespace(
     today: date,
 ) -> TefasCliArguments:
     """Map shared TEFAS CLI fields parsed by a composition-root command."""
+    return tefas_cli_arguments_for_fund(parser, values, today, values.fund_code)
+
+
+def tefas_cli_arguments_for_fund(
+    parser: argparse.ArgumentParser,
+    values: argparse.Namespace,
+    today: date,
+    fund_code: str,
+) -> TefasCliArguments:
+    """Map shared parsed fields for one explicit fund code."""
     end_date = values.end_date or today
     days = values.days or 30
     start_date = values.start_date or end_date - timedelta(days=days - 1)
     try:
-        request = TefasPriceRequest(values.fund_code, start_date, end_date)
+        request = TefasPriceRequest(fund_code, start_date, end_date)
         if end_date > values.as_of:
             raise TefasRequestError("end date must not be after the acquisition date")
     except TefasRequestError as error:
@@ -63,13 +73,21 @@ def build_tefas_cli_parser(
         description=description,
     )
     parser.add_argument("fund_code", help="TEFAS fund code, for example AAL")
+    add_tefas_acquisition_arguments(parser, today)
+    return parser
+
+
+def add_tefas_acquisition_arguments(
+    parser: argparse.ArgumentParser,
+    today: date,
+) -> None:
+    """Add provider interval and local-source options to a parser."""
     interval = parser.add_mutually_exclusive_group()
     interval.add_argument("--start", dest="start_date", type=_iso_date)
     interval.add_argument("--days", type=positive_integer, metavar="N")
     parser.add_argument("--end", dest="end_date", type=_iso_date)
     parser.add_argument("--as-of", type=_iso_date, default=today)
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw/tefas"))
-    return parser
 
 
 def _iso_date(value: str) -> date:

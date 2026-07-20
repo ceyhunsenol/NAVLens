@@ -117,3 +117,29 @@ navlens-backtest-tefas AAL --days 365 --lookback 5 --run-root artifacts/runs
 
 The complete schema and compatibility rules are documented in
 [`RUN_MANIFESTS.md`](RUN_MANIFESTS.md).
+
+## Multi-fund TEFAS batch
+
+The batch command applies the same acquisition, dataset, estimator comparison,
+Rust metrics, and run-manifest pipeline to each requested fund:
+
+```text
+navlens-backtest-batch AAL YAY MAC --days 365 --lookback 5
+```
+
+Funds execute sequentially in input order. Cached artifacts are reused without
+delay; consecutive live provider requests retain the TEFAS adapter's configured
+minimum interval. The batch layer does not contain an alternative provider
+client, estimator, return calculation, or metrics implementation.
+
+An expected source, validation, or local-storage failure is isolated to its
+fund and does not prevent later funds from running. The compact output contains
+one metrics row per successful fund/model and one error row per failed fund.
+Every successful fund retains its own versioned run manifest. Batch output is
+not yet persisted as a separate aggregate artifact.
+
+Exit codes are:
+
+- `0`: every fund succeeded;
+- `2`: at least one fund succeeded and at least one failed;
+- `1`: every fund failed.

@@ -23,10 +23,10 @@ class FakeClient:
         return outcome
 
 
-def response(price: float = 1.25) -> TefasHttpResponse:
+def response(price: float = 1.25, fund_code: str = "AAL") -> TefasHttpResponse:
     body = (
         '{"errorCode":null,"errorMessage":null,"resultList":['
-        f'{{"tarih":"2026-07-01","fonKodu":"AAL","fiyat":{price}}}]}}'
+        f'{{"tarih":"2026-07-01","fonKodu":"{fund_code}","fiyat":{price}}}]}}'
     ).encode()
     return decode_response(body, "https://www.tefas.gov.tr/api/funds/fonFiyatBilgiGetir")
 
@@ -75,6 +75,21 @@ def test_retries_transport_failure_with_policy_delay(tmp_path) -> None:
 
     assert len(result.records) == 1
     assert delays == [5.0]
+    assert client.calls == 2
+
+
+def test_spaces_consecutive_live_fund_requests(tmp_path) -> None:
+    client = FakeClient([response(), response(fund_code="YAY")])
+    delays = []
+    policy = TefasAccessPolicy(minimum_interval=timedelta(seconds=5))
+    acquisition = AcquireTefasPrices(client, tmp_path, policy, delays.append)
+    acquired_at = datetime(2026, 7, 20, 9, tzinfo=UTC)
+    yay_request = TefasPriceRequest("YAY", date(2026, 7, 1), date(2026, 7, 20))
+
+    acquisition.acquire(request(), date(2026, 7, 20), acquired_at)
+    acquisition.acquire(yay_request, date(2026, 7, 20), acquired_at + timedelta(seconds=1))
+
+    assert delays == [4.0]
     assert client.calls == 2
 
 
