@@ -85,3 +85,18 @@ Every scalar prediction is retained as a `WalkForwardRecord` for later tables
 and charts, while `BacktestMetrics` is calculated only by Rust. The workflow
 consumes an explicit return series and never fetches live data or requires an
 API key during training or evaluation.
+
+## TEFAS command
+
+The installed package provides a composition-root command that connects the
+keyless TEFAS acquisition adapter to the canonical dataset and walk-forward
+evaluation pipeline:
+
+```text
+navlens-backtest-tefas AAL --days 365 --lookback 5
+```
+
+The command reports source provenance, model configuration, decimal-unit Rust
+metrics, and one CSV-compatible row for every out-of-sample prediction. It uses
+the existing raw-response cache and does not introduce a second TEFAS client,
+return calculation, estimator implementation, or metric implementation.
