@@ -53,6 +53,10 @@ endpoint used by the website through an isolated Python adapter. The client
 owns HTTP transport, the parser owns provider fields, and the shared source
 normalizer performs the single Python-to-Rust price mapping.
 
+`AcquireTefasPrices` checks the local cache, fetches when necessary, stores the
+exact response bytes and provenance metadata atomically, then invokes the TEFAS
+parser. Training never triggers this acquisition implicitly.
+
 The aggregate one-month, three-month, and similar return columns on the TEFAS
 fund-returns page are not dated unit prices and cannot feed this pipeline as
 prices. See [`TEFAS_DATA_ACCESS.md`](TEFAS_DATA_ACCESS.md) for the verified

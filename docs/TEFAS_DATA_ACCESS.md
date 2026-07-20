@@ -8,7 +8,7 @@ adapter.
 ## Supported workflow
 
 1. `TefasHttpClient` requests one fund's JSON price history over HTTP.
-2. The unmodified response may be stored under `data/raw/tefas/` with its
+2. The unmodified response is stored atomically under `data/raw/tefas/` with its
    checksum and acquisition context.
 3. `navlens.sources.tefas.parser` maps `tarih`, `fonKodu`, and `fiyat` into
    explicit provider records and filters the requested interval.
@@ -39,8 +39,8 @@ records.
 - Acquisition uses direct HTTP rather than browser automation.
 - The provider endpoint and payload names live only in the TEFAS client/query
   modules.
-- Requests run with concurrency one, caching, bounded retries, and explicit
-  delays when orchestration is introduced.
+- `AcquireTefasPrices` runs with concurrency one, verifies cached payload
+  checksums, and applies bounded retries with explicit delays.
 - Transport and payload failures are reported through distinct source errors.
 - Borsa Istanbul data products are a separate source and require their own
   access and licensing review.
@@ -56,8 +56,8 @@ For every retained response artifact, record at least:
 - preparation command or script version;
 - any rows rejected or changed during preparation.
 
-These values will become machine-readable dataset metadata in a later
-milestone. They must not be inferred from the file after training.
+These values are written to a machine-readable metadata sidecar and must not be
+inferred from the file after training.
 
 ## Official references
 
