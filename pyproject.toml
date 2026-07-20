@@ -17,6 +17,9 @@ classifiers = [
     "Programming Language :: Rust",
 ]
 
+[project.scripts]
+navlens-fetch-tefas = "navlens.sources.tefas.cli:main"
+
 [project.optional-dependencies]
 dev = [
     "maturin>=1.9,<2",

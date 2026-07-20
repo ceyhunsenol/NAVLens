@@ -57,6 +57,17 @@ normalizer performs the single Python-to-Rust price mapping.
 exact response bytes and provenance metadata atomically, then invokes the TEFAS
 parser. Training never triggers this acquisition implicitly.
 
+The Python data-source entry point exposes this same orchestration without
+duplicating it:
+
+```shell
+navlens-fetch-tefas AAL --days 30
+```
+
+This narrowly scoped acquisition command is distinct from the Rust `navlens`
+product CLI. It owns command-line mapping and output only; provider transport,
+cache, storage, and parsing remain in their existing TEFAS modules.
+
 The aggregate one-month, three-month, and similar return columns on the TEFAS
 fund-returns page are not dated unit prices and cannot feed this pipeline as
 prices. See [`TEFAS_DATA_ACCESS.md`](TEFAS_DATA_ACCESS.md) for the verified

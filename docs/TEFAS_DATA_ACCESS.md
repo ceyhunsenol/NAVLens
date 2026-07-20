@@ -7,6 +7,12 @@ adapter.
 
 ## Supported workflow
 
+Run a 30-calendar-day acquisition from the repository environment with:
+
+```shell
+navlens-fetch-tefas AAL --days 30
+```
+
 1. `TefasHttpClient` requests one fund's JSON price history over HTTP.
 2. The unmodified response is stored atomically under `data/raw/tefas/` with its
    checksum and acquisition context.
