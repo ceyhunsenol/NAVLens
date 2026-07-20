@@ -217,6 +217,12 @@ analysis, estimator training, explainability, notebooks, and visualisation.
 - Provider adapters output raw or explicitly normalized records; they do not
   train models or make investment decisions.
 
+Versioned backtest run manifests belong to Python evaluation while NAVLens is
+in its research stage. Manifest mapping and local-file persistence are separate
+responsibilities. A manifest serializes source provenance, estimator metadata,
+predictions, and Rust-produced metrics; it MUST NOT recalculate canonical
+financial values. Incompatible JSON changes require a new schema version.
+
 ## Rust workspace boundaries
 
 The intended crates and their allowed roles are:

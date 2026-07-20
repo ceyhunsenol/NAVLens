@@ -1,11 +1,15 @@
 """Human-readable output for TEFAS walk-forward backtests."""
 
 from .comparison import ModelComparisonEntry
+from .manifests.records import StoredRunManifest
 from .records import WalkForwardRecord
 from .tefas_backtest import TefasBacktestResult
 
 
-def format_tefas_backtest_result(result: TefasBacktestResult) -> str:
+def format_tefas_backtest_result(
+    result: TefasBacktestResult,
+    stored_manifest: StoredRunManifest,
+) -> str:
     """Render provenance, decimal metrics, and dated prediction records."""
     metrics = result.evaluation.metrics
     cache_status = "hit" if result.acquisition.from_cache else "miss"
@@ -15,6 +19,8 @@ def format_tefas_backtest_result(result: TefasBacktestResult) -> str:
         f"predictions={len(result.evaluation.records)}",
         f"cache={cache_status}",
         f"raw={result.dataset.source_path}",
+        f"run_id={stored_manifest.run_id}",
+        f"manifest={stored_manifest.path}",
         f"model=linear-regression-baseline@{result.estimator.model_version}",
         f"lookback={result.estimator.lookback}",
         f"confidence_level={result.estimator.confidence_level}",

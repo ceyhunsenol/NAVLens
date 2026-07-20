@@ -1,3 +1,4 @@
+import json
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def test_maps_acquisition_and_estimator_arguments() -> None:
     assert arguments.acquisition.request.start_date == date(2025, 7, 21)
     assert arguments.estimator.lookback == 5
     assert arguments.estimator.confidence_level == pytest.approx(0.8)
+    assert arguments.run_root == Path("data/runs")
 
 
 def test_rejects_baseline_training_window_below_minimum() -> None:
@@ -36,9 +38,11 @@ def test_main_runs_full_tefas_backtest_pipeline(monkeypatch, capsys, tmp_path: P
 
         def acquire(self, request, _as_of, acquired_at) -> TefasAcquisitionResult:
             assert acquired_at.utcoffset() is not None
+            payload_path = tmp_path / "payload.json"
+            payload_path.write_text('{"data": []}', encoding="utf-8")
             return TefasAcquisitionResult(
                 _price_records(request.normalized_fund_code),
-                tmp_path / "payload.json",
+                payload_path,
                 True,
             )
 
@@ -55,6 +59,8 @@ def test_main_runs_full_tefas_backtest_pipeline(monkeypatch, capsys, tmp_path: P
             "2026-07-20",
             "--raw-root",
             str(tmp_path),
+            "--run-root",
+            str(tmp_path / "runs"),
             "--lookback",
             "2",
         ]
@@ -63,6 +69,8 @@ def test_main_runs_full_tefas_backtest_pipeline(monkeypatch, capsys, tmp_path: P
     output = capsys.readouterr().out
     assert exit_code == 0
     assert "fund=AAL" in output
+    assert "run_id=" in output
+    assert f"manifest={tmp_path / 'runs'}" in output
     assert "predictions=3" in output
     assert "mae_decimal=" in output
     assert "direction_accuracy=" in output
@@ -71,6 +79,11 @@ def test_main_runs_full_tefas_backtest_pipeline(monkeypatch, capsys, tmp_path: P
     assert "historical-mean-baseline@0.1.0" in output
     assert "last-return-baseline@0.1.0" in output
     assert "prediction_date,target_date,predicted_return_decimal" in output
+    manifests = list((tmp_path / "runs").glob("*.json"))
+    assert len(manifests) == 1
+    payload = json.loads(manifests[0].read_text(encoding="utf-8"))
+    assert payload["schema_version"] == "navlens-backtest-run-v1"
+    assert len(payload["models"]) == 3
 
 
 def test_main_reports_insufficient_history(monkeypatch, capsys) -> None:

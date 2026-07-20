@@ -4,6 +4,7 @@ import argparse
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
+from pathlib import Path
 
 from navlens.sources.tefas.cli_arguments import (
     TefasCliArguments,
@@ -21,6 +22,7 @@ class TefasBacktestCliArguments:
 
     acquisition: TefasCliArguments
     estimator: LinearBaselineWalkForward
+    run_root: Path
 
 
 def parse_tefas_backtest_arguments(
@@ -38,6 +40,7 @@ def parse_tefas_backtest_arguments(
     parser.add_argument("--model-version", default="0.1.0")
     parser.add_argument("--confidence-level", type=_confidence_level, default=0.90)
     parser.add_argument("--minimum-training-returns", type=positive_integer)
+    parser.add_argument("--run-root", type=Path, default=Path("data/runs"))
     values = parser.parse_args(argv)
     acquisition = tefas_cli_arguments_from_namespace(parser, values, current_date)
     try:
@@ -49,7 +52,7 @@ def parse_tefas_backtest_arguments(
         )
     except ValueError as error:
         parser.error(str(error))
-    return TefasBacktestCliArguments(acquisition, estimator)
+    return TefasBacktestCliArguments(acquisition, estimator, values.run_root)
 
 
 def _confidence_level(value: str) -> float:

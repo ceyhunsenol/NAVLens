@@ -37,6 +37,7 @@ Thumbs.db
 # Local data and secrets
 /data/raw/
 /data/processed/
+/data/runs/
 *.parquet
 *.sqlite3
 .env

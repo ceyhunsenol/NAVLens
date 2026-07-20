@@ -2,8 +2,9 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from hashlib import sha256
 from pathlib import Path
+
+from navlens.sources.artifact_digest import sha256_artifact
 
 from .request import TefasPriceRequest
 
@@ -30,11 +31,10 @@ def capture_payload_provenance(
         raise ValueError("download timestamp must include a timezone")
 
     path = Path(payload_path)
-    digest = sha256(path.read_bytes()).hexdigest()
     return TefasPayloadProvenance(
         source_url=source_url,
         downloaded_at=downloaded_at,
         original_filename=path.name,
-        sha256_hex=digest,
+        sha256_hex=sha256_artifact(path),
         request=request,
     )

@@ -106,3 +106,14 @@ configuration, a compact decimal-unit Rust metrics table, and one
 CSV-compatible row for every linear-model prediction. It uses the existing
 raw-response cache and does not introduce a second TEFAS client, return
 calculation, or metric implementation.
+
+Every successful run also writes a versioned JSON artifact to `data/runs/`.
+The terminal output includes its `run_id` and path. A different destination can
+be selected explicitly:
+
+```text
+navlens-backtest-tefas AAL --days 365 --lookback 5 --run-root artifacts/runs
+```
+
+The complete schema and compatibility rules are documented in
+[`RUN_MANIFESTS.md`](RUN_MANIFESTS.md).

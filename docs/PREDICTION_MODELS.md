@@ -168,5 +168,5 @@ A new estimator is accepted only when all of the following are satisfied:
     layer.
 12. This catalog is updated in the same change.
 
-Machine-readable run manifests and persisted comparison artifacts are planned
-but are not implemented yet. They are the next comparison milestone.
+Machine-readable comparison results are persisted through the versioned run
+manifest documented in [`RUN_MANIFESTS.md`](RUN_MANIFESTS.md).
