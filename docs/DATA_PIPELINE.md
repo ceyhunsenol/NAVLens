@@ -57,6 +57,12 @@ normalizer performs the single Python-to-Rust price mapping.
 exact response bytes and provenance metadata atomically, then invokes the TEFAS
 parser. Training never triggers this acquisition implicitly.
 
+`build_tefas_fund_returns` accepts an already completed acquisition, verifies
+that its records describe one fund, and delegates to the same
+`build_fund_return_dataset` path used by CSV. That shared path maps records to
+PyO3 observations, invokes the Rust return calculation, and creates the pandas
+series. Dataset construction never performs an HTTP request.
+
 The Python data-source entry point exposes this same orchestration without
 duplicating it:
 
