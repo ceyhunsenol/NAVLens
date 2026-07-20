@@ -2,8 +2,9 @@
 
 from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
+
+from navlens.datasets.return_series import validated_decimal_returns
 
 FEATURE_SCHEMA_VERSION = "lagged-returns-v1"
 TARGET_NAME = "next_published_nav_return_decimal"
@@ -25,7 +26,8 @@ def build_lagged_return_dataset(
     lookback: int,
 ) -> LaggedReturnDataset:
     """Build supervised rows without using the target or future observations."""
-    clean_returns = _validated_returns(returns, minimum_size=lookback + 1, lookback=lookback)
+    _validate_lookback(lookback)
+    clean_returns = validated_decimal_returns(returns, minimum_size=lookback + 1)
     features = pd.DataFrame(
         {
             _feature_name(lag): clean_returns.shift(lag)
@@ -39,7 +41,8 @@ def build_lagged_return_dataset(
 
 def build_latest_feature_row(returns: pd.Series, *, lookback: int) -> pd.DataFrame:
     """Build one inference row using only the most recently observed returns."""
-    clean_returns = _validated_returns(returns, minimum_size=lookback, lookback=lookback)
+    _validate_lookback(lookback)
+    clean_returns = validated_decimal_returns(returns, minimum_size=lookback)
     values = {
         _feature_name(lag): [clean_returns.iloc[-lag]]
         for lag in range(1, lookback + 1)
@@ -47,27 +50,9 @@ def build_latest_feature_row(returns: pd.Series, *, lookback: int) -> pd.DataFra
     return pd.DataFrame(values, index=pd.DatetimeIndex([clean_returns.index[-1]]))
 
 
-def _validated_returns(
-    returns: pd.Series,
-    *,
-    minimum_size: int,
-    lookback: int,
-) -> pd.Series:
+def _validate_lookback(lookback: int) -> None:
     if lookback < 1:
         raise ValueError("lookback must be at least one")
-    if not isinstance(returns, pd.Series):
-        raise TypeError("returns must be a pandas Series")
-    if not isinstance(returns.index, pd.DatetimeIndex):
-        raise TypeError("returns must use a DatetimeIndex")
-    if not returns.index.is_monotonic_increasing or not returns.index.is_unique:
-        raise ValueError("returns must have a unique, chronological index")
-    if len(returns) < minimum_size:
-        raise ValueError(f"at least {minimum_size} returns are required")
-
-    clean_returns = returns.astype(float)
-    if not np.isfinite(clean_returns.to_numpy()).all():
-        raise ValueError("returns must contain only finite values")
-    return clean_returns
 
 
 def _feature_name(lag: int) -> str:

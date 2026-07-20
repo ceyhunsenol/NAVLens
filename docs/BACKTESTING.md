@@ -60,3 +60,28 @@ The public Python package exposes `BacktestObservation` and
 `evaluate_backtest` as thin PyO3 mappings. This lets walk-forward research use
 the canonical Rust chronology checks and metrics without duplicating them in
 Python.
+
+## Expanding-window baseline
+
+The Python evaluation package implements an expanding-window walk-forward
+workflow. Each step trains only on returns through its `prediction_date`, then
+predicts the next published NAV return at `target_date`. The actual target and
+all later returns are excluded from that training call.
+
+```python
+from navlens.evaluation import LinearBaselineWalkForward, run_walk_forward
+
+estimator = LinearBaselineWalkForward(
+    lookback=3,
+    model_version="0.1.0",
+    confidence_level=0.80,
+)
+result = run_walk_forward("AAL", returns, estimator)
+```
+
+`WalkForwardEstimator` is the model lifecycle boundary. The current linear
+baseline implements it without coupling the generic evaluator to scikit-learn.
+Every scalar prediction is retained as a `WalkForwardRecord` for later tables
+and charts, while `BacktestMetrics` is calculated only by Rust. The workflow
+consumes an explicit return series and never fetches live data or requires an
+API key during training or evaluation.

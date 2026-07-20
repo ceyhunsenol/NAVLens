@@ -7,6 +7,7 @@ from .fund_returns import (
     load_fund_returns_csv,
 )
 from .pandas_returns import dated_returns_to_series
+from .return_series import validated_decimal_returns
 from .tefas_returns import build_tefas_fund_returns
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "build_tefas_fund_returns",
     "dated_returns_to_series",
     "load_fund_returns_csv",
+    "validated_decimal_returns",
 ]
