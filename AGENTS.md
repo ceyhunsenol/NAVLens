@@ -15,7 +15,7 @@ even when it is functionally correct.
 
 ## Code discovery
 
-This project uses the Cozy Gateway `codebase-memory-mcp` knowledge graph.
+This project uses the independent `codebase-memory-mcp` knowledge graph.
 Prefer graph tools over filesystem text search for code discovery:
 
 1. `search_graph` for symbols and definitions;
@@ -47,4 +47,3 @@ Run the relevant Python and TypeScript checks once those workspaces exist.
 Do not silently change dependency direction, model ownership, persistence
 strategy, public contracts, or cross-language boundaries. Create an ADR under
 `docs/adr/` and update the architecture contract when the decision is accepted.
-
