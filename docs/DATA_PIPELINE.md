@@ -85,3 +85,19 @@ fund-returns page are not dated unit prices and cannot feed this pipeline as
 prices. See [`TEFAS_DATA_ACCESS.md`](TEFAS_DATA_ACCESS.md) for the verified
 boundary and provenance requirements, and
 [`ADR-0006`](adr/0006-tefas-data-access.md) for the decision.
+
+## Holdings dataset snapshot boundary
+
+Dataset-level holdings snapshots use `HoldingSnapshot`, an immutable record
+wrapping validated Rust-backed `HoldingPosition` instances alongside
+provenance metadata (`fund_id`, `effective_date`, `published_at`, `ingested_at`,
+`source_id`).
+
+`select_latest_holdings_snapshot` enforces publication-time safety:
+- a snapshot is eligible only when its `published_at` does not exceed the simulated prediction timestamp;
+- a later correction supersedes an earlier snapshot for the same effective date once published;
+- snapshots belonging to other funds are ignored.
+
+This envelope represents dataset construction only. KAP document acquisition,
+PDF parsing, and holdings file loading remain separate future adapter steps.
+

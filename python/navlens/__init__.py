@@ -21,13 +21,20 @@ from ._native import (
     estimate_portfolio_return,
     evaluate_backtest,
 )
+from .datasets import (
+    HoldingDatasetError,
+    HoldingSnapshot,
+    select_latest_holdings_snapshot,
+)
 
 __all__ = [
     "AssetClass",
     "BacktestMetrics",
     "BacktestObservation",
     "DatedDecimalReturn",
+    "HoldingDatasetError",
     "HoldingPosition",
+    "HoldingSnapshot",
     "IntervalMetrics",
     "MarketDate",
     "ModelDescriptor",
@@ -42,4 +49,5 @@ __all__ = [
     "create_return_prediction",
     "estimate_portfolio_return",
     "evaluate_backtest",
+    "select_latest_holdings_snapshot",
 ]

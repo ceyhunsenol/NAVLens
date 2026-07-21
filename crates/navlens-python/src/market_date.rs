@@ -7,9 +7,12 @@ use pyo3::prelude::*;
     name = "MarketDate",
     frozen,
     module = "navlens._native",
+    eq,
+    ord,
+    hash,
     from_py_object
 )]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) struct PyMarketDate {
     inner: MarketDate,
 }
@@ -24,6 +27,7 @@ impl PyMarketDate {
     }
 }
 
+#[allow(clippy::trivially_copy_pass_by_ref)]
 #[pymethods]
 impl PyMarketDate {
     #[new]
