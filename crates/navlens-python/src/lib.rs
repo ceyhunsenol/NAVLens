@@ -1,11 +1,13 @@
 //! Thin `PyO3` mappings for the public `NAVLens` Python package.
 
+mod asset_class;
 mod backtest_metrics;
 mod backtest_observation;
 mod dated_decimal_return;
 mod error;
 mod estimate_portfolio;
 mod evaluate_backtest;
+mod holding_position;
 mod market_date;
 mod model_descriptor;
 mod portfolio_return_estimate;
@@ -16,12 +18,14 @@ mod return_prediction;
 mod unit_price;
 mod utc_timestamp;
 
+use asset_class::PyAssetClass;
 use backtest_metrics::{PyBacktestMetrics, PyIntervalMetrics};
 use backtest_observation::PyBacktestObservation;
 use dated_decimal_return::PyDatedDecimalReturn;
 use error::NavlensValidationError;
 use estimate_portfolio::estimate_portfolio_return;
 use evaluate_backtest::evaluate_backtest as evaluate_backtest_fn;
+use holding_position::PyHoldingPosition;
 use market_date::PyMarketDate;
 use model_descriptor::PyModelDescriptor;
 use portfolio_return_estimate::PortfolioReturnEstimate;
@@ -39,8 +43,10 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
         "NavlensValidationError",
         module.py().get_type::<NavlensValidationError>(),
     )?;
+    module.add_class::<PyAssetClass>()?;
     module.add_class::<PyMarketDate>()?;
     module.add_class::<PyUnitPrice>()?;
+    module.add_class::<PyHoldingPosition>()?;
     module.add_class::<PyPriceObservation>()?;
     module.add_class::<PyDatedDecimalReturn>()?;
     module.add_class::<PyUtcTimestamp>()?;

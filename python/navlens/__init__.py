@@ -1,9 +1,11 @@
 """Public Python API backed by the NAVLens Rust core."""
 
 from ._native import (
+    AssetClass,
     BacktestMetrics,
     BacktestObservation,
     DatedDecimalReturn,
+    HoldingPosition,
     IntervalMetrics,
     MarketDate,
     ModelDescriptor,
@@ -21,9 +23,11 @@ from ._native import (
 )
 
 __all__ = [
+    "AssetClass",
     "BacktestMetrics",
     "BacktestObservation",
     "DatedDecimalReturn",
+    "HoldingPosition",
     "IntervalMetrics",
     "MarketDate",
     "ModelDescriptor",
