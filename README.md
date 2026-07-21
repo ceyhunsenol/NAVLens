@@ -46,6 +46,8 @@ Focused documentation:
 - [`docs/CLI.md`](docs/CLI.md): executable commands and application flow.
 - [`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md): source, normalization, and
   dataset boundaries.
+- [`docs/DATA_SOURCE_FEASIBILITY.md`](docs/DATA_SOURCE_FEASIBILITY.md): verified
+  official-source options, access constraints, and the holdings-data roadmap.
 - [`docs/TEFAS_DATA_ACCESS.md`](docs/TEFAS_DATA_ACCESS.md): supported TEFAS
   export workflow and automation limits.
 

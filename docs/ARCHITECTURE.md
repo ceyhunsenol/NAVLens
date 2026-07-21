@@ -217,6 +217,24 @@ analysis, estimator training, explainability, notebooks, and visualisation.
 - Provider adapters output raw or explicitly normalized records; they do not
   train models or make investment decisions.
 
+### External source capabilities
+
+NAVLens is keyless-first. Its canonical financial types, deterministic
+calculations, local imports, and baseline research workflows MUST NOT require
+an external API credential.
+
+- Credentialed providers are optional infrastructure adapters.
+- Missing credentials disable only the capability that explicitly requires
+  them; they MUST NOT break unrelated workflows.
+- Secrets remain in process configuration and MUST NOT enter domain,
+  application-result, artifact, log, or client-side UI types.
+- Credentialed and keyless implementations of one source capability map to the
+  same consumer-owned contract.
+- Holdings disclosure, market pricing, foreign exchange, and fund unit prices
+  are separate capabilities. An adapter for one MUST NOT impersonate another.
+- Public visibility of a provider document MUST NOT be treated as permission
+  for unrestricted automated acquisition.
+
 Versioned backtest run manifests belong to Python evaluation while NAVLens is
 in its research stage. Manifest mapping and local-file persistence are separate
 responsibilities. A manifest serializes source provenance, estimator metadata,

@@ -2,14 +2,18 @@ use crate::CoreError;
 use crate::identifier::{IdentifierError, validate_identifier};
 use std::fmt::{Display, Formatter};
 
-/// Stable provider-facing identifier of an investment fund.
+/// Stable, provider-neutral identifier of a held instrument.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct FundId(String);
+pub struct InstrumentId(String);
 
-impl FundId {
+impl InstrumentId {
     pub const MAX_LENGTH: usize = 64;
 
-    /// Creates a validated fund identifier.
+    /// Creates a normalized instrument identifier.
+    ///
+    /// Identifiers may contain punctuation but must not contain whitespace or
+    /// control characters. A mapper should prefer an ISIN when one exists and
+    /// otherwise produce a documented stable identifier.
     ///
     /// # Errors
     /// Returns an error when the identifier is empty, too long, or contains
@@ -28,20 +32,22 @@ impl FundId {
 
 fn map_identifier_error(error: IdentifierError) -> CoreError {
     match error {
-        IdentifierError::Empty => CoreError::EmptyFundId,
-        IdentifierError::TooLong(length) => CoreError::FundIdTooLong(length),
-        IdentifierError::ContainsWhitespace => CoreError::FundIdContainsWhitespace,
-        IdentifierError::ContainsControlCharacter => CoreError::FundIdContainsControlCharacter,
+        IdentifierError::Empty => CoreError::EmptyInstrumentId,
+        IdentifierError::TooLong(length) => CoreError::InstrumentIdTooLong(length),
+        IdentifierError::ContainsWhitespace => CoreError::InstrumentIdContainsWhitespace,
+        IdentifierError::ContainsControlCharacter => {
+            CoreError::InstrumentIdContainsControlCharacter
+        }
     }
 }
 
-impl AsRef<str> for FundId {
+impl AsRef<str> for InstrumentId {
     fn as_ref(&self) -> &str {
         self.as_str()
     }
 }
 
-impl Display for FundId {
+impl Display for InstrumentId {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> std::fmt::Result {
         formatter.write_str(self.as_str())
     }

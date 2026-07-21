@@ -1,6 +1,7 @@
 use navlens_core::{
-    ConfidenceLevel, CoreError, DecimalReturn, ExpenseRate, FundId, PortfolioComponent,
-    PortfolioEstimate, PortfolioWeight, PredictionInterval, UnitPrice, calculate_decimal_return,
+    AssetClass, ConfidenceLevel, CoreError, DecimalReturn, ExpenseRate, FundId, HoldingPosition,
+    InstrumentId, PortfolioComponent, PortfolioEstimate, PortfolioWeight, PredictionInterval,
+    UnitPrice, calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -85,6 +86,34 @@ fn validates_fund_identifiers() {
     assert_eq!(
         FundId::new("ABC 123"),
         Err(CoreError::FundIdContainsWhitespace)
+    );
+}
+
+#[test]
+fn creates_provider_neutral_holding_positions() {
+    let instrument_id = InstrumentId::new("US67066G1040").expect("valid ISIN");
+    let position =
+        HoldingPosition::new(instrument_id, AssetClass::Equity, portfolio_weight(0.0544));
+
+    assert_eq!(position.instrument_id().as_str(), "US67066G1040");
+    assert_eq!(position.asset_class(), AssetClass::Equity);
+    assert!((position.fund_total_weight().value() - 0.0544).abs() < f64::EPSILON);
+}
+
+#[test]
+fn rejects_non_normalized_instrument_identifiers() {
+    assert_eq!(
+        InstrumentId::new("AAPL US"),
+        Err(CoreError::InstrumentIdContainsWhitespace)
+    );
+    assert_eq!(InstrumentId::new(""), Err(CoreError::EmptyInstrumentId));
+    assert_eq!(
+        InstrumentId::new("X".repeat(InstrumentId::MAX_LENGTH + 1)),
+        Err(CoreError::InstrumentIdTooLong(InstrumentId::MAX_LENGTH + 1))
+    );
+    assert_eq!(
+        InstrumentId::new("ABC\0"),
+        Err(CoreError::InstrumentIdContainsControlCharacter)
     );
 }
 

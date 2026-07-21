@@ -4,12 +4,16 @@ use std::fmt::{Display, Formatter};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum CoreError {
     ConfidenceLevelOutOfRange(f64),
+    EmptyInstrumentId,
     EmptyPortfolio,
     EmptyFundId,
     ExpenseRateOutOfRange(f64),
     FundIdContainsControlCharacter,
     FundIdContainsWhitespace,
     FundIdTooLong(usize),
+    InstrumentIdContainsControlCharacter,
+    InstrumentIdContainsWhitespace,
+    InstrumentIdTooLong(usize),
     NonFiniteNumber,
     PortfolioWeightOutOfRange(f64),
     PredictionIntervalBounds { lower: f64, upper: f64 },
@@ -24,6 +28,7 @@ impl Display for CoreError {
                 formatter,
                 "confidence level must be strictly between zero and one; got {level}"
             ),
+            Self::EmptyInstrumentId => formatter.write_str("instrument identifier cannot be empty"),
             Self::EmptyPortfolio => formatter.write_str("portfolio cannot be empty"),
             Self::EmptyFundId => formatter.write_str("fund identifier cannot be empty"),
             Self::ExpenseRateOutOfRange(rate) => {
@@ -41,6 +46,16 @@ impl Display for CoreError {
             Self::FundIdTooLong(length) => write!(
                 formatter,
                 "fund identifier cannot exceed 64 characters; got {length}"
+            ),
+            Self::InstrumentIdContainsControlCharacter => {
+                formatter.write_str("instrument identifier cannot contain control characters")
+            }
+            Self::InstrumentIdContainsWhitespace => {
+                formatter.write_str("instrument identifier cannot contain whitespace")
+            }
+            Self::InstrumentIdTooLong(length) => write!(
+                formatter,
+                "instrument identifier cannot exceed 64 characters; got {length}"
             ),
             Self::NonFiniteNumber => formatter.write_str("number must be finite"),
             Self::PortfolioWeightOutOfRange(weight) => {

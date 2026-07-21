@@ -15,20 +15,11 @@ even when it is functionally correct.
 
 ## Code discovery
 
-This project uses the independent `codebase-memory-mcp` knowledge graph.
-Prefer graph tools over filesystem text search for code discovery:
-
-1. `search_graph` for symbols and definitions;
-2. `trace_path` for callers, callees, and data flow;
-3. `get_code_snippet` for exact symbol source;
-4. `query_graph` for architectural and complexity queries;
-5. `get_architecture` for a high-level view.
-
-Use text search only for literals, configuration, documentation, unsupported
-file types, or when the graph is stale or insufficient. Refresh the index after
-material structural changes.
-
-Project graph identifier: `NAVLens`.
+Before adding a rule, calculation, mapper, port, or provider implementation,
+search the repository for its existing owner and callers. Extend the canonical
+implementation instead of creating a duplicate or an alternate path around
+it. No specific editor, agent, indexer, or external development tool is
+required to contribute.
 
 ## Quality gates
 

@@ -46,6 +46,12 @@ Training receives `returns`; it never opens this file itself.
 - Only small synthetic test fixtures are committed.
 - External data is not relicensed under the repository's MIT license.
 
+The current source feasibility matrix, access constraints, and recommended
+holdings-data sequence are documented in
+[`DATA_SOURCE_FEASIBILITY.md`](DATA_SOURCE_FEASIBILITY.md). A listed source is
+not an approved production adapter unless that document marks its intended use
+as accepted.
+
 ## TEFAS source boundary
 
 TEFAS does not provide a documented public API. NAVLens calls the JSON price
