@@ -1,9 +1,9 @@
-use crate::MarketDate;
-use navlens_core::CoreError;
+use crate::{MarketDate, PriceAdjustment};
+use navlens_core::{CoreError, CurrencyCode, InstrumentId};
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PricingError {
     DuplicatePriceDate(MarketDate),
     InsufficientPriceObservations(usize),
@@ -12,6 +12,18 @@ pub enum PricingError {
         current: MarketDate,
     },
     ReturnCalculation(CoreError),
+    MixedInstrumentId {
+        expected: InstrumentId,
+        found: InstrumentId,
+    },
+    MixedCurrencyCode {
+        expected: CurrencyCode,
+        found: CurrencyCode,
+    },
+    MixedPriceAdjustment {
+        expected: PriceAdjustment,
+        found: PriceAdjustment,
+    },
 }
 
 impl Display for PricingError {
@@ -27,6 +39,18 @@ impl Display for PricingError {
                 "price dates must increase; {current} follows {previous}"
             ),
             Self::ReturnCalculation(error) => Display::fmt(error, formatter),
+            Self::MixedInstrumentId { expected, found } => write!(
+                formatter,
+                "all observations in a series must share the same instrument ID; expected {expected}, found {found}"
+            ),
+            Self::MixedCurrencyCode { expected, found } => write!(
+                formatter,
+                "all observations in a series must share the same currency; expected {expected}, found {found}"
+            ),
+            Self::MixedPriceAdjustment { expected, found } => write!(
+                formatter,
+                "all observations in a series must share the same price adjustment; expected {expected:?}, found {found:?}"
+            ),
         }
     }
 }

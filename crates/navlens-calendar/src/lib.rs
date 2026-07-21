@@ -11,6 +11,6 @@ pub use market_calendar::MarketCalendar;
 pub use market_date::MarketDate;
 pub use pricing::{
     DatedDecimalReturn, PriceAdjustment, PriceObservation, PriceSeries, PricingError,
-    SecurityPriceObservation,
+    SecurityPriceObservation, SecurityPriceSeries,
 };
 pub use session::{SessionKind, SessionOverride};

@@ -1,3 +1,4 @@
+use super::validation::validate_date_sequence;
 use crate::{DatedDecimalReturn, PriceObservation, PricingError};
 use navlens_core::{FundId, calculate_decimal_return};
 
@@ -15,7 +16,7 @@ impl PriceSeries {
     /// Returns an error for too few observations, duplicate dates, or
     /// decreasing dates.
     pub fn new(fund_id: FundId, observations: Vec<PriceObservation>) -> Result<Self, PricingError> {
-        validate_observations(&observations)?;
+        validate_date_sequence(observations.iter().map(|obs| obs.date()))?;
         Ok(Self {
             fund_id,
             observations,
@@ -47,23 +48,4 @@ impl PriceSeries {
             })
             .collect()
     }
-}
-
-fn validate_observations(observations: &[PriceObservation]) -> Result<(), PricingError> {
-    if observations.len() < 2 {
-        return Err(PricingError::InsufficientPriceObservations(
-            observations.len(),
-        ));
-    }
-    for pair in observations.windows(2) {
-        let previous = pair[0].date();
-        let current = pair[1].date();
-        if current == previous {
-            return Err(PricingError::DuplicatePriceDate(current));
-        }
-        if current < previous {
-            return Err(PricingError::NonChronologicalPriceDate { previous, current });
-        }
-    }
-    Ok(())
 }
