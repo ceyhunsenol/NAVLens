@@ -1,7 +1,7 @@
 use navlens_core::{
-    AssetClass, ConfidenceLevel, CoreError, DecimalReturn, ExpenseRate, FundId, HoldingPosition,
-    InstrumentId, PortfolioComponent, PortfolioEstimate, PortfolioWeight, PredictionInterval,
-    UnitPrice, calculate_decimal_return,
+    AssetClass, ConfidenceLevel, CoreError, CurrencyCode, DecimalReturn, ExpenseRate, FundId,
+    HoldingPosition, InstrumentId, PortfolioComponent, PortfolioEstimate, PortfolioWeight,
+    PredictionInterval, UnitPrice, calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -166,4 +166,32 @@ fn rejects_invalid_unit_prices() {
         Err(CoreError::UnitPriceNotPositive(-1.0))
     );
     assert_eq!(UnitPrice::new(f64::NAN), Err(CoreError::NonFiniteNumber));
+}
+
+#[test]
+fn creates_currency_codes() {
+    let usd = CurrencyCode::new("USD").expect("valid currency");
+    assert_eq!(usd.as_str(), "USD");
+    assert_eq!(usd.as_ref(), "USD");
+    assert_eq!(usd.to_string(), "USD");
+
+    let try_code = CurrencyCode::new("TRY").expect("valid currency");
+    assert_ne!(usd, try_code);
+    assert!(usd > try_code);
+
+    let mut codes = std::collections::HashSet::new();
+    assert!(codes.insert(usd.clone()));
+    assert!(!codes.insert(CurrencyCode::new("USD").expect("same valid currency")));
+    assert!(codes.contains(&usd));
+}
+
+#[test]
+fn rejects_invalid_currency_codes() {
+    for invalid in ["", "US", "USDT", "usd", "US1", "US ", "US\0", "ÜS"] {
+        assert_eq!(
+            CurrencyCode::new(invalid),
+            Err(CoreError::InvalidCurrencyCode),
+            "unexpectedly accepted {invalid:?}"
+        );
+    }
 }

@@ -19,6 +19,7 @@ pub enum CoreError {
     PredictionIntervalBounds { lower: f64, upper: f64 },
     UnitPriceNotPositive(f64),
     WeightsDoNotSumToOne(f64),
+    InvalidCurrencyCode,
 }
 
 impl Display for CoreError {
@@ -76,6 +77,9 @@ impl Display for CoreError {
             }
             Self::WeightsDoNotSumToOne(sum) => {
                 write!(formatter, "portfolio weights must sum to one; got {sum}")
+            }
+            Self::InvalidCurrencyCode => {
+                formatter.write_str("currency code must be exactly three uppercase ASCII letters")
             }
         }
     }

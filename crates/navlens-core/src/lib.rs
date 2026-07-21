@@ -1,6 +1,7 @@
 //! Canonical financial types and deterministic calculations for `NAVLens`.
 
 mod confidence_level;
+mod currency_code;
 mod decimal_return;
 mod error;
 mod expense_rate;
@@ -12,6 +13,7 @@ mod prediction;
 mod unit_price;
 
 pub use confidence_level::ConfidenceLevel;
+pub use currency_code::CurrencyCode;
 pub use decimal_return::DecimalReturn;
 pub use error::CoreError;
 pub use expense_rate::ExpenseRate;
