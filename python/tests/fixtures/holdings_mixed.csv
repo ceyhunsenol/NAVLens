@@ -1,0 +1,4 @@
+fund_id,effective_date,published_at,ingested_at,source_id,instrument_id,asset_class,weight
+AAL,2026-01-31,2026-02-05T10:00:00Z,2026-02-05T10:05:00Z,kap_jan,US67066G1040,equity,0.0544
+AAL,2026-02-28,2026-03-05T10:00:00Z,2026-03-05T10:05:00Z,kap_feb,US67066G1040,equity,0.0600
+XYZ,2026-02-28,2026-03-05T10:00:00Z,2026-03-05T10:05:00Z,kap_feb,TRT120325T12,debt_security,0.1000

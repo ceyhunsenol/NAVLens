@@ -93,11 +93,14 @@ wrapping validated Rust-backed `HoldingPosition` instances alongside
 provenance metadata (`fund_id`, `effective_date`, `published_at`, `ingested_at`,
 `source_id`).
 
+Local provider-neutral CSV files are parsed via `read_holdings_snapshots`, which
+validates row fields, maps asset classes and positions to Rust-backed types, and
+groups rows into immutable `HoldingSnapshot` objects.
+
 `select_latest_holdings_snapshot` enforces publication-time safety:
 - a snapshot is eligible only when its `published_at` does not exceed the simulated prediction timestamp;
 - a later correction supersedes an earlier snapshot for the same effective date once published;
 - snapshots belonging to other funds are ignored.
 
-This envelope represents dataset construction only. KAP document acquisition,
-PDF parsing, and holdings file loading remain separate future adapter steps.
-
+This envelope represents local dataset construction only. Automated KAP document
+acquisition, PDF parsing, and web scraping remain separate future adapter steps.
