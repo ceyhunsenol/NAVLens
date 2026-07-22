@@ -72,9 +72,7 @@ def select_latest_holdings_snapshot(
     """
     _validate_utc_timestamp(at_timestamp, "prediction timestamp")
 
-    eligible = [
-        s for s in snapshots if s.fund_id == fund_id and s.published_at <= at_timestamp
-    ]
+    eligible = [s for s in snapshots if s.fund_id == fund_id and s.published_at <= at_timestamp]
     if not eligible:
         return None
 

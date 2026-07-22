@@ -87,9 +87,7 @@ def _validate_columns(fieldnames: Sequence[str] | None, path: Path) -> None:
         raise CsvHoldingsSourceError(f"CSV is missing required columns in {path}: {names}")
 
 
-def _parse_row(
-    row: CsvRow, row_number: int, path: Path
-) -> tuple[SnapshotKey, HoldingPosition]:
+def _parse_row(row: CsvRow, row_number: int, path: Path) -> tuple[SnapshotKey, HoldingPosition]:
     metadata = _parse_metadata(row, row_number, path)
     position = _parse_position(row, row_number, path)
     return metadata, position
@@ -151,9 +149,7 @@ def _parse_asset_class(value: str, row_number: int, path: Path) -> AssetClass:
         raise _row_error(path, row_number, f"invalid asset_class {value!r}: {error}") from error
 
 
-def _required_value(
-    row: CsvRow, column: str, row_number: int, path: Path
-) -> str:
+def _required_value(row: CsvRow, column: str, row_number: int, path: Path) -> str:
     value = row.get(column)
     if value is None or not value.strip():
         raise _row_error(path, row_number, f"{column} is required")

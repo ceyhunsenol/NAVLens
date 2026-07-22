@@ -29,10 +29,7 @@ def build_lagged_return_dataset(
     _validate_lookback(lookback)
     clean_returns = validated_decimal_returns(returns, minimum_size=lookback + 1)
     features = pd.DataFrame(
-        {
-            _feature_name(lag): clean_returns.shift(lag)
-            for lag in range(1, lookback + 1)
-        },
+        {_feature_name(lag): clean_returns.shift(lag) for lag in range(1, lookback + 1)},
         index=clean_returns.index,
     ).dropna()
     targets = clean_returns.loc[features.index].rename(TARGET_NAME)
@@ -43,10 +40,7 @@ def build_latest_feature_row(returns: pd.Series, *, lookback: int) -> pd.DataFra
     """Build one inference row using only the most recently observed returns."""
     _validate_lookback(lookback)
     clean_returns = validated_decimal_returns(returns, minimum_size=lookback)
-    values = {
-        _feature_name(lag): [clean_returns.iloc[-lag]]
-        for lag in range(1, lookback + 1)
-    }
+    values = {_feature_name(lag): [clean_returns.iloc[-lag]] for lag in range(1, lookback + 1)}
     return pd.DataFrame(values, index=pd.DatetimeIndex([clean_returns.index[-1]]))
 
 
