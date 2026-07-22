@@ -33,13 +33,19 @@ from .datasets import (
     select_latest_holdings_snapshot,
     select_security_price_snapshots,
 )
-from .sources import CsvHoldingsSourceError, read_holdings_snapshots
+from .sources import (
+    CsvHoldingsSourceError,
+    CsvSecurityPriceSourceError,
+    read_holdings_snapshots,
+    read_security_prices_csv,
+)
 
 __all__ = [
     "AssetClass",
     "BacktestMetrics",
     "BacktestObservation",
     "CsvHoldingsSourceError",
+    "CsvSecurityPriceSourceError",
     "CurrencyCode",
     "DatedDecimalReturn",
     "HoldingDatasetError",
@@ -65,6 +71,7 @@ __all__ = [
     "estimate_portfolio_return",
     "evaluate_backtest",
     "read_holdings_snapshots",
+    "read_security_prices_csv",
     "select_latest_holdings_snapshot",
     "select_security_price_snapshots",
 ]
