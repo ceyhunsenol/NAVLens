@@ -102,3 +102,18 @@ fn calculates_calendar_days_since_negative_difference() {
     assert_eq!(earlier.calendar_days_since(later), -9);
     assert_eq!(later.calendar_days_since(earlier), 9);
 }
+
+#[test]
+fn public_api_exports_period_decimal_return() {
+    use navlens_calendar::PeriodDecimalReturn;
+    use navlens_core::DecimalReturn;
+
+    let start = date(2026, 1, 1);
+    let end = date(2026, 1, 2);
+    let ret = DecimalReturn::new(0.05).expect("valid return");
+
+    let p = PeriodDecimalReturn::new(start, end, ret).expect("valid period return");
+    assert_eq!(p.period_start_date(), start);
+    assert_eq!(p.period_end_date(), end);
+    assert_eq!(p.decimal_return(), ret);
+}

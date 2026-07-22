@@ -1,6 +1,9 @@
-use super::calculation::calculate_dated_decimal_returns;
+use super::calculation::{calculate_dated_decimal_returns, calculate_period_decimal_returns};
 use super::validation::validate_date_sequence;
-use crate::{DatedDecimalReturn, PriceAdjustment, PricingError, SecurityPriceObservation};
+use crate::{
+    DatedDecimalReturn, PeriodDecimalReturn, PriceAdjustment, PricingError,
+    SecurityPriceObservation,
+};
 use navlens_core::{CurrencyCode, InstrumentId};
 
 /// A validated, homogeneous, chronological series of security price observations.
@@ -56,6 +59,14 @@ impl SecurityPriceSeries {
     /// Returns an error if a finite price ratio produces a non-finite return.
     pub fn decimal_returns(&self) -> Result<Vec<DatedDecimalReturn>, PricingError> {
         calculate_dated_decimal_returns(&self.observations, |obs| (obs.market_date(), obs.price()))
+    }
+
+    /// Calculates one period decimal return for every adjacent price pair.
+    ///
+    /// # Errors
+    /// Returns an error if a finite price ratio produces a non-finite return or if period dates are invalid.
+    pub fn period_returns(&self) -> Result<Vec<PeriodDecimalReturn>, PricingError> {
+        calculate_period_decimal_returns(&self.observations, |obs| (obs.market_date(), obs.price()))
     }
 }
 

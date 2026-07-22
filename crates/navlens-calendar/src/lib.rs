@@ -10,7 +10,7 @@ pub use error::CalendarError;
 pub use market_calendar::MarketCalendar;
 pub use market_date::MarketDate;
 pub use pricing::{
-    DatedDecimalReturn, PriceAdjustment, PriceObservation, PriceSeries, PricingError,
-    SecurityPriceObservation, SecurityPriceSeries,
+    DatedDecimalReturn, PeriodDecimalReturn, PriceAdjustment, PriceObservation, PriceSeries,
+    PricingError, SecurityPriceObservation, SecurityPriceSeries,
 };
 pub use session::{SessionKind, SessionOverride};

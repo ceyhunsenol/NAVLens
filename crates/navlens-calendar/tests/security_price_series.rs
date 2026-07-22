@@ -186,3 +186,75 @@ fn decimal_returns_parity_with_price_series() {
 
     assert_eq!(fund_returns, security_returns);
 }
+
+#[test]
+fn period_decimal_return_preserves_fields_and_validates_dates() {
+    use navlens_calendar::PeriodDecimalReturn;
+    use navlens_core::DecimalReturn;
+
+    let start = date(2);
+    let end = date(5);
+    let ret = DecimalReturn::new(0.01).expect("valid return");
+
+    let period_ret = PeriodDecimalReturn::new(start, end, ret).expect("valid period return");
+    assert_eq!(period_ret.period_start_date(), start);
+    assert_eq!(period_ret.period_end_date(), end);
+    assert_eq!(period_ret.decimal_return(), ret);
+
+    assert_eq!(
+        PeriodDecimalReturn::new(start, start, ret),
+        Err(PricingError::InvalidReturnPeriod {
+            period_start_date: start,
+            period_end_date: start,
+        })
+    );
+
+    assert_eq!(
+        PeriodDecimalReturn::new(end, start, ret),
+        Err(PricingError::InvalidReturnPeriod {
+            period_start_date: end,
+            period_end_date: start,
+        })
+    );
+}
+
+#[test]
+fn calculates_period_returns_for_security_price_series() {
+    let first = observation_with_price("AAPL", 2, 100.0, "USD", PriceAdjustment::Unadjusted);
+    let second = observation_with_price("AAPL", 5, 101.0, "USD", PriceAdjustment::Unadjusted);
+    let third = observation_with_price("AAPL", 6, 100.495, "USD", PriceAdjustment::Unadjusted);
+
+    let series = SecurityPriceSeries::new(vec![first, second, third]).expect("valid series");
+    let period_returns = series.period_returns().expect("valid period returns");
+    let dated_returns = series.decimal_returns().expect("valid dated returns");
+
+    assert_eq!(period_returns.len(), 2);
+    assert_eq!(period_returns[0].period_start_date(), date(2));
+    assert_eq!(period_returns[0].period_end_date(), date(5));
+    assert_eq!(
+        period_returns[0].decimal_return(),
+        dated_returns[0].decimal_return()
+    );
+
+    assert_eq!(period_returns[1].period_start_date(), date(5));
+    assert_eq!(period_returns[1].period_end_date(), date(6));
+    assert_eq!(
+        period_returns[1].decimal_return(),
+        dated_returns[1].decimal_return()
+    );
+}
+
+#[test]
+fn period_returns_preserve_calendar_gaps_without_shifting_dates() {
+    // Friday (Jan 2) to Monday (Jan 5) weekend gap
+    let friday = observation_with_price("AAPL", 2, 100.0, "USD", PriceAdjustment::Unadjusted);
+    let monday = observation_with_price("AAPL", 5, 105.0, "USD", PriceAdjustment::Unadjusted);
+
+    let series = SecurityPriceSeries::new(vec![friday, monday]).expect("valid series");
+    let period_returns = series.period_returns().expect("valid period returns");
+
+    assert_eq!(period_returns.len(), 1);
+    assert_eq!(period_returns[0].period_start_date(), date(2));
+    assert_eq!(period_returns[0].period_end_date(), date(5));
+    assert!((period_returns[0].decimal_return().value() - 0.05).abs() < 1e-12);
+}

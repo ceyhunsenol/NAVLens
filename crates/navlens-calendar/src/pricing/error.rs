@@ -24,6 +24,10 @@ pub enum PricingError {
         expected: PriceAdjustment,
         found: PriceAdjustment,
     },
+    InvalidReturnPeriod {
+        period_start_date: MarketDate,
+        period_end_date: MarketDate,
+    },
 }
 
 impl Display for PricingError {
@@ -50,6 +54,13 @@ impl Display for PricingError {
             Self::MixedPriceAdjustment { expected, found } => write!(
                 formatter,
                 "all observations in a series must share the same price adjustment; expected {expected:?}, found {found:?}"
+            ),
+            Self::InvalidReturnPeriod {
+                period_start_date,
+                period_end_date,
+            } => write!(
+                formatter,
+                "return period start must precede end; {period_start_date} is on or after {period_end_date}"
             ),
         }
     }
