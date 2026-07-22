@@ -21,6 +21,7 @@ pub enum CoreError {
     UnitPriceNotPositive(f64),
     WeightsDoNotSumToOne(f64),
     InvalidCurrencyCode,
+    ReturnCoverageExceedsFundTotal(f64),
 }
 
 impl Display for CoreError {
@@ -86,6 +87,10 @@ impl Display for CoreError {
             Self::InvalidCurrencyCode => {
                 formatter.write_str("currency code must be exactly three uppercase ASCII letters")
             }
+            Self::ReturnCoverageExceedsFundTotal(total) => write!(
+                formatter,
+                "return coverage portfolio weight cannot exceed 1.0; got {total}"
+            ),
         }
     }
 }

@@ -1,7 +1,8 @@
 use navlens_core::{
     AssetClass, ConfidenceLevel, CoreError, CurrencyCode, DecimalReturn, ExpenseRate, FundId,
     HoldingPosition, InstrumentId, PortfolioComponent, PortfolioCoverageWeights, PortfolioEstimate,
-    PortfolioWeight, PredictionInterval, UnitPrice, calculate_decimal_return,
+    PortfolioReturnContribution, PortfolioWeight, PredictionInterval, UnitPrice,
+    calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -264,5 +265,99 @@ fn rejects_portfolio_coverage_weights_exceeding_one() {
     assert_eq!(
         PortfolioCoverageWeights::new(&covered, &uncovered),
         Err(CoreError::DeclaredWeightExceedsFundTotal(1.1))
+    );
+}
+
+#[test]
+fn calculates_portfolio_return_contribution_empty_input() {
+    let contribution =
+        PortfolioReturnContribution::calculate(&[]).expect("empty components should succeed");
+
+    assert!((contribution.observed_contribution().value() - 0.0).abs() < f64::EPSILON);
+    assert!((contribution.return_coverage().value() - 0.0).abs() < f64::EPSILON);
+    assert!(!contribution.has_full_coverage());
+}
+
+#[test]
+fn calculates_partial_portfolio_return_contribution_without_renormalization() {
+    let components = [
+        PortfolioComponent {
+            weight: portfolio_weight(0.4),
+            market_return: decimal_return(0.05),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(0.2),
+            market_return: decimal_return(-0.03),
+        },
+    ];
+
+    let contribution =
+        PortfolioReturnContribution::calculate(&components).expect("valid partial components");
+
+    assert!((contribution.observed_contribution().value() - 0.014).abs() < 1e-12);
+    assert!((contribution.return_coverage().value() - 0.6).abs() < 1e-12);
+    assert!(!contribution.has_full_coverage());
+}
+
+#[test]
+fn calculates_full_coverage_portfolio_return_contribution() {
+    let components = [
+        PortfolioComponent {
+            weight: portfolio_weight(0.7),
+            market_return: decimal_return(0.02),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(0.3),
+            market_return: decimal_return(-0.01),
+        },
+    ];
+
+    let contribution = PortfolioReturnContribution::calculate(&components)
+        .expect("valid full coverage components");
+
+    assert!((contribution.observed_contribution().value() - 0.011).abs() < 1e-12);
+    assert!((contribution.return_coverage().value() - 1.0).abs() < 1e-12);
+    assert!(contribution.has_full_coverage());
+}
+
+#[test]
+fn clamps_return_coverage_within_tolerance_and_rejects_exceeding_weight() {
+    let w1 = 0.75;
+    let w2 = 0.250_000_000_5;
+    let raw_sum = w1 + w2;
+    assert!(raw_sum > 1.0);
+    assert!(raw_sum < 1.0 + 1e-9);
+
+    let components_within_tolerance = [
+        PortfolioComponent {
+            weight: portfolio_weight(w1),
+            market_return: decimal_return(0.01),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(w2),
+            market_return: decimal_return(0.01),
+        },
+    ];
+
+    let clamped = PortfolioReturnContribution::calculate(&components_within_tolerance)
+        .expect("within tolerance should succeed");
+    assert!((clamped.return_coverage().value() - 1.0).abs() < f64::EPSILON);
+    assert!(clamped.has_full_coverage());
+
+    // 0.8 + 0.3 = 1.1 (exceeds 1.0 + tolerance)
+    let components_exceeding = [
+        PortfolioComponent {
+            weight: portfolio_weight(0.8),
+            market_return: decimal_return(0.01),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(0.3),
+            market_return: decimal_return(0.01),
+        },
+    ];
+
+    assert_eq!(
+        PortfolioReturnContribution::calculate(&components_exceeding),
+        Err(CoreError::ReturnCoverageExceedsFundTotal(1.1))
     );
 }
