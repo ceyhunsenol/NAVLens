@@ -8,11 +8,21 @@ use pyo3::prelude::*;
     name = "HoldingPosition",
     frozen,
     module = "navlens._native",
-    skip_from_py_object
+    from_py_object
 )]
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct PyHoldingPosition {
     inner: HoldingPosition,
+}
+
+impl PyHoldingPosition {
+    pub(crate) const fn from_inner(inner: HoldingPosition) -> Self {
+        Self { inner }
+    }
+
+    pub(crate) fn into_inner(self) -> HoldingPosition {
+        self.inner
+    }
 }
 
 #[pymethods]
@@ -55,5 +65,5 @@ fn build_holding_position(
     let instrument_id = InstrumentId::new(instrument_id)?;
     let weight = PortfolioWeight::new(weight)?;
     let position = HoldingPosition::new(instrument_id, asset_class.into_inner(), weight);
-    Ok(PyHoldingPosition { inner: position })
+    Ok(PyHoldingPosition::from_inner(position))
 }

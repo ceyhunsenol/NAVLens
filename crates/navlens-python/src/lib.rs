@@ -1,8 +1,12 @@
 //! Thin `PyO3` mappings for the public `NAVLens` Python package.
 
+mod align_holdings_prices;
+mod alignment_policy;
 mod asset_class;
 mod backtest_metrics;
 mod backtest_observation;
+mod coverage_gap_reason;
+mod covered_holding_price;
 mod currency_code;
 mod dated_decimal_return;
 mod error;
@@ -11,20 +15,27 @@ mod evaluate_backtest;
 mod holding_position;
 mod market_date;
 mod model_descriptor;
+mod portfolio_coverage_report;
 mod portfolio_return_estimate;
 mod prediction_request;
 mod price_adjustment;
 mod price_observation;
 mod price_returns;
 mod return_prediction;
+mod security_price_history_candidate;
 mod security_price_observation;
 mod security_price_series;
+mod uncovered_holding;
 mod unit_price;
 mod utc_timestamp;
 
+use align_holdings_prices::align_holdings_prices as align_holdings_prices_fn;
+use alignment_policy::PyAlignmentPolicy;
 use asset_class::PyAssetClass;
 use backtest_metrics::{PyBacktestMetrics, PyIntervalMetrics};
 use backtest_observation::PyBacktestObservation;
+use coverage_gap_reason::PyCoverageGapReason;
+use covered_holding_price::PyCoveredHoldingPrice;
 use currency_code::PyCurrencyCode;
 use dated_decimal_return::PyDatedDecimalReturn;
 use error::NavlensValidationError;
@@ -33,6 +44,7 @@ use evaluate_backtest::evaluate_backtest as evaluate_backtest_fn;
 use holding_position::PyHoldingPosition;
 use market_date::PyMarketDate;
 use model_descriptor::PyModelDescriptor;
+use portfolio_coverage_report::PyPortfolioCoverageReport;
 use portfolio_return_estimate::PortfolioReturnEstimate;
 use prediction_request::PyPredictionRequest;
 use price_adjustment::PyPriceAdjustment;
@@ -40,8 +52,10 @@ use price_observation::PyPriceObservation;
 use price_returns::calculate_price_returns;
 use pyo3::prelude::*;
 use return_prediction::{PyReturnPrediction, create_return_prediction};
+use security_price_history_candidate::PySecurityPriceHistoryCandidate;
 use security_price_observation::PySecurityPriceObservation;
 use security_price_series::PySecurityPriceSeries;
+use uncovered_holding::PyUncoveredHolding;
 use unit_price::PyUnitPrice;
 use utc_timestamp::PyUtcTimestamp;
 
@@ -60,6 +74,11 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyPriceObservation>()?;
     module.add_class::<PySecurityPriceObservation>()?;
     module.add_class::<PySecurityPriceSeries>()?;
+    module.add_class::<PySecurityPriceHistoryCandidate>()?;
+    module.add_class::<PyAlignmentPolicy>()?;
+    module.add_class::<PyCoverageGapReason>()?;
+    module.add_class::<PyCoveredHoldingPrice>()?;
+    module.add_class::<PyUncoveredHolding>()?;
     module.add_class::<PyDatedDecimalReturn>()?;
     module.add_class::<PyUtcTimestamp>()?;
     module.add_class::<PyModelDescriptor>()?;
@@ -69,9 +88,11 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyIntervalMetrics>()?;
     module.add_class::<PyBacktestMetrics>()?;
     module.add_class::<PortfolioReturnEstimate>()?;
+    module.add_class::<PyPortfolioCoverageReport>()?;
     module.add_function(wrap_pyfunction!(estimate_portfolio_return, module)?)?;
     module.add_function(wrap_pyfunction!(create_return_prediction, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
     module.add_function(wrap_pyfunction!(evaluate_backtest_fn, module)?)?;
+    module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
     Ok(())
 }
