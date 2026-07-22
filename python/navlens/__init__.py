@@ -28,7 +28,10 @@ from ._native import (
 from .datasets import (
     HoldingDatasetError,
     HoldingSnapshot,
+    SecurityPriceDatasetError,
+    SecurityPriceSnapshot,
     select_latest_holdings_snapshot,
+    select_security_price_snapshots,
 )
 from .sources import CsvHoldingsSourceError, read_holdings_snapshots
 
@@ -51,8 +54,10 @@ __all__ = [
     "PriceAdjustment",
     "PriceObservation",
     "ReturnPrediction",
+    "SecurityPriceDatasetError",
     "SecurityPriceObservation",
     "SecurityPriceSeries",
+    "SecurityPriceSnapshot",
     "UnitPrice",
     "UtcTimestamp",
     "calculate_price_returns",
@@ -61,4 +66,5 @@ __all__ = [
     "evaluate_backtest",
     "read_holdings_snapshots",
     "select_latest_holdings_snapshot",
+    "select_security_price_snapshots",
 ]

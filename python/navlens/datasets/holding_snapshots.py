@@ -2,20 +2,12 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from navlens import HoldingPosition, MarketDate
 
+from ._timestamps import validate_utc_timestamp
 from .errors import HoldingDatasetError
-
-
-def _validate_utc_timestamp(dt: datetime, field_name: str) -> None:
-    if not isinstance(dt, datetime):
-        raise HoldingDatasetError(f"{field_name} must be a datetime instance")
-    if dt.tzinfo is None or dt.utcoffset() is None:
-        raise HoldingDatasetError(f"{field_name} must include a timezone")
-    if dt.utcoffset() != timedelta(0):
-        raise HoldingDatasetError(f"{field_name} must be in UTC timezone")
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,8 +29,8 @@ class HoldingSnapshot:
         if not isinstance(self.effective_date, MarketDate):
             raise HoldingDatasetError("effective_date must be a MarketDate instance")
 
-        _validate_utc_timestamp(self.published_at, "published_at")
-        _validate_utc_timestamp(self.ingested_at, "ingested_at")
+        validate_utc_timestamp(self.published_at, "published_at", HoldingDatasetError)
+        validate_utc_timestamp(self.ingested_at, "ingested_at", HoldingDatasetError)
 
         if self.ingested_at < self.published_at:
             raise HoldingDatasetError("ingestion time cannot precede publication time")
@@ -70,7 +62,7 @@ def select_latest_holdings_snapshot(
     - Among eligible active snapshots across effective dates, the snapshot with the newest
       effective date is selected.
     """
-    _validate_utc_timestamp(at_timestamp, "prediction timestamp")
+    validate_utc_timestamp(at_timestamp, "prediction timestamp", HoldingDatasetError)
 
     eligible = [s for s in snapshots if s.fund_id == fund_id and s.published_at <= at_timestamp]
     if not eligible:
