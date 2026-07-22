@@ -5,7 +5,9 @@ mod error;
 mod estimate_portfolio_return;
 
 pub use align_holdings_prices::{
-    AlignmentContractError, AlignmentPolicy, CoverageGapReason, SecurityPriceHistoryCandidate,
+    AlignHoldingsPricesError, AlignmentContractError, AlignmentPolicy, CoverageGapReason,
+    CoveredHoldingPrice, PortfolioCoverageReport, SecurityPriceHistoryCandidate, UncoveredHolding,
+    align_holdings_prices,
 };
 pub use error::ApplicationError;
 pub use estimate_portfolio_return::{
