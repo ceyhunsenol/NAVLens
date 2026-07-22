@@ -7,6 +7,7 @@ pub enum CoreError {
     EmptyInstrumentId,
     EmptyPortfolio,
     EmptyFundId,
+    DeclaredWeightExceedsFundTotal(f64),
     ExpenseRateOutOfRange(f64),
     FundIdContainsControlCharacter,
     FundIdContainsWhitespace,
@@ -28,6 +29,10 @@ impl Display for CoreError {
             Self::ConfidenceLevelOutOfRange(level) => write!(
                 formatter,
                 "confidence level must be strictly between zero and one; got {level}"
+            ),
+            Self::DeclaredWeightExceedsFundTotal(total) => write!(
+                formatter,
+                "declared portfolio weight cannot exceed 1.0; got {total}"
             ),
             Self::EmptyInstrumentId => formatter.write_str("instrument identifier cannot be empty"),
             Self::EmptyPortfolio => formatter.write_str("portfolio cannot be empty"),

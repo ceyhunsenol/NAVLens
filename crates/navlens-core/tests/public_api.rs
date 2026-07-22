@@ -1,7 +1,7 @@
 use navlens_core::{
     AssetClass, ConfidenceLevel, CoreError, CurrencyCode, DecimalReturn, ExpenseRate, FundId,
-    HoldingPosition, InstrumentId, PortfolioComponent, PortfolioEstimate, PortfolioWeight,
-    PredictionInterval, UnitPrice, calculate_decimal_return,
+    HoldingPosition, InstrumentId, PortfolioComponent, PortfolioCoverageWeights, PortfolioEstimate,
+    PortfolioWeight, PredictionInterval, UnitPrice, calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -194,4 +194,75 @@ fn rejects_invalid_currency_codes() {
             "unexpectedly accepted {invalid:?}"
         );
     }
+}
+
+#[test]
+fn calculates_portfolio_coverage_weights_full_coverage() {
+    let covered = [portfolio_weight(0.6), portfolio_weight(0.4)];
+    let uncovered = [];
+
+    let coverage = PortfolioCoverageWeights::new(&covered, &uncovered).expect("valid coverage");
+
+    assert!((coverage.declared_weight().value() - 1.0).abs() < f64::EPSILON);
+    assert!((coverage.covered_weight().value() - 1.0).abs() < f64::EPSILON);
+    assert!((coverage.uncovered_listed_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.unrepresented_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.total_uncovered_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert_eq!(coverage.coverage_ratio(), coverage.covered_weight());
+}
+
+#[test]
+fn calculates_portfolio_coverage_weights_partial_coverage() {
+    let covered = [portfolio_weight(0.5)];
+    let uncovered = [portfolio_weight(0.3)];
+
+    let coverage = PortfolioCoverageWeights::new(&covered, &uncovered).expect("valid coverage");
+
+    assert!((coverage.declared_weight().value() - 0.8).abs() < f64::EPSILON);
+    assert!((coverage.covered_weight().value() - 0.5).abs() < f64::EPSILON);
+    assert!((coverage.uncovered_listed_weight().value() - 0.3).abs() < f64::EPSILON);
+    assert!((coverage.unrepresented_weight().value() - 0.2).abs() < f64::EPSILON);
+    assert!((coverage.total_uncovered_weight().value() - 0.5).abs() < f64::EPSILON);
+    assert_eq!(coverage.coverage_ratio(), coverage.covered_weight());
+}
+
+#[test]
+fn calculates_portfolio_coverage_weights_empty_inputs() {
+    let covered = [];
+    let uncovered = [];
+
+    let coverage = PortfolioCoverageWeights::new(&covered, &uncovered).expect("valid coverage");
+
+    assert!((coverage.declared_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.covered_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.uncovered_listed_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.unrepresented_weight().value() - 1.0).abs() < f64::EPSILON);
+    assert!((coverage.total_uncovered_weight().value() - 1.0).abs() < f64::EPSILON);
+    assert_eq!(coverage.coverage_ratio(), coverage.covered_weight());
+}
+
+#[test]
+fn calculates_portfolio_coverage_weights_completely_uncovered() {
+    let covered = [];
+    let uncovered = [portfolio_weight(0.7)];
+
+    let coverage = PortfolioCoverageWeights::new(&covered, &uncovered).expect("valid coverage");
+
+    assert!((coverage.declared_weight().value() - 0.7).abs() < f64::EPSILON);
+    assert!((coverage.covered_weight().value() - 0.0).abs() < f64::EPSILON);
+    assert!((coverage.uncovered_listed_weight().value() - 0.7).abs() < f64::EPSILON);
+    assert!((coverage.unrepresented_weight().value() - 0.3).abs() < f64::EPSILON);
+    assert!((coverage.total_uncovered_weight().value() - 1.0).abs() < f64::EPSILON);
+    assert_eq!(coverage.coverage_ratio(), coverage.covered_weight());
+}
+
+#[test]
+fn rejects_portfolio_coverage_weights_exceeding_one() {
+    let covered = [portfolio_weight(0.8)];
+    let uncovered = [portfolio_weight(0.3)];
+
+    assert_eq!(
+        PortfolioCoverageWeights::new(&covered, &uncovered),
+        Err(CoreError::DeclaredWeightExceedsFundTotal(1.1))
+    );
 }
