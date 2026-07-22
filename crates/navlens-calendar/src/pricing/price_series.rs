@@ -1,6 +1,7 @@
+use super::calculation::calculate_dated_decimal_returns;
 use super::validation::validate_date_sequence;
 use crate::{DatedDecimalReturn, PriceObservation, PricingError};
-use navlens_core::{FundId, calculate_decimal_return};
+use navlens_core::FundId;
 
 /// A validated chronological unit-price series for one fund.
 #[derive(Clone, Debug, PartialEq)]
@@ -38,14 +39,6 @@ impl PriceSeries {
     /// # Errors
     /// Returns an error if a finite price ratio produces a non-finite return.
     pub fn decimal_returns(&self) -> Result<Vec<DatedDecimalReturn>, PricingError> {
-        self.observations
-            .windows(2)
-            .map(|pair| {
-                let current = pair[1];
-                calculate_decimal_return(pair[0].unit_price(), current.unit_price())
-                    .map(|value| DatedDecimalReturn::new(current.date(), value))
-                    .map_err(PricingError::ReturnCalculation)
-            })
-            .collect()
+        calculate_dated_decimal_returns(&self.observations, |obs| (obs.date(), obs.unit_price()))
     }
 }

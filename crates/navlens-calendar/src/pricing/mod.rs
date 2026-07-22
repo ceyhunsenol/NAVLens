@@ -1,3 +1,4 @@
+mod calculation;
 mod dated_decimal_return;
 mod error;
 mod price_observation;
