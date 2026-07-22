@@ -25,6 +25,17 @@ impl MarketDate {
         Ok(Self(date))
     }
 
+    /// Calculates the number of calendar days elapsed since `earlier`.
+    ///
+    /// # Sign Semantics
+    /// - Positive (`> 0`) if `self` is chronologically later than `earlier`.
+    /// - Zero (`0`) if `self` is on the exact same date as `earlier`.
+    /// - Negative (`< 0`) if `self` is chronologically earlier than `earlier`.
+    #[must_use]
+    pub fn calendar_days_since(self, earlier: Self) -> i64 {
+        (self.0 - earlier.0).whole_days()
+    }
+
     pub(crate) const fn weekday(self) -> Weekday {
         self.0.weekday()
     }

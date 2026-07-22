@@ -69,3 +69,36 @@ fn rejects_invalid_gregorian_dates() {
         })
     );
 }
+
+#[test]
+fn calculates_calendar_days_since_same_day() {
+    let d = date(2026, 7, 22);
+    assert_eq!(d.calendar_days_since(d), 0);
+}
+
+#[test]
+fn calculates_calendar_days_since_across_month_boundary() {
+    let jan31 = date(2026, 1, 31);
+    let feb01 = date(2026, 2, 1);
+    assert_eq!(feb01.calendar_days_since(jan31), 1);
+    assert_eq!(jan31.calendar_days_since(feb01), -1);
+}
+
+#[test]
+fn calculates_calendar_days_since_across_leap_year_february() {
+    let feb28_leap = date(2024, 2, 28);
+    let mar01_leap = date(2024, 3, 1);
+    assert_eq!(mar01_leap.calendar_days_since(feb28_leap), 2);
+
+    let feb28_non_leap = date(2025, 2, 28);
+    let mar01_non_leap = date(2025, 3, 1);
+    assert_eq!(mar01_non_leap.calendar_days_since(feb28_non_leap), 1);
+}
+
+#[test]
+fn calculates_calendar_days_since_negative_difference() {
+    let earlier = date(2026, 1, 1);
+    let later = date(2026, 1, 10);
+    assert_eq!(earlier.calendar_days_since(later), -9);
+    assert_eq!(later.calendar_days_since(earlier), 9);
+}
