@@ -32,6 +32,14 @@ from ._native import (
     estimate_portfolio_return,
     evaluate_backtest,
 )
+from .alignment import (
+    InvalidPointInTimeAlignmentRequestError,
+    MissingHoldingsSnapshotError,
+    PointInTimeAlignmentError,
+    PointInTimeAlignmentRequest,
+    PointInTimeAlignmentResult,
+    align_point_in_time,
+)
 from .datasets import (
     HoldingDatasetError,
     HoldingSnapshot,
@@ -61,10 +69,15 @@ __all__ = [
     "HoldingDatasetError",
     "HoldingPosition",
     "HoldingSnapshot",
+    "InvalidPointInTimeAlignmentRequestError",
     "IntervalMetrics",
     "MarketDate",
+    "MissingHoldingsSnapshotError",
     "ModelDescriptor",
     "NavlensValidationError",
+    "PointInTimeAlignmentError",
+    "PointInTimeAlignmentRequest",
+    "PointInTimeAlignmentResult",
     "PortfolioCoverageReport",
     "PortfolioReturnEstimate",
     "PredictionRequest",
@@ -80,6 +93,7 @@ __all__ = [
     "UnitPrice",
     "UtcTimestamp",
     "align_holdings_prices",
+    "align_point_in_time",
     "calculate_price_returns",
     "create_return_prediction",
     "estimate_portfolio_return",

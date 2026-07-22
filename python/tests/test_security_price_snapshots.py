@@ -128,9 +128,8 @@ def test_prevents_future_data_leakage() -> None:
         [snapshot],
         source_id="bloomberg",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=before_avail,
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res == ()
 
@@ -139,17 +138,50 @@ def test_prevents_future_data_leakage() -> None:
         [snapshot],
         source_id="bloomberg",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=at_avail,
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res_at == (snapshot,)
 
 
-def test_correction_publication_timing() -> None:
+def test_filters_by_pricing_as_of_date() -> None:
+    obs_valid = _make_obs(date=MarketDate(2026, 1, 15))
+    obs_future = _make_obs(date=MarketDate(2026, 1, 21))
+    avail_time = datetime(2026, 1, 15, 18, 0, tzinfo=UTC)
+
+    snap_valid = SecurityPriceSnapshot(
+        observation=obs_valid, available_at=avail_time, ingested_at=avail_time, source_id="src1"
+    )
+    snap_future = SecurityPriceSnapshot(
+        observation=obs_future, available_at=avail_time, ingested_at=avail_time, source_id="src1"
+    )
+
+    res = select_security_price_snapshots(
+        [snap_valid, snap_future],
+        source_id="src1",
+        instrument_id="US67066G1040",
+        at_timestamp=datetime(2026, 1, 22, 0, 0, tzinfo=UTC),
+        pricing_as_of_date=MarketDate(2026, 1, 20),
+    )
+    assert res == (snap_valid,)
+
+
+@pytest.mark.parametrize(
+    ("corrected_currency", "corrected_adjustment"),
+    [("TRY", "unadjusted"), ("USD", "split_adjusted")],
+)
+def test_correction_publication_timing_and_identity_superseding(
+    corrected_currency: str,
+    corrected_adjustment: str,
+) -> None:
     date = MarketDate(2026, 1, 15)
-    orig_obs = _make_obs(date=date, price_val=150.00)
-    corr_obs = _make_obs(date=date, price_val=150.25)
+    orig_obs = _make_obs(date=date, price_val=150.00, currency_code="USD")
+    corr_obs = _make_obs(
+        date=date,
+        price_val=150.25,
+        currency_code=corrected_currency,
+        adjustment_str=corrected_adjustment,
+    )
 
     orig_snapshot = SecurityPriceSnapshot(
         observation=orig_obs,
@@ -171,20 +203,18 @@ def test_correction_publication_timing() -> None:
         snapshots,
         source_id="bloomberg",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=datetime(2026, 1, 15, 23, 59, tzinfo=UTC),
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res_before == (orig_snapshot,)
 
-    # Query after correction: corrected record is selected
+    # Query after correction: corrected record is selected (superseding currency change)
     res_after = select_security_price_snapshots(
         snapshots,
         source_id="bloomberg",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=datetime(2026, 1, 16, 10, 0, tzinfo=UTC),
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res_after == (corr_snapshot,)
 
@@ -212,9 +242,8 @@ def test_does_not_mix_different_sources() -> None:
         [bloomberg_snap, reuters_snap],
         source_id="bloomberg",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=query_time,
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res_bloomberg == (bloomberg_snap,)
 
@@ -222,14 +251,13 @@ def test_does_not_mix_different_sources() -> None:
         [bloomberg_snap, reuters_snap],
         source_id="reuters",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=query_time,
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res_reuters == (reuters_snap,)
 
 
-def test_filters_by_instrument_currency_and_adjustment() -> None:
+def test_filters_by_instrument_only() -> None:
     avail_time = datetime(2026, 1, 15, 18, 0, tzinfo=UTC)
     date = MarketDate(2026, 1, 15)
 
@@ -255,39 +283,16 @@ def test_filters_by_instrument_currency_and_adjustment() -> None:
         ingested_at=avail_time,
         source_id="src1",
     )
-    snap_diff_curr = SecurityPriceSnapshot(
-        observation=_make_obs(
-            instrument_id="US67066G1040",
-            date=date,
-            currency_code="EUR",
-            adjustment_str="unadjusted",
-        ),
-        available_at=avail_time,
-        ingested_at=avail_time,
-        source_id="src1",
-    )
-    snap_diff_adj = SecurityPriceSnapshot(
-        observation=_make_obs(
-            instrument_id="US67066G1040",
-            date=date,
-            currency_code="USD",
-            adjustment_str="split_adjusted",
-        ),
-        available_at=avail_time,
-        ingested_at=avail_time,
-        source_id="src1",
-    )
 
-    all_snaps = [snap_target, snap_diff_inst, snap_diff_curr, snap_diff_adj]
+    all_snaps = [snap_target, snap_diff_inst]
     query_time = datetime(2026, 1, 16, 0, 0, tzinfo=UTC)
 
     res = select_security_price_snapshots(
         all_snaps,
         source_id="src1",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=query_time,
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res == (snap_target,)
 
@@ -319,9 +324,8 @@ def test_returns_chronological_tuple() -> None:
         [snap3, snap1, snap2],
         source_id="src1",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=datetime(2026, 1, 21, 0, 0, tzinfo=UTC),
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
 
     assert isinstance(res, tuple)
@@ -333,9 +337,8 @@ def test_returns_empty_tuple_when_no_snapshots_match() -> None:
         [],
         source_id="src1",
         instrument_id="US67066G1040",
-        currency=CurrencyCode("USD"),
-        adjustment=PriceAdjustment("unadjusted"),
         at_timestamp=datetime(2026, 1, 21, 0, 0, tzinfo=UTC),
+        pricing_as_of_date=MarketDate(2026, 1, 20),
     )
     assert res == ()
     assert isinstance(res, tuple)

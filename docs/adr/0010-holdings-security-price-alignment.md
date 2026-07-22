@@ -54,9 +54,13 @@ At a supplied `prediction_timestamp`:
   `market_date <= pricing_as_of_date`.
 
 Later corrections remain invisible until their respective publication or
-availability timestamp. `ingested_at` is provenance and does not replace these
-eligibility rules. Records excluded by these rules MUST NOT influence matching,
-coverage, staleness, or return calculations.
+availability timestamp. For security price snapshots, correction identity is
+strictly defined by `(source_id, instrument_id, market_date)`. The latest
+eligible correction (highest `(available_at, ingested_at)`) for a given market
+date supersedes any earlier record for that market date entirely, including any
+changes in currency or price adjustment. `ingested_at` is provenance and does
+not replace these eligibility rules. Records excluded by these rules MUST NOT
+influence matching, coverage, staleness, or return calculations.
 
 ### 3. Explicit alignment policy
 

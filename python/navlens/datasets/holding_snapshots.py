@@ -50,13 +50,16 @@ class HoldingSnapshot:
 
 def select_latest_holdings_snapshot(
     snapshots: Iterable[HoldingSnapshot],
+    *,
     fund_id: str,
+    source_id: str,
     at_timestamp: datetime,
 ) -> HoldingSnapshot | None:
-    """Select the latest publication-time-safe holdings snapshot for a requested fund.
+    """Select the latest publication-time-safe holdings snapshot for a requested fund and source.
 
     Enforces publication-time safety:
-    - Only snapshots matching `fund_id` and published on or before `at_timestamp` are eligible.
+    - Only snapshots matching `fund_id`, `source_id`, and published on or
+      before `at_timestamp` are eligible.
     - For any effective date, a later correction supersedes an earlier snapshot once the
       correction has been published.
     - Among eligible active snapshots across effective dates, the snapshot with the newest
@@ -64,7 +67,11 @@ def select_latest_holdings_snapshot(
     """
     validate_utc_timestamp(at_timestamp, "prediction timestamp", HoldingDatasetError)
 
-    eligible = [s for s in snapshots if s.fund_id == fund_id and s.published_at <= at_timestamp]
+    eligible = [
+        s
+        for s in snapshots
+        if s.fund_id == fund_id and s.source_id == source_id and s.published_at <= at_timestamp
+    ]
     if not eligible:
         return None
 

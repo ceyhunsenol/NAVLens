@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 
-from navlens import CurrencyCode, MarketDate, PriceAdjustment, SecurityPriceObservation
+from navlens import MarketDate, SecurityPriceObservation
 
 from ._timestamps import validate_utc_timestamp
 from .errors import SecurityPriceDatasetError
@@ -40,15 +40,14 @@ def select_security_price_snapshots(
     *,
     source_id: str,
     instrument_id: str,
-    currency: CurrencyCode,
-    adjustment: PriceAdjustment,
     at_timestamp: datetime,
+    pricing_as_of_date: MarketDate,
 ) -> tuple[SecurityPriceSnapshot, ...]:
-    """Select point-in-time-safe security price snapshots chronologically.
+    """Select point-in-time-safe security price snapshots chronologically up to pricing as-of date.
 
     Rules:
-    - Only snapshots matching `source_id`, `instrument_id`, `currency`, `adjustment`,
-      and published on or before `at_timestamp` (`available_at <= at_timestamp`) are eligible.
+    - Only snapshots matching `source_id`, `instrument_id`, published on or before `at_timestamp`
+      (`available_at <= at_timestamp`), and with `market_date <= pricing_as_of_date` are eligible.
     - For any market date, the snapshot published latest (`(available_at, ingested_at)`)
       supersedes earlier observations once its `available_at` timestamp has passed.
     - Observations from different sources are never mixed.
@@ -56,30 +55,48 @@ def select_security_price_snapshots(
     """
     validate_utc_timestamp(at_timestamp, "prediction timestamp", SecurityPriceDatasetError)
 
-    eligible = [
-        s
-        for s in snapshots
-        if s.source_id == source_id
-        and s.observation.instrument_id == instrument_id
-        and s.observation.currency == currency
-        and s.observation.adjustment == adjustment
-        and s.available_at <= at_timestamp
-    ]
+    eligible = _eligible_snapshots(
+        snapshots,
+        source_id=source_id,
+        instrument_id=instrument_id,
+        at_timestamp=at_timestamp,
+        pricing_as_of_date=pricing_as_of_date,
+    )
     if not eligible:
         return ()
 
+    latest_by_date = _latest_corrections(eligible)
+    return tuple(sorted(latest_by_date.values(), key=lambda s: s.observation.market_date))
+
+
+def _eligible_snapshots(
+    snapshots: Iterable[SecurityPriceSnapshot],
+    *,
+    source_id: str,
+    instrument_id: str,
+    at_timestamp: datetime,
+    pricing_as_of_date: MarketDate,
+) -> list[SecurityPriceSnapshot]:
+    return [
+        snapshot
+        for snapshot in snapshots
+        if snapshot.source_id == source_id
+        and snapshot.observation.instrument_id == instrument_id
+        and snapshot.available_at <= at_timestamp
+        and snapshot.observation.market_date <= pricing_as_of_date
+    ]
+
+
+def _latest_corrections(
+    snapshots: Iterable[SecurityPriceSnapshot],
+) -> dict[MarketDate, SecurityPriceSnapshot]:
     market_date_map: dict[MarketDate, SecurityPriceSnapshot] = {}
-    for s in eligible:
-        market_date = s.observation.market_date
+    for snapshot in snapshots:
+        market_date = snapshot.observation.market_date
         existing = market_date_map.get(market_date)
-        if existing is None or (s.available_at, s.ingested_at) > (
+        if existing is None or (snapshot.available_at, snapshot.ingested_at) > (
             existing.available_at,
             existing.ingested_at,
         ):
-            market_date_map[market_date] = s
-
-    sorted_snapshots = sorted(
-        market_date_map.values(),
-        key=lambda s: s.observation.market_date,
-    )
-    return tuple(sorted_snapshots)
+            market_date_map[market_date] = snapshot
+    return market_date_map

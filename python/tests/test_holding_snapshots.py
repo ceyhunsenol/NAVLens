@@ -112,11 +112,15 @@ def test_prevents_future_data_leakage() -> None:
     )
 
     before_pub = datetime(2026, 2, 5, 9, 59, tzinfo=UTC)
-    selected = select_latest_holdings_snapshot([snapshot], "AAL", at_timestamp=before_pub)
+    selected = select_latest_holdings_snapshot(
+        [snapshot], fund_id="AAL", source_id="kap_report", at_timestamp=before_pub
+    )
     assert selected is None
 
     at_pub = datetime(2026, 2, 5, 10, 0, tzinfo=UTC)
-    selected_at_pub = select_latest_holdings_snapshot([snapshot], "AAL", at_timestamp=at_pub)
+    selected_at_pub = select_latest_holdings_snapshot(
+        [snapshot], fund_id="AAL", source_id="kap_report", at_timestamp=at_pub
+    )
     assert selected_at_pub == snapshot
 
 
@@ -126,7 +130,7 @@ def test_selects_newest_effective_period() -> None:
         effective_date=MarketDate(2026, 1, 31),
         published_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
-        source_id="kap_jan",
+        source_id="kap_report",
         positions=(_make_position("JAN_POS"),),
     )
     feb_snapshot = HoldingSnapshot(
@@ -134,13 +138,16 @@ def test_selects_newest_effective_period() -> None:
         effective_date=MarketDate(2026, 2, 28),
         published_at=datetime(2026, 3, 5, 10, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 3, 5, 10, 0, tzinfo=UTC),
-        source_id="kap_feb",
+        source_id="kap_report",
         positions=(_make_position("FEB_POS"),),
     )
 
     query_time = datetime(2026, 3, 6, 0, 0, tzinfo=UTC)
     selected = select_latest_holdings_snapshot(
-        [jan_snapshot, feb_snapshot], "AAL", at_timestamp=query_time
+        [jan_snapshot, feb_snapshot],
+        fund_id="AAL",
+        source_id="kap_report",
+        at_timestamp=query_time,
     )
     assert selected == feb_snapshot
 
@@ -151,7 +158,7 @@ def test_correction_publication_timing() -> None:
         effective_date=MarketDate(2026, 1, 31),
         published_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
-        source_id="kap_original",
+        source_id="kap_report",
         positions=(_make_position("ORIGINAL"),),
     )
     correction = HoldingSnapshot(
@@ -159,7 +166,7 @@ def test_correction_publication_timing() -> None:
         effective_date=MarketDate(2026, 1, 31),
         published_at=datetime(2026, 2, 10, 14, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 2, 10, 14, 0, tzinfo=UTC),
-        source_id="kap_correction",
+        source_id="kap_report",
         positions=(_make_position("CORRECTION"),),
     )
 
@@ -167,12 +174,16 @@ def test_correction_publication_timing() -> None:
 
     # Before correction publication: original is selected
     before_correction = datetime(2026, 2, 6, 0, 0, tzinfo=UTC)
-    res_before = select_latest_holdings_snapshot(snapshots, "AAL", at_timestamp=before_correction)
+    res_before = select_latest_holdings_snapshot(
+        snapshots, fund_id="AAL", source_id="kap_report", at_timestamp=before_correction
+    )
     assert res_before == original
 
     # After correction publication: correction supersedes original
     after_correction = datetime(2026, 2, 11, 0, 0, tzinfo=UTC)
-    res_after = select_latest_holdings_snapshot(snapshots, "AAL", at_timestamp=after_correction)
+    res_after = select_latest_holdings_snapshot(
+        snapshots, fund_id="AAL", source_id="kap_report", at_timestamp=after_correction
+    )
     assert res_after == correction
 
 
@@ -182,7 +193,7 @@ def test_ignores_snapshots_of_other_funds() -> None:
         effective_date=MarketDate(2026, 1, 31),
         published_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
-        source_id="kap_aal",
+        source_id="kap_report",
         positions=(_make_position("AAL_POS"),),
     )
     xyz_snapshot = HoldingSnapshot(
@@ -190,22 +201,33 @@ def test_ignores_snapshots_of_other_funds() -> None:
         effective_date=MarketDate(2026, 1, 31),
         published_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
         ingested_at=datetime(2026, 2, 5, 10, 0, tzinfo=UTC),
-        source_id="kap_xyz",
+        source_id="kap_report",
         positions=(_make_position("XYZ_POS"),),
     )
 
     query_time = datetime(2026, 2, 6, 0, 0, tzinfo=UTC)
     res_aal = select_latest_holdings_snapshot(
-        [aal_snapshot, xyz_snapshot], "AAL", at_timestamp=query_time
+        [aal_snapshot, xyz_snapshot],
+        fund_id="AAL",
+        source_id="kap_report",
+        at_timestamp=query_time,
     )
     assert res_aal == aal_snapshot
 
     res_xyz = select_latest_holdings_snapshot(
-        [aal_snapshot, xyz_snapshot], "XYZ", at_timestamp=query_time
+        [aal_snapshot, xyz_snapshot],
+        fund_id="XYZ",
+        source_id="kap_report",
+        at_timestamp=query_time,
     )
     assert res_xyz == xyz_snapshot
 
 
 def test_returns_none_when_no_snapshot_available() -> None:
     query_time = datetime(2026, 2, 6, 0, 0, tzinfo=UTC)
-    assert select_latest_holdings_snapshot([], "AAL", at_timestamp=query_time) is None
+    assert (
+        select_latest_holdings_snapshot(
+            [], fund_id="AAL", source_id="kap_report", at_timestamp=query_time
+        )
+        is None
+    )
