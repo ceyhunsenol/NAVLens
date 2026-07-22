@@ -1,6 +1,6 @@
 # ADR-0010: Holdings and security-price alignment and coverage policy
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-22
 
 ## Context
