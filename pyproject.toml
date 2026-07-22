@@ -18,6 +18,7 @@ classifiers = [
 ]
 
 [project.scripts]
+navlens-align-holdings-csv = "navlens.alignment.cli:main"
 navlens-backtest-tefas = "navlens.evaluation.tefas_cli:main"
 navlens-backtest-batch = "navlens.evaluation.tefas_batch_cli:main"
 navlens-fetch-tefas = "navlens.sources.tefas.cli:main"
