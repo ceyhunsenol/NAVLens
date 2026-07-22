@@ -211,6 +211,18 @@ Rust owns:
 - security-return and coverage-weight arithmetic;
 - deterministic coverage reasons and fatal alignment errors.
 
+Crate placement remains within the existing workspace boundaries:
+
+- `navlens-calendar::pricing` owns security-price history validation, dated
+  security-return construction, and date-based staleness evaluation because it
+  already owns `MarketDate`, `PriceAdjustment`, and `SecurityPriceSeries`;
+- `navlens-core::portfolio` owns provider-independent coverage-weight
+  arithmetic over `PortfolioWeight` values;
+- `navlens-application` owns alignment command/result contracts and coordinates
+  the core and pricing operations without reimplementing either calculation.
+
+No new crate is introduced by this decision.
+
 Python MUST NOT reimplement Rust's financial, coverage, or weight arithmetic.
 Rust domain code MUST NOT depend on Python timestamps, source files, provider
 records, or dataset envelopes.
@@ -261,17 +273,19 @@ operation does not justify a repository, provider, or matcher interface.
 
 ## Smallest implementation sequence
 
-1. Add Rust alignment-policy and history-candidate input types, fatal error
-   taxonomy, coverage-reason taxonomy, and weight-report result types without
-   Python or provider concerns.
-2. Add Rust security-return calculation for homogeneous
-   `SecurityPriceSeries`.
-3. Implement deterministic Rust series construction, alignment, and coverage
+1. Add Rust security-return calculation for homogeneous
+   `SecurityPriceSeries`, reusing the canonical dated-return calculation used by
+   fund price series.
+2. Add provider-independent coverage-weight arithmetic under
+   `navlens-core::portfolio`.
+3. Add application alignment-policy/history-candidate inputs, fatal error and
+   coverage-reason taxonomies, and report result types.
+4. Implement deterministic Rust series construction, alignment, and coverage
    reporting over canonical holdings and preselected observation candidates.
-4. Expose the accepted Rust contracts through thin PyO3 mappings.
-5. Add Python point-in-time orchestration that supplies validated series and
-   attaches provenance.
-6. Add integration fixtures covering future corrections, partial holdings,
+5. Expose the accepted Rust contracts through thin PyO3 mappings.
+6. Add Python point-in-time orchestration that supplies selected observations
+   and attaches provenance.
+7. Add integration fixtures covering future corrections, partial holdings,
    missing prices, currency/adjustment mismatch, stale data, duplicate holdings,
    unsupported assets, and non-normalized coverage.
 
