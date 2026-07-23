@@ -21,7 +21,7 @@ impl PortfolioEstimate<'_> {
             return Err(CoreError::EmptyPortfolio);
         }
 
-        let result = calculate_weighted_return(self.components);
+        let result = calculate_weighted_return(self.components)?;
 
         if (result.weight_sum - 1.0).abs() > WEIGHT_TOLERANCE {
             return Err(CoreError::WeightsDoNotSumToOne(result.weight_sum));

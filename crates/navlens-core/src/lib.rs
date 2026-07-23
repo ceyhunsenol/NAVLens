@@ -20,8 +20,8 @@ pub use expense_rate::ExpenseRate;
 pub use fund_id::FundId;
 pub use holding::{AssetClass, HoldingPosition, InstrumentId};
 pub use portfolio::{
-    PortfolioComponent, PortfolioCoverageWeights, PortfolioEstimate, PortfolioReturnContribution,
-    PortfolioWeight,
+    PortfolioComponent, PortfolioComponentContribution, PortfolioCoverageWeights,
+    PortfolioEstimate, PortfolioReturnContribution, PortfolioWeight,
 };
 pub use prediction::PredictionInterval;
 pub use unit_price::{UnitPrice, calculate_decimal_return};

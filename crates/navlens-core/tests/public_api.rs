@@ -1,8 +1,8 @@
 use navlens_core::{
     AssetClass, ConfidenceLevel, CoreError, CurrencyCode, DecimalReturn, ExpenseRate, FundId,
-    HoldingPosition, InstrumentId, PortfolioComponent, PortfolioCoverageWeights, PortfolioEstimate,
-    PortfolioReturnContribution, PortfolioWeight, PredictionInterval, UnitPrice,
-    calculate_decimal_return,
+    HoldingPosition, InstrumentId, PortfolioComponent, PortfolioComponentContribution,
+    PortfolioCoverageWeights, PortfolioEstimate, PortfolioReturnContribution, PortfolioWeight,
+    PredictionInterval, UnitPrice, calculate_decimal_return,
 };
 
 fn decimal_return(value: f64) -> DecimalReturn {
@@ -15,6 +15,14 @@ fn expense_rate(value: f64) -> ExpenseRate {
 
 fn portfolio_weight(value: f64) -> PortfolioWeight {
     PortfolioWeight::new(value).expect("test portfolio weight should be valid")
+}
+
+fn assert_approximately_equal(actual: f64, expected: f64) {
+    const TEST_TOLERANCE: f64 = 1e-12;
+    assert!(
+        (actual - expected).abs() <= TEST_TOLERANCE,
+        "expected {expected}, got {actual}"
+    );
 }
 
 #[test]
@@ -360,4 +368,68 @@ fn clamps_return_coverage_within_tolerance_and_rejects_exceeding_weight() {
         PortfolioReturnContribution::calculate(&components_exceeding),
         Err(CoreError::ReturnCoverageExceedsFundTotal(1.1))
     );
+}
+
+#[test]
+fn calculates_positive_portfolio_component_contribution() {
+    let component = PortfolioComponent {
+        weight: portfolio_weight(0.5),
+        market_return: decimal_return(0.04),
+    };
+    let contribution = PortfolioComponentContribution::calculate(&component).unwrap();
+
+    assert_approximately_equal(contribution.weighted_contribution().value(), 0.02);
+    assert_eq!(contribution.weight(), component.weight);
+    assert_eq!(contribution.market_return(), component.market_return);
+}
+
+#[test]
+fn calculates_negative_portfolio_component_contribution() {
+    let component = PortfolioComponent {
+        weight: portfolio_weight(0.2),
+        market_return: decimal_return(-0.03),
+    };
+    let contribution = PortfolioComponentContribution::calculate(&component).unwrap();
+
+    assert_approximately_equal(contribution.weighted_contribution().value(), -0.006);
+}
+
+#[test]
+fn zero_weight_produces_zero_portfolio_component_contribution() {
+    let component = PortfolioComponent {
+        weight: portfolio_weight(0.0),
+        market_return: decimal_return(0.05),
+    };
+    let contribution = PortfolioComponentContribution::calculate(&component).unwrap();
+
+    assert_approximately_equal(contribution.weighted_contribution().value(), 0.0);
+}
+
+#[test]
+fn portfolio_return_contribution_matches_sum_of_components() {
+    let components = [
+        PortfolioComponent {
+            weight: portfolio_weight(0.4),
+            market_return: decimal_return(0.05),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(0.2),
+            market_return: decimal_return(-0.03),
+        },
+        PortfolioComponent {
+            weight: portfolio_weight(0.1),
+            market_return: decimal_return(0.00),
+        },
+    ];
+
+    let mut expected_sum = 0.0;
+    for c in &components {
+        let contrib = PortfolioComponentContribution::calculate(c).unwrap();
+        expected_sum += contrib.weighted_contribution().value();
+    }
+
+    let contribution =
+        PortfolioReturnContribution::calculate(&components).expect("valid components");
+
+    assert_approximately_equal(contribution.observed_contribution().value(), expected_sum);
 }

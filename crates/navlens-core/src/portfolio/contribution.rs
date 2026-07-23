@@ -35,7 +35,7 @@ impl PortfolioReturnContribution {
             });
         }
 
-        let result = calculate_weighted_return(components);
+        let result = calculate_weighted_return(components)?;
 
         if !result.weight_sum.is_finite() || !result.gross_return.is_finite() {
             return Err(CoreError::NonFiniteNumber);
