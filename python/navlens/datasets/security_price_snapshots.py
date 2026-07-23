@@ -6,6 +6,7 @@ from datetime import datetime
 
 from navlens import MarketDate, SecurityPriceObservation
 
+from ._correction import latest_corrections_by_date
 from ._timestamps import validate_utc_timestamp
 from .errors import SecurityPriceDatasetError
 
@@ -65,7 +66,7 @@ def select_security_price_snapshots(
     if not eligible:
         return ()
 
-    latest_by_date = _latest_corrections(eligible)
+    latest_by_date = latest_corrections_by_date(eligible, lambda s: s.observation.market_date)
     return tuple(sorted(latest_by_date.values(), key=lambda s: s.observation.market_date))
 
 
@@ -85,18 +86,3 @@ def _eligible_snapshots(
         and snapshot.available_at <= at_timestamp
         and snapshot.observation.market_date <= pricing_as_of_date
     ]
-
-
-def _latest_corrections(
-    snapshots: Iterable[SecurityPriceSnapshot],
-) -> dict[MarketDate, SecurityPriceSnapshot]:
-    market_date_map: dict[MarketDate, SecurityPriceSnapshot] = {}
-    for snapshot in snapshots:
-        market_date = snapshot.observation.market_date
-        existing = market_date_map.get(market_date)
-        if existing is None or (snapshot.available_at, snapshot.ingested_at) > (
-            existing.available_at,
-            existing.ingested_at,
-        ):
-            market_date_map[market_date] = snapshot
-    return market_date_map

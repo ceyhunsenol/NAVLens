@@ -17,13 +17,10 @@ This document defines the mathematical, architectural, and financial semantics o
 - `DecimalReturn` and `PortfolioReturnContribution` are present in `navlens-core`.
 - `ReturnPeriod` and `PeriodDecimalReturn` are present in `navlens-calendar`.
 - `ReturnContributionResult` is present in `navlens-application`.
-- Reconciliation capability is not yet implemented.
+- Core reconciliation arithmetic/result, application exact-period orchestration, and PyO3 bindings are implemented.
 
 **Planned:**
-- Core reconciliation arithmetic/result
-- Application exact-period orchestration
-- PyO3 bindings
-- Python provenance orchestration
+- Python point-in-time provenance orchestration
 - Formatter/CLI/dataset
 
 ## Decision

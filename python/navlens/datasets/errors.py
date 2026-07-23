@@ -11,3 +11,7 @@ class HoldingDatasetError(ValueError):
 
 class SecurityPriceDatasetError(ValueError):
     """Validated security price data cannot form a research dataset snapshot."""
+
+
+class FundUnitPriceDatasetError(ValueError):
+    """Validated fund unit-price data cannot form a research dataset snapshot."""

@@ -56,10 +56,13 @@ from .alignment import (
     format_return_contribution_result,
 )
 from .datasets import (
+    FundUnitPriceDatasetError,
+    FundUnitPriceSnapshot,
     HoldingDatasetError,
     HoldingSnapshot,
     SecurityPriceDatasetError,
     SecurityPriceSnapshot,
+    select_fund_unit_price_snapshots,
     select_latest_holdings_snapshot,
     select_security_price_snapshots,
 )
@@ -84,6 +87,8 @@ __all__ = [
     "DatedDecimalReturn",
     "FundReturnReconciliation",
     "FundReturnReconciliationResult",
+    "FundUnitPriceDatasetError",
+    "FundUnitPriceSnapshot",
     "HoldingDatasetError",
     "HoldingPosition",
     "HoldingSnapshot",
@@ -130,6 +135,7 @@ __all__ = [
     "read_holdings_snapshots",
     "read_security_prices_csv",
     "reconcile_fund_return",
+    "select_fund_unit_price_snapshots",
     "select_latest_holdings_snapshot",
     "select_security_price_snapshots",
 ]

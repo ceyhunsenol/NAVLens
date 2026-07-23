@@ -2,6 +2,7 @@
 
 from .errors import (
     FundReturnDatasetError,
+    FundUnitPriceDatasetError,
     HoldingDatasetError,
     SecurityPriceDatasetError,
 )
@@ -9,6 +10,10 @@ from .fund_returns import (
     FundReturnDataset,
     build_fund_return_dataset,
     load_fund_returns_csv,
+)
+from .fund_unit_price_snapshots import (
+    FundUnitPriceSnapshot,
+    select_fund_unit_price_snapshots,
 )
 from .holding_snapshots import HoldingSnapshot, select_latest_holdings_snapshot
 from .pandas_returns import dated_returns_to_series
@@ -22,6 +27,8 @@ from .tefas_returns import build_tefas_fund_returns
 __all__ = [
     "FundReturnDataset",
     "FundReturnDatasetError",
+    "FundUnitPriceDatasetError",
+    "FundUnitPriceSnapshot",
     "HoldingDatasetError",
     "HoldingSnapshot",
     "SecurityPriceDatasetError",
@@ -30,6 +37,7 @@ __all__ = [
     "build_tefas_fund_returns",
     "dated_returns_to_series",
     "load_fund_returns_csv",
+    "select_fund_unit_price_snapshots",
     "select_latest_holdings_snapshot",
     "select_security_price_snapshots",
     "validated_decimal_returns",
