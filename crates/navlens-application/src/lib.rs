@@ -4,6 +4,7 @@ mod align_holdings_prices;
 mod calculate_return_contribution;
 mod error;
 mod estimate_portfolio_return;
+mod reconcile_fund_return;
 
 pub use align_holdings_prices::{
     AlignHoldingsPricesError, AlignmentContractError, AlignmentPolicy, CoverageGapReason,
@@ -18,4 +19,7 @@ pub use error::ApplicationError;
 pub use estimate_portfolio_return::{
     EstimatePortfolioReturnCommand, EstimatePortfolioReturnResult, WeightedMarketReturnInput,
     estimate_portfolio_return,
+};
+pub use reconcile_fund_return::{
+    FundReturnReconciliationResult, ReconcileFundReturnError, reconcile_fund_return,
 };
