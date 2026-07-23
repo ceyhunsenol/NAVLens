@@ -50,6 +50,7 @@ from .alignment import (
     PointInTimeReturnContributionResult,
     align_point_in_time,
     calculate_point_in_time_return_contribution,
+    format_return_contribution_result,
 )
 from .datasets import (
     HoldingDatasetError,
@@ -120,6 +121,7 @@ __all__ = [
     "create_return_prediction",
     "estimate_portfolio_return",
     "evaluate_backtest",
+    "format_return_contribution_result",
     "read_holdings_snapshots",
     "read_security_prices_csv",
     "select_latest_holdings_snapshot",

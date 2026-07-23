@@ -12,6 +12,7 @@ from .return_contribution import (
     PointInTimeReturnContributionResult,
     calculate_point_in_time_return_contribution,
 )
+from .return_contribution_formatting import format_return_contribution_result
 
 __all__ = [
     "InvalidPointInTimeAlignmentRequestError",
@@ -22,4 +23,5 @@ __all__ = [
     "PointInTimeReturnContributionResult",
     "align_point_in_time",
     "calculate_point_in_time_return_contribution",
+    "format_return_contribution_result",
 ]
