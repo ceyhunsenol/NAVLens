@@ -19,6 +19,10 @@ impl PyPortfolioCoverageReport {
     pub(crate) const fn from_inner(inner: PortfolioCoverageReport) -> Self {
         Self { inner }
     }
+
+    pub(crate) const fn inner(&self) -> &PortfolioCoverageReport {
+        &self.inner
+    }
 }
 
 #[pymethods]
