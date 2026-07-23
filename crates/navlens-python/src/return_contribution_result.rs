@@ -22,6 +22,10 @@ impl PyReturnContributionResult {
     pub(crate) fn from_inner(inner: ReturnContributionResult) -> Self {
         Self { inner }
     }
+
+    pub(crate) const fn inner(&self) -> &ReturnContributionResult {
+        &self.inner
+    }
 }
 
 #[pymethods]

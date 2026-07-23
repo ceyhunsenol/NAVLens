@@ -22,6 +22,10 @@ impl PyPeriodDecimalReturn {
     pub(crate) const fn from_inner(inner: PeriodDecimalReturn) -> Self {
         Self { inner }
     }
+
+    pub(crate) const fn into_inner(self) -> PeriodDecimalReturn {
+        self.inner
+    }
 }
 
 #[allow(clippy::trivially_copy_pass_by_ref)]

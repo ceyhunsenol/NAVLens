@@ -10,6 +10,8 @@ from ._native import (
     CoveredHoldingPrice,
     CurrencyCode,
     DatedDecimalReturn,
+    FundReturnReconciliation,
+    FundReturnReconciliationResult,
     HoldingPosition,
     IntervalMetrics,
     MarketDate,
@@ -40,6 +42,7 @@ from ._native import (
     create_return_prediction,
     estimate_portfolio_return,
     evaluate_backtest,
+    reconcile_fund_return,
 )
 from .alignment import (
     InvalidPointInTimeAlignmentRequestError,
@@ -79,6 +82,8 @@ __all__ = [
     "CsvSecurityPriceSourceError",
     "CurrencyCode",
     "DatedDecimalReturn",
+    "FundReturnReconciliation",
+    "FundReturnReconciliationResult",
     "HoldingDatasetError",
     "HoldingPosition",
     "HoldingSnapshot",
@@ -124,6 +129,7 @@ __all__ = [
     "format_return_contribution_result",
     "read_holdings_snapshots",
     "read_security_prices_csv",
+    "reconcile_fund_return",
     "select_latest_holdings_snapshot",
     "select_security_price_snapshots",
 ]

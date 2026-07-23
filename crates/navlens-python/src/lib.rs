@@ -14,6 +14,8 @@ mod dated_decimal_return;
 mod error;
 mod estimate_portfolio;
 mod evaluate_backtest;
+mod fund_return_reconciliation;
+mod fund_return_reconciliation_result;
 mod holding_position;
 mod market_date;
 mod model_descriptor;
@@ -26,6 +28,7 @@ mod prediction_request;
 mod price_adjustment;
 mod price_observation;
 mod price_returns;
+mod reconcile_fund_return;
 mod return_contribution_result;
 mod return_coverage_gap;
 mod return_coverage_gap_reason;
@@ -111,6 +114,8 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<portfolio_component_contribution::PyPortfolioComponentContribution>()?;
     module.add_class::<component_contribution::PyComponentContribution>()?;
     module.add_class::<PyReturnContributionResult>()?;
+    module.add_class::<fund_return_reconciliation::PyFundReturnReconciliation>()?;
+    module.add_class::<fund_return_reconciliation_result::PyFundReturnReconciliationResult>()?;
     module.add_function(wrap_pyfunction!(estimate_portfolio_return, module)?)?;
     module.add_function(wrap_pyfunction!(create_return_prediction, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
@@ -118,6 +123,10 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
     module.add_function(wrap_pyfunction!(
         calculate_return_contribution::calculate_return_contribution,
+        module
+    )?)?;
+    module.add_function(wrap_pyfunction!(
+        reconcile_fund_return::reconcile_fund_return,
         module
     )?)?;
     Ok(())
