@@ -21,7 +21,7 @@ class AlignmentCliArguments:
     request: PointInTimeAlignmentRequest
 
 
-def _parse_market_date(val: str) -> MarketDate:
+def parse_market_date(val: str) -> MarketDate:
     parsed = date.fromisoformat(val)
     return MarketDate(parsed.year, parsed.month, parsed.day)
 
@@ -32,11 +32,14 @@ def _parse_utc_datetime(val: str) -> datetime:
     return dt
 
 
-def build_alignment_cli_parser() -> argparse.ArgumentParser:
-    """Build parser for navlens-align-holdings-csv."""
+def build_alignment_cli_parser(
+    prog: str = "navlens-align-holdings-csv",
+    description: str = "Run point-in-time holdings and security-price alignment on CSV files.",
+) -> argparse.ArgumentParser:
+    """Build parser for alignment-related CLI commands."""
     parser = argparse.ArgumentParser(
-        prog="navlens-align-holdings-csv",
-        description="Run point-in-time holdings and security-price alignment on CSV files.",
+        prog=prog,
+        description=description,
     )
     parser.add_argument("--holdings-csv", required=True, type=Path, help="Path to holdings CSV.")
     parser.add_argument(
@@ -88,14 +91,9 @@ def build_alignment_cli_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def parse_alignment_cli_arguments(
-    argv: Sequence[str] | None = None,
-) -> AlignmentCliArguments:
-    """Parse raw CLI arguments into AlignmentCliArguments."""
-    parser = build_alignment_cli_parser()
-    args = parser.parse_args(argv)
-
-    pricing_as_of = _parse_market_date(args.pricing_as_of_date)
+def extract_alignment_arguments(args: argparse.Namespace) -> AlignmentCliArguments:
+    """Extract AlignmentCliArguments from parsed argparse.Namespace."""
+    pricing_as_of = parse_market_date(args.pricing_as_of_date)
     prediction_ts = _parse_utc_datetime(args.prediction_timestamp)
 
     policy = AlignmentPolicy(
@@ -119,3 +117,12 @@ def parse_alignment_cli_arguments(
         security_prices_csv=args.security_prices_csv,
         request=request,
     )
+
+
+def parse_alignment_cli_arguments(
+    argv: Sequence[str] | None = None,
+) -> AlignmentCliArguments:
+    """Parse raw CLI arguments into AlignmentCliArguments."""
+    parser = build_alignment_cli_parser()
+    args = parser.parse_args(argv)
+    return extract_alignment_arguments(args)
