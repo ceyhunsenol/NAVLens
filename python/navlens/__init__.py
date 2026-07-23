@@ -47,7 +47,9 @@ from .alignment import (
     PointInTimeAlignmentError,
     PointInTimeAlignmentRequest,
     PointInTimeAlignmentResult,
+    PointInTimeReturnContributionResult,
     align_point_in_time,
+    calculate_point_in_time_return_contribution,
 )
 from .datasets import (
     HoldingDatasetError,
@@ -89,6 +91,7 @@ __all__ = [
     "PointInTimeAlignmentError",
     "PointInTimeAlignmentRequest",
     "PointInTimeAlignmentResult",
+    "PointInTimeReturnContributionResult",
     "PortfolioComponentContribution",
     "PortfolioCoverageReport",
     "PortfolioReturnContribution",
@@ -111,6 +114,7 @@ __all__ = [
     "UtcTimestamp",
     "align_holdings_prices",
     "align_point_in_time",
+    "calculate_point_in_time_return_contribution",
     "calculate_price_returns",
     "calculate_return_contribution",
     "create_return_prediction",
