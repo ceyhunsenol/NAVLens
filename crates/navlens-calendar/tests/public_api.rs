@@ -1,4 +1,7 @@
-use navlens_calendar::{CalendarError, MarketCalendar, MarketDate, SessionKind, SessionOverride};
+use navlens_calendar::{
+    CalendarError, MarketCalendar, MarketDate, PricingError, ReturnPeriod, SessionKind,
+    SessionOverride,
+};
 
 fn date(year: i32, month: u8, day: u8) -> MarketDate {
     MarketDate::new(year, month, day).expect("test date should be valid")
@@ -116,4 +119,38 @@ fn public_api_exports_period_decimal_return() {
     assert_eq!(p.period_start_date(), start);
     assert_eq!(p.period_end_date(), end);
     assert_eq!(p.decimal_return(), ret);
+
+    let period = p.period();
+    assert_eq!(period.period_start_date(), start);
+    assert_eq!(period.period_end_date(), end);
+
+    let from_p = PeriodDecimalReturn::from_period(period, ret);
+    assert_eq!(from_p.period_start_date(), start);
+    assert_eq!(from_p.decimal_return(), ret);
+}
+
+#[test]
+fn return_period_validates_dates() {
+    let d1 = date(2026, 1, 1);
+    let d2 = date(2026, 1, 2);
+
+    let valid = ReturnPeriod::new(d1, d2).expect("chronological dates");
+    assert_eq!(valid.period_start_date(), d1);
+    assert_eq!(valid.period_end_date(), d2);
+
+    assert_eq!(
+        ReturnPeriod::new(d1, d1),
+        Err(PricingError::InvalidReturnPeriod {
+            period_start_date: d1,
+            period_end_date: d1,
+        })
+    );
+
+    assert_eq!(
+        ReturnPeriod::new(d2, d1),
+        Err(PricingError::InvalidReturnPeriod {
+            period_start_date: d2,
+            period_end_date: d1,
+        })
+    );
 }
