@@ -47,8 +47,9 @@ defined in `.vscode/settings.json`.
 - [ ] Time-series code prevents future-data leakage.
 - [ ] New dependencies have a clear layer-specific justification.
 - [ ] Public behavior and assumptions are documented.
-- [ ] Focused documentation changed with the behavior and separates current
-      guarantees from future plans.
+- [ ] Focused documentation changed with the behavior and clearly separates
+      current guarantees, plans, open decisions, and non-goals where relevant.
+- [ ] Planned behavior is not presented as an available capability.
 - [ ] Existing graph symbols and call paths were checked before adding a new
       implementation of a rule, formula, metric, or mapper.
 - [ ] No duplicate implementation or alternate path bypasses a canonical owner.

@@ -14,7 +14,7 @@ resolver = "3"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/navlens/navlens"
+repository = "https://github.com/ceyhunsenol/NAVLens"
 rust-version = "1.88"
 
 [workspace.lints.rust]

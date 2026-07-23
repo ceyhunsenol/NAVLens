@@ -218,6 +218,11 @@ then remove the duplicate. Do not leave both implementations active.
 - A boundary or dependency-direction change requires an ADR.
 - README remains a concise entry point; detailed behavior belongs under `docs/`.
 - Documentation MUST distinguish implemented guarantees from planned behavior.
+- Planned behavior MUST NOT be presented as an available capability.
+- Open decisions and non-goals SHOULD be identified when their omission could
+  otherwise be mistaken for an implementation promise.
+- Status headings are used only where they improve clarity; documents MUST NOT
+  add empty or irrelevant sections to satisfy a template.
 - Examples and commands in documentation are treated as testable interfaces and
   must be kept current.
 - Comments explain why a decision exists; they do not narrate obvious code.

@@ -11,7 +11,8 @@ and an evaluation against historical observations.
 ## Architecture
 
 - **Rust** owns canonical financial types, deterministic calculations,
-  validation, calendars, backtesting, and the future API/CLI.
+  validation, calendars, backtesting, production execution, and the planned
+  API.
 - **Python** owns data-source experiments, statistical research, model
   training, explainability, notebooks, and visualisation.
 - **TypeScript** will own the web interface and will not duplicate financial
@@ -25,7 +26,7 @@ and [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Current milestone
 
-The initial workspace contains:
+The current workspace contains:
 
 - `navlens-core`: portfolio-return estimation and validated domain types.
 - `navlens-backtest`: regression and direction-accuracy metrics.
@@ -34,6 +35,13 @@ The initial workspace contains:
 - `navlens-application`: transport-independent use-case orchestration.
 - `navlens-python`: PyO3 mappings for the installable Python package.
 - `navlens-cli`: executable command-line adapter.
+
+Planned components are:
+
+- `navlens-infrastructure`: Rust database and provider implementations behind
+  application-owned ports.
+- `navlens-api`: Axum transport and composition root.
+- A TypeScript web interface consuming versioned API contracts.
 
 Focused documentation:
 

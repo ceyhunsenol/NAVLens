@@ -8,6 +8,25 @@ File, module, function, and class decomposition is governed by
 
 The words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are normative.
 
+## Documentation status
+
+This contract describes enforced boundaries for current code and accepted
+boundaries for planned components. A planned component or capability is not
+implemented merely because its intended boundary is documented here.
+
+Use these labels when a document could otherwise be mistaken for current
+behavior:
+
+- **Current**: implemented and verifiable in the repository.
+- **Planned**: accepted direction that is not yet implemented.
+- **Open decision**: unresolved design work; it is not a binding rule until
+  accepted through the appropriate decision process.
+- **Non-goal**: deliberately excluded from the stated scope.
+
+Important decisions SHOULD explain **why** when the rationale is not obvious
+from the rule itself. These labels are a clarity tool, not a mandatory template;
+documents SHOULD include only the sections relevant to their subject.
+
 ## Core principles
 
 1. Every concept has one canonical owner.
@@ -18,34 +37,16 @@ The words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are normative.
 6. Shared code is extracted only after a real shared abstraction is identified.
 7. Financial correctness is preferred over convenience and premature speed.
 
-## Expected language balance
+## Language ownership
 
-At medium project maturity, the expected ownership balance is:
+Rust owns canonical financial and domain logic together with production-critical
+execution. Python owns research, experimentation, estimator training,
+explainability, and data-science workflows. TypeScript owns presentation and
+client interaction through versioned contracts.
 
-| Scope | Rust | Python | TypeScript |
-| --- | ---: | ---: | ---: |
-| Rust and Python subsystems only | 60–70% | 30–40% | — |
-| Entire production source tree | 55–60% | 25–30% | 10–15% |
-
-The central expectation is approximately **65% Rust / 35% Python** when the web
-interface is excluded. Rust remains the product's durable domain and execution
-spine; Python remains the research, training, and data-science environment.
-
-These percentages are an architectural health indicator, not a line-count quota.
-Code MUST NOT be moved, duplicated, or rewritten merely to reach a percentage.
-Responsibility ownership always takes precedence. A significant long-term drift
-should trigger an architecture review because it may indicate one of these
-problems:
-
-- too much financial or application logic has leaked into Python;
-- experimental Python code has become production code without a stable boundary;
-- Rust has absorbed research workflows better expressed in Python;
-- TypeScript has started duplicating application or financial logic.
-
-When reporting the balance, count maintained production and test source files.
-Exclude generated code, vendored dependencies, lock files, notebooks used only
-for exploration, fixtures, data files, and build output. Report both production-
-only and production-plus-test measurements so tests do not hide ownership drift.
+The amount of code in each language is an outcome of these responsibilities,
+not an architectural target or health metric. Code MUST NOT be moved,
+duplicated, or rewritten to influence language statistics.
 
 ## Dependency direction
 
@@ -243,19 +244,20 @@ financial values. Incompatible JSON changes require a new schema version.
 
 ## Rust workspace boundaries
 
-The intended crates and their allowed roles are:
+The current and planned crates have these allowed roles. Planned entries record
+accepted boundaries; they do not describe implemented components.
 
-| Crate | Responsibility | May depend on |
-| --- | --- | --- |
-| `navlens-core` | Domain types and calculations | standard library, narrowly approved domain crates |
-| `navlens-calendar` | Pricing days, business days, settlement | `navlens-core` |
-| `navlens-prediction` | Model-independent prediction contracts and provenance | `navlens-core`, `navlens-calendar` |
-| `navlens-backtest` | Evaluation engine and metrics | `navlens-core` |
-| `navlens-application` | Use cases and ports | domain crates |
-| `navlens-infrastructure` | Database/provider implementations | application and domain crates |
-| `navlens-python` | PyO3 mapping only | application and domain crates |
-| `navlens-api` | Axum transport and composition root | application and infrastructure |
-| `navlens-cli` | CLI transport and composition root | application and infrastructure |
+| Crate | Status | Responsibility | May depend on |
+| --- | --- | --- | --- |
+| `navlens-core` | Current | Domain types and calculations | standard library, narrowly approved domain crates |
+| `navlens-calendar` | Current | Pricing days, business days, settlement | `navlens-core` |
+| `navlens-prediction` | Current | Model-independent prediction contracts and provenance | `navlens-core`, `navlens-calendar` |
+| `navlens-backtest` | Current | Evaluation engine and metrics | `navlens-core` |
+| `navlens-application` | Current | Use cases and ports | domain crates |
+| `navlens-infrastructure` | Planned | Database/provider implementations | application and domain crates |
+| `navlens-python` | Current | PyO3 mapping only | application and domain crates |
+| `navlens-api` | Planned | Axum transport and composition root | application and infrastructure |
+| `navlens-cli` | Current | CLI transport and composition root | application and infrastructure |
 
 Sibling domain crates SHOULD NOT depend on each other unless the dependency is
 part of their stated responsibility. Cyclic crate dependencies are forbidden.
