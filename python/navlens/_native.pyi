@@ -227,6 +227,10 @@ def calculate_price_returns(
     fund_id: str,
     observations: Sequence[PriceObservation],
 ) -> list[DatedDecimalReturn]: ...
+def calculate_price_period_returns(
+    fund_id: str,
+    observations: Sequence[PriceObservation],
+) -> list[PeriodDecimalReturn]: ...
 def evaluate_backtest(
     fund_id: str,
     observations: Sequence[BacktestObservation],

@@ -56,6 +56,38 @@ fn calculates_returns_with_the_current_price_date() {
 }
 
 #[test]
+fn calculates_period_returns_with_exact_dates() {
+    let series = PriceSeries::new(
+        fund_id(),
+        vec![
+            observation(2, 100.0),
+            observation(5, 101.0),
+            observation(6, 100.495),
+        ],
+    )
+    .expect("valid price series");
+
+    let decimal_returns = series.decimal_returns().expect("finite returns");
+    let period_returns = series.period_returns().expect("finite period returns");
+
+    assert_eq!(period_returns.len(), 2);
+
+    assert_eq!(period_returns[0].period_start_date(), date(2));
+    assert_eq!(period_returns[0].period_end_date(), date(5));
+    assert_eq!(
+        period_returns[0].decimal_return(),
+        decimal_returns[0].decimal_return()
+    );
+
+    assert_eq!(period_returns[1].period_start_date(), date(5));
+    assert_eq!(period_returns[1].period_end_date(), date(6));
+    assert_eq!(
+        period_returns[1].decimal_return(),
+        decimal_returns[1].decimal_return()
+    );
+}
+
+#[test]
 fn rejects_short_duplicate_and_decreasing_series() {
     assert_eq!(
         PriceSeries::new(fund_id(), vec![observation(2, 100.0)]),

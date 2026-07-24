@@ -62,7 +62,7 @@ use portfolio_return_estimate::PortfolioReturnEstimate;
 use prediction_request::PyPredictionRequest;
 use price_adjustment::PyPriceAdjustment;
 use price_observation::PyPriceObservation;
-use price_returns::calculate_price_returns;
+use price_returns::{calculate_price_period_returns, calculate_price_returns};
 use pyo3::prelude::*;
 use return_contribution_result::PyReturnContributionResult;
 use return_coverage_gap::PyReturnCoverageGap;
@@ -119,6 +119,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(estimate_portfolio_return, module)?)?;
     module.add_function(wrap_pyfunction!(create_return_prediction, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
+    module.add_function(wrap_pyfunction!(calculate_price_period_returns, module)?)?;
     module.add_function(wrap_pyfunction!(evaluate_backtest_fn, module)?)?;
     module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
     module.add_function(wrap_pyfunction!(

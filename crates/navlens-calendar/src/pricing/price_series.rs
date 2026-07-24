@@ -1,6 +1,6 @@
-use super::calculation::calculate_dated_decimal_returns;
+use super::calculation::{calculate_dated_decimal_returns, calculate_period_decimal_returns};
 use super::validation::validate_date_sequence;
-use crate::{DatedDecimalReturn, PriceObservation, PricingError};
+use crate::{DatedDecimalReturn, PeriodDecimalReturn, PriceObservation, PricingError};
 use navlens_core::FundId;
 
 /// A validated chronological unit-price series for one fund.
@@ -40,5 +40,13 @@ impl PriceSeries {
     /// Returns an error if a finite price ratio produces a non-finite return.
     pub fn decimal_returns(&self) -> Result<Vec<DatedDecimalReturn>, PricingError> {
         calculate_dated_decimal_returns(&self.observations, |obs| (obs.date(), obs.unit_price()))
+    }
+
+    /// Calculates one period return for every adjacent price pair.
+    ///
+    /// # Errors
+    /// Returns an error if a finite price ratio produces a non-finite return.
+    pub fn period_returns(&self) -> Result<Vec<PeriodDecimalReturn>, PricingError> {
+        calculate_period_decimal_returns(&self.observations, |obs| (obs.date(), obs.unit_price()))
     }
 }
