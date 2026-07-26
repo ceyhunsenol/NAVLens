@@ -18,10 +18,11 @@ This document defines the mathematical, architectural, and financial semantics o
 - `ReturnPeriod` and `PeriodDecimalReturn` are present in `navlens-calendar`.
 - `ReturnContributionResult` is present in `navlens-application`.
 - Core reconciliation arithmetic/result, application exact-period orchestration, and PyO3 bindings are implemented.
+- Python point-in-time provenance orchestration is implemented.
 
 **Planned:**
-- Python point-in-time provenance orchestration
-- Formatter/CLI/dataset
+- Formatter and CLI
+- Historical reconciliation/backtest dataset
 
 ## Decision
 
