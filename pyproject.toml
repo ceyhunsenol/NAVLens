@@ -23,6 +23,7 @@ navlens-return-contribution-csv = "navlens.alignment.return_contribution_cli:mai
 navlens-backtest-tefas = "navlens.evaluation.tefas_cli:main"
 navlens-backtest-batch = "navlens.evaluation.tefas_batch_cli:main"
 navlens-fetch-tefas = "navlens.sources.tefas.cli:main"
+navlens-reconcile-fund-csv = "navlens.reconciliation.cli:main"
 
 [project.optional-dependencies]
 dev = [

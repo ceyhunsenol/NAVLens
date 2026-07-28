@@ -22,11 +22,14 @@ class ReturnContributionCliArguments:
     target_period: ReturnPeriod
 
 
-def build_return_contribution_cli_parser() -> argparse.ArgumentParser:
-    """Build parser for navlens-return-contribution-csv."""
+def build_return_contribution_cli_parser(
+    prog: str = "navlens-return-contribution-csv",
+    description: str = "Calculate return contribution from CSV holdings and security prices.",
+) -> argparse.ArgumentParser:
+    """Build parser for navlens-return-contribution-csv or inheriting CLIs."""
     parser = build_alignment_cli_parser(
-        prog="navlens-return-contribution-csv",
-        description="Calculate return contribution from CSV holdings and security prices.",
+        prog=prog,
+        description=description,
     )
     parser.add_argument(
         "--return-start-date",
@@ -43,13 +46,10 @@ def build_return_contribution_cli_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def parse_return_contribution_cli_arguments(
-    argv: Sequence[str] | None = None,
+def extract_return_contribution_arguments(
+    args: argparse.Namespace,
 ) -> ReturnContributionCliArguments:
-    """Parse raw CLI arguments into ReturnContributionCliArguments."""
-    parser = build_return_contribution_cli_parser()
-    args = parser.parse_args(argv)
-
+    """Extract ReturnContributionCliArguments from a parsed namespace."""
     alignment_args = extract_alignment_arguments(args)
     period = ReturnPeriod(
         parse_market_date(args.return_start_date),
@@ -60,3 +60,12 @@ def parse_return_contribution_cli_arguments(
         alignment_args=alignment_args,
         target_period=period,
     )
+
+
+def parse_return_contribution_cli_arguments(
+    argv: Sequence[str] | None = None,
+) -> ReturnContributionCliArguments:
+    """Parse raw CLI arguments into ReturnContributionCliArguments."""
+    parser = build_return_contribution_cli_parser()
+    args = parser.parse_args(argv)
+    return extract_return_contribution_arguments(args)

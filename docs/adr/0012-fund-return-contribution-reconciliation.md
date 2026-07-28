@@ -19,9 +19,9 @@ This document defines the mathematical, architectural, and financial semantics o
 - `ReturnContributionResult` is present in `navlens-application`.
 - Core reconciliation arithmetic/result, application exact-period orchestration, and PyO3 bindings are implemented.
 - Python point-in-time provenance orchestration is implemented.
+- Formatter and CLI are implemented.
 
 **Planned:**
-- Formatter and CLI
 - Historical reconciliation/backtest dataset
 
 ## Decision
