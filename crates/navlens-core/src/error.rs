@@ -22,6 +22,8 @@ pub enum CoreError {
     WeightsDoNotSumToOne(f64),
     InvalidCurrencyCode,
     ReturnCoverageExceedsFundTotal(f64),
+    FxRateNotPositive(f64),
+    IdenticalCurrencyPair,
 }
 
 impl Display for CoreError {
@@ -91,6 +93,15 @@ impl Display for CoreError {
                 formatter,
                 "return coverage portfolio weight cannot exceed 1.0; got {total}"
             ),
+            Self::FxRateNotPositive(rate) => {
+                write!(
+                    formatter,
+                    "foreign exchange rate must be strictly positive; got {rate}"
+                )
+            }
+            Self::IdenticalCurrencyPair => {
+                formatter.write_str("currency pair base and quote currencies cannot be identical")
+            }
         }
     }
 }
