@@ -15,3 +15,7 @@ class SecurityPriceDatasetError(ValueError):
 
 class FundUnitPriceDatasetError(ValueError):
     """Validated fund unit-price data cannot form a research dataset snapshot."""
+
+
+class FxRateDatasetError(ValueError):
+    """Validated foreign exchange rate data cannot form a research dataset snapshot."""

@@ -3,6 +3,7 @@
 from .errors import (
     FundReturnDatasetError,
     FundUnitPriceDatasetError,
+    FxRateDatasetError,
     HoldingDatasetError,
     SecurityPriceDatasetError,
 )
@@ -14,6 +15,10 @@ from .fund_returns import (
 from .fund_unit_price_snapshots import (
     FundUnitPriceSnapshot,
     select_fund_unit_price_snapshots,
+)
+from .fx_rate_snapshots import (
+    FxRateSnapshot,
+    select_fx_rate_snapshots,
 )
 from .holding_snapshots import HoldingSnapshot, select_latest_holdings_snapshot
 from .pandas_returns import dated_returns_to_series
@@ -29,6 +34,8 @@ __all__ = [
     "FundReturnDatasetError",
     "FundUnitPriceDatasetError",
     "FundUnitPriceSnapshot",
+    "FxRateDatasetError",
+    "FxRateSnapshot",
     "HoldingDatasetError",
     "HoldingSnapshot",
     "SecurityPriceDatasetError",
@@ -38,6 +45,7 @@ __all__ = [
     "dated_returns_to_series",
     "load_fund_returns_csv",
     "select_fund_unit_price_snapshots",
+    "select_fx_rate_snapshots",
     "select_latest_holdings_snapshot",
     "select_security_price_snapshots",
     "validated_decimal_returns",

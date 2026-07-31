@@ -28,11 +28,12 @@ planned code is already implemented.
 - canonical `CurrencyPair`, `FxRate`, `FxRateKind`, `FxRateObservation`, and
   `FxRateSeries` types;
 - thin PyO3 projections for the canonical FX types (`CurrencyPair`, `FxRate`,
-  `FxRateKind`, `FxRateObservation`, `FxRateSeries`).
+  `FxRateKind`, `FxRateObservation`, `FxRateSeries`);
+- point-in-time `FxRateSnapshot` dataset envelope and `select_fx_rate_snapshots`
+  selection.
 
 **Planned:**
 
-- point-in-time `FxRateSnapshot` datasets;
 - a provider-neutral local FX CSV adapter;
 - separated TCMB XML client, parser, mapper, acquisition, and cache
   capabilities.
