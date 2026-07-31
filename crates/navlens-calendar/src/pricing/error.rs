@@ -1,5 +1,5 @@
 use crate::{MarketDate, PriceAdjustment};
-use navlens_core::{CoreError, CurrencyCode, InstrumentId};
+use navlens_core::{CoreError, CurrencyCode, CurrencyPair, FxRateKind, InstrumentId};
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
@@ -27,6 +27,20 @@ pub enum PricingError {
     InvalidReturnPeriod {
         period_start_date: MarketDate,
         period_end_date: MarketDate,
+    },
+    EmptyFxRateSeries,
+    DuplicateFxRateDate(MarketDate),
+    NonChronologicalFxRateDate {
+        previous: MarketDate,
+        current: MarketDate,
+    },
+    MixedCurrencyPair {
+        expected: CurrencyPair,
+        found: CurrencyPair,
+    },
+    MixedFxRateKind {
+        expected: FxRateKind,
+        found: FxRateKind,
     },
 }
 
@@ -61,6 +75,20 @@ impl Display for PricingError {
             } => write!(
                 formatter,
                 "return period start must precede end; {period_start_date} is on or after {period_end_date}"
+            ),
+            Self::EmptyFxRateSeries => formatter.write_str("FX rate series cannot be empty"),
+            Self::DuplicateFxRateDate(date) => write!(formatter, "duplicate FX rate for {date}"),
+            Self::NonChronologicalFxRateDate { previous, current } => write!(
+                formatter,
+                "FX rate dates must increase; {current} follows {previous}"
+            ),
+            Self::MixedCurrencyPair { expected, found } => write!(
+                formatter,
+                "all observations in an FX rate series must share the same currency pair; expected {expected:?}, found {found:?}"
+            ),
+            Self::MixedFxRateKind { expected, found } => write!(
+                formatter,
+                "all observations in an FX rate series must share the same rate kind; expected {expected:?}, found {found:?}"
             ),
         }
     }

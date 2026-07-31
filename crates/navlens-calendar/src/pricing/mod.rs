@@ -1,6 +1,8 @@
 mod calculation;
 mod dated_decimal_return;
 mod error;
+mod fx_rate_observation;
+mod fx_rate_series;
 mod period_decimal_return;
 mod price_observation;
 mod price_series;
@@ -11,6 +13,8 @@ mod validation;
 
 pub use dated_decimal_return::DatedDecimalReturn;
 pub use error::PricingError;
+pub use fx_rate_observation::FxRateObservation;
+pub use fx_rate_series::FxRateSeries;
 pub use period_decimal_return::PeriodDecimalReturn;
 pub use price_observation::PriceObservation;
 pub use price_series::PriceSeries;
