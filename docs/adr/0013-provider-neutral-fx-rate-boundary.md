@@ -25,12 +25,13 @@ planned code is already implemented.
 
 - `CurrencyCode`
 - `CoverageGapReason::CurrencyMismatch`
+- canonical `CurrencyPair`, `FxRate`, `FxRateKind`, `FxRateObservation`, and
+  `FxRateSeries` types;
+- thin PyO3 projections for the canonical FX types (`CurrencyPair`, `FxRate`,
+  `FxRateKind`, `FxRateObservation`, `FxRateSeries`).
 
 **Planned:**
 
-- canonical `CurrencyPair`, `FxRate`, `FxRateKind`, `FxRateObservation`, and
-  `FxRateSeries` types;
-- thin PyO3 projections for the canonical types;
 - point-in-time `FxRateSnapshot` datasets;
 - a provider-neutral local FX CSV adapter;
 - separated TCMB XML client, parser, mapper, acquisition, and cache
