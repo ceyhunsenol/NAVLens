@@ -30,13 +30,13 @@ planned code is already implemented.
 - thin PyO3 projections for the canonical FX types (`CurrencyPair`, `FxRate`,
   `FxRateKind`, `FxRateObservation`, `FxRateSeries`);
 - point-in-time `FxRateSnapshot` dataset envelope and `select_fx_rate_snapshots`
-  selection.
+  selection;
+- provider-neutral local FX CSV adapter (`read_fx_rates_csv`).
 
 **Planned:**
 
-- a provider-neutral local FX CSV adapter;
-- separated TCMB XML client, parser, mapper, acquisition, and cache
-  capabilities.
+- separated TCMB XML client, parser, mapper, availability policy, acquisition,
+  and cache capabilities.
 
 **Deferred:**
 

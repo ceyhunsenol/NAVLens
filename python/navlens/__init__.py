@@ -85,9 +85,11 @@ from .reconciliation import (
 )
 from .sources import (
     CsvFundUnitPriceSourceError,
+    CsvFxRateSourceError,
     CsvHoldingsSourceError,
     CsvSecurityPriceSourceError,
     read_fund_unit_prices_csv,
+    read_fx_rates_csv,
     read_holdings_snapshots,
     read_security_prices_csv,
 )
@@ -101,6 +103,7 @@ __all__ = [
     "CoverageGapReason",
     "CoveredHoldingPrice",
     "CsvFundUnitPriceSourceError",
+    "CsvFxRateSourceError",
     "CsvHoldingsSourceError",
     "CsvSecurityPriceSourceError",
     "CurrencyCode",
@@ -166,6 +169,7 @@ __all__ = [
     "evaluate_backtest",
     "format_return_contribution_result",
     "read_fund_unit_prices_csv",
+    "read_fx_rates_csv",
     "read_holdings_snapshots",
     "read_security_prices_csv",
     "reconcile_fund_return",
