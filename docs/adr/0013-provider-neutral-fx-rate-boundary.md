@@ -31,11 +31,12 @@ planned code is already implemented.
   `FxRateKind`, `FxRateObservation`, `FxRateSeries`);
 - point-in-time `FxRateSnapshot` dataset envelope and `select_fx_rate_snapshots`
   selection;
-- provider-neutral local FX CSV adapter (`read_fx_rates_csv`).
+- provider-neutral local FX CSV adapter (`read_fx_rates_csv`);
+- TCMB daily rates XML record definitions and parser (`parse_tcmb_daily_rates_xml`).
 
 **Planned:**
 
-- separated TCMB XML client, parser, mapper, availability policy, acquisition,
+- separated TCMB XML HTTP client, mapper, availability policy, acquisition,
   and cache capabilities.
 
 **Deferred:**
