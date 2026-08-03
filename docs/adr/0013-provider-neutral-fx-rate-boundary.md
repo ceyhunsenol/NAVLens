@@ -33,12 +33,13 @@ planned code is already implemented.
   selection;
 - provider-neutral local FX CSV adapter (`read_fx_rates_csv`);
 - TCMB daily rates XML record definitions and parser (`parse_tcmb_daily_rates_xml`);
-- TCMB canonical mapping and Unit normalization (`map_tcmb_daily_rates`).
+- TCMB canonical mapping and Unit normalization (`map_tcmb_daily_rates`);
+- initial scheduled TCMB availability policy (`initial_tcmb_available_at`).
 
 **Planned:**
 
-- separated TCMB XML HTTP client, availability policy, acquisition, and cache
-  capabilities.
+- separated TCMB XML HTTP client, acquisition, cache, and correction timing
+  orchestration capabilities.
 
 **Deferred:**
 

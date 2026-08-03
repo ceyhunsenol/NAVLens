@@ -16,6 +16,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Rust",
 ]
+dependencies = [
+    "tzdata>=2024.1",
+]
 
 [project.scripts]
 navlens-align-holdings-csv = "navlens.alignment.cli:main"
