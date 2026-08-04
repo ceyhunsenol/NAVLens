@@ -1,4 +1,4 @@
-"""Errors raised while parsing TCMB XML payloads."""
+"""Errors raised by TCMB source capabilities."""
 
 
 class TcmbXmlParseError(ValueError):
@@ -7,3 +7,7 @@ class TcmbXmlParseError(ValueError):
 
 class TcmbMappingError(ValueError):
     """Raised when TCMB daily rate records cannot be mapped into canonical FX observations."""
+
+
+class TcmbTransportError(Exception):
+    """Raised when a TCMB HTTP transport request fails."""
