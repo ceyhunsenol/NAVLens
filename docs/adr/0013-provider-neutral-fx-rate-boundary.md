@@ -36,13 +36,15 @@ planned code is already implemented.
 - TCMB canonical mapping and Unit normalization (`map_tcmb_daily_rates`);
 - initial scheduled TCMB availability policy (`initial_tcmb_available_at`);
 - separated TCMB XML HTTP transport client (`TcmbHttpClient`);
-- revision-safe TCMB acquisition artifact and provenance (`acquire_tcmb_daily_rates`).
+- revision-safe TCMB acquisition artifact and provenance (`acquire_tcmb_daily_rates`);
+- content-addressed atomic TCMB raw artifact storage (`store_tcmb_raw_artifact`).
 
 **Planned:**
 
-- raw cache;
-- revision comparison and correction timing resolution;
-- conversion into point-in-time `FxRateSnapshot`.
+- request identity/index;
+- cache-aware acquisition orchestration;
+- revision comparison and correction timing;
+- `FxRateSnapshot` conversion.
 
 **Deferred:**
 

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 
 from navlens._timestamps import validate_utc_timestamp
+from navlens.sources.artifact_digest import validate_sha256_hex
 
 from .availability import TCMB_AVAILABILITY_POLICY_ID, TCMB_AVAILABILITY_POLICY_VERSION
 from .errors import TcmbAcquisitionError
@@ -35,7 +36,7 @@ class TcmbAcquisitionProvenance:
             raise TcmbAcquisitionError("source_url cannot be empty")
 
         validate_utc_timestamp(self.retrieved_at, "retrieved_at", TcmbAcquisitionError)
-        _validate_sha256(self.sha256_hex)
+        validate_sha256_hex(self.sha256_hex, "sha256_hex", TcmbAcquisitionError)
 
         if not isinstance(self.availability_policy_id, str) or not self.availability_policy_id:
             raise TcmbAcquisitionError("availability_policy_id cannot be empty")
@@ -66,12 +67,3 @@ def _build_tcmb_provenance(
         availability_policy_version=TCMB_AVAILABILITY_POLICY_VERSION,
         cache_hit=cache_hit,
     )
-
-
-def _validate_sha256(value: str) -> None:
-    if (
-        not isinstance(value, str)
-        or len(value) != 64
-        or not all(character in "0123456789abcdef" for character in value)
-    ):
-        raise TcmbAcquisitionError("sha256_hex must be a 64-character lowercase hex string")

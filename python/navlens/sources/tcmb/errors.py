@@ -15,3 +15,11 @@ class TcmbTransportError(Exception):
 
 class TcmbAcquisitionError(ValueError):
     """Raised when TCMB acquisition provenance invariants are violated."""
+
+
+class TcmbRawCacheError(ValueError):
+    """Raised for invalid parameters when interacting with the TCMB raw cache."""
+
+
+class TcmbRawCacheIntegrityError(TcmbRawCacheError):
+    """Raised when TCMB raw cache content does not match its expected digest."""
