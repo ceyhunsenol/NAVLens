@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from navlens import HoldingPosition, MarketDate
+from navlens._timestamps import validate_utc_timestamp
 
-from ._timestamps import validate_utc_timestamp
 from .errors import HoldingDatasetError
 
 

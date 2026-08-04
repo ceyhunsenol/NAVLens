@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from navlens import MarketDate, PriceObservation
+from navlens._timestamps import validate_utc_timestamp
 
 from ._correction import latest_corrections_by_date
-from ._timestamps import validate_utc_timestamp
 from .errors import FundUnitPriceDatasetError
 
 

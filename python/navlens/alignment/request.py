@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from navlens import AlignmentPolicy
-from navlens.datasets._timestamps import validate_utc_timestamp
+from navlens._timestamps import validate_utc_timestamp
 
 from .errors import InvalidPointInTimeAlignmentRequestError
 

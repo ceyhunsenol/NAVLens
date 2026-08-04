@@ -35,12 +35,14 @@ planned code is already implemented.
 - TCMB daily rates XML record definitions and parser (`parse_tcmb_daily_rates_xml`);
 - TCMB canonical mapping and Unit normalization (`map_tcmb_daily_rates`);
 - initial scheduled TCMB availability policy (`initial_tcmb_available_at`);
-- separated TCMB XML HTTP transport client (`TcmbHttpClient`).
+- separated TCMB XML HTTP transport client (`TcmbHttpClient`);
+- revision-safe TCMB acquisition artifact and provenance (`acquire_tcmb_daily_rates`).
 
 **Planned:**
 
-- separated TCMB XML acquisition, raw cache, and correction timing
-  orchestration capabilities.
+- raw cache;
+- revision comparison and correction timing resolution;
+- conversion into point-in-time `FxRateSnapshot`.
 
 **Deferred:**
 

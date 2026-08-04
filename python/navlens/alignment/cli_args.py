@@ -7,7 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from navlens import AlignmentPolicy, CurrencyCode, MarketDate, PriceAdjustment
-from navlens.datasets._timestamps import validate_utc_timestamp
+from navlens._timestamps import validate_utc_timestamp
 
 from .request import PointInTimeAlignmentRequest
 

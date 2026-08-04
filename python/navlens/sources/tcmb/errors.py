@@ -11,3 +11,7 @@ class TcmbMappingError(ValueError):
 
 class TcmbTransportError(Exception):
     """Raised when a TCMB HTTP transport request fails."""
+
+
+class TcmbAcquisitionError(ValueError):
+    """Raised when TCMB acquisition provenance invariants are violated."""
