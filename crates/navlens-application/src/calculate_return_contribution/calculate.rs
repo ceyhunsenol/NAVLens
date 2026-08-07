@@ -1,8 +1,9 @@
 use super::component::ComponentContribution;
 use super::error::CalculateReturnContributionError;
 use super::gap::{ReturnCoverageGap, ReturnCoverageGapReason};
-use super::result::{ReturnContributionResult, ReturnCoverageBreakdown};
+use super::result::ReturnContributionResult;
 use crate::align_holdings_prices::{CoveredHoldingPrice, PortfolioCoverageReport};
+use crate::return_coverage_breakdown::ReturnCoverageBreakdown;
 use navlens_calendar::ReturnPeriod;
 use navlens_core::{
     PortfolioComponent, PortfolioComponentContribution, PortfolioReturnContribution,

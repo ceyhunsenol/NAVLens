@@ -45,6 +45,7 @@ planned contracts below are already implemented.
 - chronological `FxRateObservation` and `FxRateSeries` types;
 - pure boundary lookup (`latest_observation_on_or_before`) on `FxRateSeries` in
   `navlens-calendar`;
+- typed FX return policy, evidence, results, and gaps in `navlens-application`;
 - point-in-time `FxRateSnapshot` selection in Python;
 - provider-isolated FX acquisition and provenance;
 - `CoverageGapReason::CurrencyMismatch` for the existing base-currency-only
@@ -52,11 +53,9 @@ planned contracts below are already implemented.
 
 **Planned, in implementation order:**
 
-1. typed FX return policy, evidence, results, and gaps in
-   `navlens-application`;
-2. an FX-aware return-contribution capability and explicit foreign-price
+1. an FX-aware return-contribution capability and explicit foreign-price
    permission;
-3. thin PyO3 projections and Python point-in-time orchestration.
+2. thin PyO3 projections and Python point-in-time orchestration.
 
 **Deferred:**
 

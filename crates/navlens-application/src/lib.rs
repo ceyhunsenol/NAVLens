@@ -6,6 +6,7 @@ mod calculate_return_contribution;
 mod error;
 mod estimate_portfolio_return;
 mod reconcile_fund_return;
+mod return_coverage_breakdown;
 
 pub use align_holdings_prices::{
     AlignHoldingsPricesError, AlignmentContractError, AlignmentPolicy, CoverageGapReason,
@@ -13,8 +14,8 @@ pub use align_holdings_prices::{
     align_holdings_prices,
 };
 pub use calculate_fx_adjusted_return_contribution::{
-    CurrencyReturnAdjustment, FxAdjustmentEvidence, FxBoundaryEvidence, FxReturnContractError,
-    FxReturnPolicy,
+    CurrencyReturnAdjustment, FxAdjustedComponentContribution, FxAdjustedReturnContributionResult,
+    FxAdjustmentEvidence, FxBoundaryEvidence, FxReturnContractError, FxReturnPolicy,
 };
 pub use calculate_return_contribution::{
     CalculateReturnContributionError, ComponentContribution, ReturnContributionResult,

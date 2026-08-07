@@ -1,9 +1,38 @@
-use navlens_core::HoldingPosition;
+use crate::calculate_fx_adjusted_return_contribution::FxBoundaryEvidence;
+use navlens_calendar::MarketDate;
+use navlens_core::{CurrencyPair, FxRateKind, HoldingPosition};
 
 /// Reason why a covered holding could not provide a return for the target period.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ReturnCoverageGapReason {
     MissingExactPeriodReturn,
+    MissingDirectFxCandidate {
+        required_pair: CurrencyPair,
+        required_kind: FxRateKind,
+    },
+    FxRateKindMismatch {
+        required_pair: CurrencyPair,
+        required_kind: FxRateKind,
+        available_kinds: Vec<FxRateKind>,
+    },
+    MissingFxStartObservation {
+        required_pair: CurrencyPair,
+        required_kind: FxRateKind,
+        requested_date: MarketDate,
+    },
+    StaleFxStartObservation {
+        evidence: FxBoundaryEvidence,
+        maximum_staleness_calendar_days: u32,
+    },
+    MissingFxEndObservation {
+        required_pair: CurrencyPair,
+        required_kind: FxRateKind,
+        requested_date: MarketDate,
+    },
+    StaleFxEndObservation {
+        evidence: FxBoundaryEvidence,
+        maximum_staleness_calendar_days: u32,
+    },
 }
 
 /// A holding that had price coverage but failed to provide an exact period return.

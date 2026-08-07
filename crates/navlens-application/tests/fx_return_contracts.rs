@@ -1,6 +1,6 @@
 use navlens_application::{
     CurrencyReturnAdjustment, FxAdjustmentEvidence, FxBoundaryEvidence, FxReturnContractError,
-    FxReturnPolicy,
+    FxReturnPolicy, ReturnCoverageGapReason,
 };
 use navlens_calendar::{FxRateObservation, MarketDate};
 use navlens_core::{
@@ -225,5 +225,81 @@ fn currency_return_adjustment_variants_remain_distinguishable() {
     match applied {
         CurrencyReturnAdjustment::Applied(ev) => assert_eq!(ev, adj_ev),
         CurrencyReturnAdjustment::NotRequired => panic!("expected Applied variant"),
+    }
+}
+
+#[test]
+fn fx_return_gap_variants_preserve_their_typed_context() {
+    let pair = usd_try();
+    let kind = FxRateKind::NonCashBuying;
+    let requested_date = MarketDate::new(2026, 1, 15).unwrap();
+    let observation = make_obs(pair.clone(), 2026, 1, 12, 35.0, kind);
+    let evidence = FxBoundaryEvidence::new(requested_date, observation, 3).unwrap();
+
+    let reasons = [
+        ReturnCoverageGapReason::MissingDirectFxCandidate {
+            required_pair: pair.clone(),
+            required_kind: kind,
+        },
+        ReturnCoverageGapReason::FxRateKindMismatch {
+            required_pair: pair.clone(),
+            required_kind: kind,
+            available_kinds: vec![FxRateKind::NonCashSelling],
+        },
+        ReturnCoverageGapReason::MissingFxStartObservation {
+            required_pair: pair.clone(),
+            required_kind: kind,
+            requested_date,
+        },
+        ReturnCoverageGapReason::StaleFxStartObservation {
+            evidence: evidence.clone(),
+            maximum_staleness_calendar_days: 2,
+        },
+        ReturnCoverageGapReason::MissingFxEndObservation {
+            required_pair: pair,
+            required_kind: kind,
+            requested_date,
+        },
+        ReturnCoverageGapReason::StaleFxEndObservation {
+            evidence: evidence.clone(),
+            maximum_staleness_calendar_days: 2,
+        },
+    ];
+
+    assert!(matches!(
+        reasons[0],
+        ReturnCoverageGapReason::MissingDirectFxCandidate { .. }
+    ));
+    assert!(matches!(
+        reasons[1],
+        ReturnCoverageGapReason::FxRateKindMismatch { .. }
+    ));
+    assert!(matches!(
+        reasons[2],
+        ReturnCoverageGapReason::MissingFxStartObservation { .. }
+    ));
+    assert!(matches!(
+        reasons[4],
+        ReturnCoverageGapReason::MissingFxEndObservation { .. }
+    ));
+
+    for reason in [&reasons[3], &reasons[5]] {
+        let (ReturnCoverageGapReason::StaleFxStartObservation {
+            evidence: stored_evidence,
+            ..
+        }
+        | ReturnCoverageGapReason::StaleFxEndObservation {
+            evidence: stored_evidence,
+            ..
+        }) = reason
+        else {
+            panic!("expected a stale FX boundary gap");
+        };
+        assert_eq!(stored_evidence.requested_date(), requested_date);
+        assert_eq!(
+            stored_evidence.observation().market_date(),
+            MarketDate::new(2026, 1, 12).unwrap()
+        );
+        assert_eq!(stored_evidence.staleness_calendar_days(), 3);
     }
 }
