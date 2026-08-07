@@ -23,3 +23,11 @@ class TcmbRawCacheError(ValueError):
 
 class TcmbRawCacheIntegrityError(TcmbRawCacheError):
     """Raised when TCMB raw cache content does not match its expected digest."""
+
+
+class TcmbRevisionIndexError(ValueError):
+    """Raised for invalid parameters or states when interacting with the TCMB revision index."""
+
+
+class TcmbRevisionIndexIntegrityError(TcmbRevisionIndexError):
+    """Raised when a TCMB revision index on disk is malformed, invalid, or corrupt."""
