@@ -11,5 +11,5 @@ pub use candidate::SecurityPriceHistoryCandidate;
 pub use error::{AlignHoldingsPricesError, AlignmentContractError};
 pub use gap::CoverageGapReason;
 pub use matcher::align_holdings_prices;
-pub use policy::AlignmentPolicy;
+pub use policy::{AlignmentPolicy, PriceCurrencyPolicy};
 pub use report::{CoveredHoldingPrice, PortfolioCoverageReport, UncoveredHolding};

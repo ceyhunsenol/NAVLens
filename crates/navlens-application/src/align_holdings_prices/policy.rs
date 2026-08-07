@@ -2,6 +2,15 @@ use crate::align_holdings_prices::error::AlignmentContractError;
 use navlens_calendar::{MarketDate, PriceAdjustment};
 use navlens_core::CurrencyCode;
 
+/// Controls whether price alignment accepts currencies other than the fund base currency.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PriceCurrencyPolicy {
+    /// Accept only security prices denominated in the fund base currency.
+    FundBaseOnly,
+    /// Permit otherwise valid foreign-currency prices for later FX evaluation.
+    PermitForeign,
+}
+
 /// Defines the policy for aligning security prices to holdings.
 #[derive(Clone, Debug, PartialEq)]
 pub struct AlignmentPolicy {
@@ -10,6 +19,7 @@ pub struct AlignmentPolicy {
     pricing_as_of_date: MarketDate,
     minimum_observations: usize,
     max_staleness_calendar_days: u32,
+    price_currency_policy: PriceCurrencyPolicy,
 }
 
 impl AlignmentPolicy {
@@ -36,7 +46,21 @@ impl AlignmentPolicy {
             pricing_as_of_date,
             minimum_observations,
             max_staleness_calendar_days,
+            price_currency_policy: PriceCurrencyPolicy::FundBaseOnly,
         })
+    }
+
+    /// Consumes the policy and returns a new one with the given price currency policy.
+    #[must_use]
+    pub fn with_price_currency_policy(mut self, policy: PriceCurrencyPolicy) -> Self {
+        self.price_currency_policy = policy;
+        self
+    }
+
+    /// Returns the price currency policy.
+    #[must_use]
+    pub const fn price_currency_policy(&self) -> PriceCurrencyPolicy {
+        self.price_currency_policy
     }
 
     /// Returns the fund's base currency.

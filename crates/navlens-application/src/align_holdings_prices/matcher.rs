@@ -1,6 +1,6 @@
 use crate::align_holdings_prices::{
     AlignHoldingsPricesError, AlignmentPolicy, CoverageGapReason, CoveredHoldingPrice,
-    PortfolioCoverageReport, SecurityPriceHistoryCandidate, UncoveredHolding,
+    PortfolioCoverageReport, PriceCurrencyPolicy, SecurityPriceHistoryCandidate, UncoveredHolding,
 };
 use navlens_calendar::SecurityPriceSeries;
 use navlens_core::{AssetClass, HoldingPosition, InstrumentId, PortfolioCoverageWeights};
@@ -141,7 +141,9 @@ fn align_validated_candidate(
 }
 
 fn policy_gap(series: &SecurityPriceSeries, policy: &AlignmentPolicy) -> Option<CoverageGapReason> {
-    if series.currency() != policy.fund_base_currency() {
+    if series.currency() != policy.fund_base_currency()
+        && policy.price_currency_policy() == PriceCurrencyPolicy::FundBaseOnly
+    {
         return Some(CoverageGapReason::CurrencyMismatch {
             expected: policy.fund_base_currency().clone(),
             found: series.currency().clone(),

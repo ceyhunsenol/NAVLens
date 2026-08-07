@@ -49,12 +49,12 @@ planned contracts below are already implemented.
 - point-in-time `FxRateSnapshot` selection in Python;
 - provider-isolated FX acquisition and provenance;
 - `CoverageGapReason::CurrencyMismatch` for the existing base-currency-only
-  price-alignment policy.
+  price-alignment policy;
+- explicit foreign-price permission (`PriceCurrencyPolicy`).
 
 **Planned, in implementation order:**
 
-1. an FX-aware return-contribution capability and explicit foreign-price
-   permission;
+1. an FX-aware return-contribution capability;
 2. thin PyO3 projections and Python point-in-time orchestration.
 
 **Deferred:**
