@@ -1,5 +1,5 @@
 use super::validation::{DateSequenceViolation, validate_strict_date_order};
-use crate::{FxRateObservation, PricingError};
+use crate::{FxRateObservation, MarketDate, PricingError};
 use navlens_core::{CurrencyPair, FxRateKind};
 
 /// A validated, homogeneous, chronological series of foreign exchange rate observations.
@@ -45,6 +45,21 @@ impl FxRateSeries {
     #[must_use]
     pub fn observations(&self) -> &[FxRateObservation] {
         &self.observations
+    }
+
+    /// Returns the latest observation on or before `date`.
+    ///
+    /// Returns `None` if `date` is before the first observation date in the series.
+    #[must_use]
+    pub fn latest_observation_on_or_before(&self, date: MarketDate) -> Option<&FxRateObservation> {
+        let index = self
+            .observations
+            .partition_point(|obs| obs.market_date() <= date);
+        if index == 0 {
+            None
+        } else {
+            Some(&self.observations[index - 1])
+        }
     }
 }
 
