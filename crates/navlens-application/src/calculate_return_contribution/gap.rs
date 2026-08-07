@@ -24,11 +24,6 @@ pub enum ReturnCoverageGapReason {
         evidence: FxBoundaryEvidence,
         maximum_staleness_calendar_days: u32,
     },
-    MissingFxEndObservation {
-        required_pair: CurrencyPair,
-        required_kind: FxRateKind,
-        requested_date: MarketDate,
-    },
     StaleFxEndObservation {
         evidence: FxBoundaryEvidence,
         maximum_staleness_calendar_days: u32,

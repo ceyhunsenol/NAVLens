@@ -50,12 +50,12 @@ planned contracts below are already implemented.
 - provider-isolated FX acquisition and provenance;
 - `CoverageGapReason::CurrencyMismatch` for the existing base-currency-only
   price-alignment policy;
-- explicit foreign-price permission (`PriceCurrencyPolicy`).
+- explicit foreign-price permission (`PriceCurrencyPolicy`);
+- an FX-aware return-contribution capability.
 
 **Planned, in implementation order:**
 
-1. an FX-aware return-contribution capability;
-2. thin PyO3 projections and Python point-in-time orchestration.
+1. thin PyO3 projections and Python point-in-time orchestration.
 
 **Deferred:**
 
@@ -393,11 +393,6 @@ pub enum ReturnCoverageGapReason {
         evidence: FxBoundaryEvidence,
         maximum_staleness_calendar_days: u32,
     },
-    MissingFxEndObservation {
-        required_pair: CurrencyPair,
-        required_kind: FxRateKind,
-        requested_date: MarketDate,
-    },
     StaleFxEndObservation {
         evidence: FxBoundaryEvidence,
         maximum_staleness_calendar_days: u32,
@@ -416,8 +411,13 @@ Candidate and gap precedence is deterministic:
 6. no observation on or before the start boundary:
    `MissingFxStartObservation`;
 7. start observation exceeds maximum staleness: `StaleFxStartObservation`;
-8. no observation on or before the end boundary: `MissingFxEndObservation`;
-9. end observation exceeds maximum staleness: `StaleFxEndObservation`.
+8. end observation exceeds maximum staleness: `StaleFxEndObservation`.
+
+After a start observation has been selected, `MissingFxEndObservation` is not a
+possible portfolio gap. The end boundary is later than the start boundary, so
+the selected start observation is necessarily also on or before the end. A
+failure to retrieve an end observation after selecting the start is therefore
+an internal contract error rather than a coverage condition.
 
 Only a reverse pair being present still counts as
 `MissingDirectFxCandidate`. There is no overlapping fallback variant.

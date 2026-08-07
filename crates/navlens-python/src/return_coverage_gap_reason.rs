@@ -33,7 +33,6 @@ impl PyReturnCoverageGapReason {
                 "missing_fx_start_observation"
             }
             ReturnCoverageGapReason::StaleFxStartObservation { .. } => "stale_fx_start_observation",
-            ReturnCoverageGapReason::MissingFxEndObservation { .. } => "missing_fx_end_observation",
             ReturnCoverageGapReason::StaleFxEndObservation { .. } => "stale_fx_end_observation",
         }
     }

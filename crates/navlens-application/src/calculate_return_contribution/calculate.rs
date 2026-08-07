@@ -1,39 +1,13 @@
+use super::aggregate::calculate_aggregate_contribution;
+use super::breakdown::construct_return_coverage_breakdown;
 use super::component::ComponentContribution;
+use super::contribution::calculate_canonical_contribution;
 use super::error::CalculateReturnContributionError;
+use super::exact_period::match_exact_period_return;
 use super::gap::{ReturnCoverageGap, ReturnCoverageGapReason};
 use super::result::ReturnContributionResult;
-use crate::align_holdings_prices::{CoveredHoldingPrice, PortfolioCoverageReport};
-use crate::return_coverage_breakdown::ReturnCoverageBreakdown;
+use crate::align_holdings_prices::PortfolioCoverageReport;
 use navlens_calendar::ReturnPeriod;
-use navlens_core::{
-    PortfolioComponent, PortfolioComponentContribution, PortfolioReturnContribution,
-};
-
-/// Matches an exact period return for a single covered holding.
-fn match_exact_period_return(
-    covered: &CoveredHoldingPrice,
-    target_period: ReturnPeriod,
-) -> Result<Option<ComponentContribution>, CalculateReturnContributionError> {
-    let period_returns = covered.series().period_returns()?;
-    let exact_return = period_returns
-        .into_iter()
-        .find(|pr| pr.period() == target_period);
-
-    if let Some(pr) = exact_return {
-        let component = PortfolioComponent {
-            weight: covered.holding().fund_total_weight(),
-            market_return: pr.decimal_return(),
-        };
-        let contribution = PortfolioComponentContribution::calculate(&component)?;
-        Ok(Some(ComponentContribution::new(
-            covered.holding().clone(),
-            pr,
-            contribution,
-        )))
-    } else {
-        Ok(None)
-    }
-}
 
 /// Calculates the exact-period aligned portfolio return contribution.
 ///
@@ -48,12 +22,17 @@ pub fn calculate_return_contribution(
     let mut portfolio_components = Vec::new();
 
     for covered in report.covered() {
-        if let Some(component) = match_exact_period_return(covered, target_period)? {
-            portfolio_components.push(PortfolioComponent {
-                weight: component.holding().fund_total_weight(),
-                market_return: component.period_return().decimal_return(),
-            });
-            component_contributions.push(component);
+        if let Some(pr) = match_exact_period_return(covered, target_period)? {
+            let (pc, contribution) = calculate_canonical_contribution(
+                covered.holding().fund_total_weight(),
+                pr.decimal_return(),
+            )?;
+            portfolio_components.push(pc);
+            component_contributions.push(ComponentContribution::new(
+                covered.holding().clone(),
+                pr,
+                contribution,
+            ));
         } else {
             return_gaps.push(ReturnCoverageGap::new(
                 covered.holding().clone(),
@@ -62,12 +41,8 @@ pub fn calculate_return_contribution(
         }
     }
 
-    let observed_contribution = PortfolioReturnContribution::calculate(&portfolio_components)?;
-    let breakdown = ReturnCoverageBreakdown::new(
-        report.weights().covered_weight(),
-        report.uncovered_listed().to_vec(),
-        return_gaps,
-    );
+    let observed_contribution = calculate_aggregate_contribution(&portfolio_components)?;
+    let breakdown = construct_return_coverage_breakdown(report, return_gaps);
 
     Ok(ReturnContributionResult::new(
         target_period,

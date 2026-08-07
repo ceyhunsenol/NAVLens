@@ -16,6 +16,24 @@ pub struct FxAdjustedComponentContribution {
 }
 
 impl FxAdjustedComponentContribution {
+    /// Creates a new `FxAdjustedComponentContribution`.
+    #[must_use]
+    pub(crate) const fn new(
+        holding: HoldingPosition,
+        security_period_return: PeriodDecimalReturn,
+        currency_adjustment: CurrencyReturnAdjustment,
+        effective_base_currency_return: DecimalReturn,
+        contribution: PortfolioComponentContribution,
+    ) -> Self {
+        Self {
+            holding,
+            security_period_return,
+            currency_adjustment,
+            effective_base_currency_return,
+            contribution,
+        }
+    }
+
     /// Returns the holding position.
     #[must_use]
     pub const fn holding(&self) -> &HoldingPosition {
@@ -57,6 +75,22 @@ pub struct FxAdjustedReturnContributionResult {
 }
 
 impl FxAdjustedReturnContributionResult {
+    /// Creates a new `FxAdjustedReturnContributionResult`.
+    #[must_use]
+    pub(crate) const fn new(
+        period: ReturnPeriod,
+        component_contributions: Vec<FxAdjustedComponentContribution>,
+        observed_contribution: PortfolioReturnContribution,
+        breakdown: ReturnCoverageBreakdown,
+    ) -> Self {
+        Self {
+            period,
+            component_contributions,
+            observed_contribution,
+            breakdown,
+        }
+    }
+
     /// Returns the target return period.
     #[must_use]
     pub const fn period(&self) -> &ReturnPeriod {

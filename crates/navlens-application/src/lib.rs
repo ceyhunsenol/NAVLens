@@ -16,6 +16,7 @@ pub use align_holdings_prices::{
 pub use calculate_fx_adjusted_return_contribution::{
     CurrencyReturnAdjustment, FxAdjustedComponentContribution, FxAdjustedReturnContributionResult,
     FxAdjustmentEvidence, FxBoundaryEvidence, FxReturnContractError, FxReturnPolicy,
+    calculate_fx_adjusted_return_contribution,
 };
 pub use calculate_return_contribution::{
     CalculateReturnContributionError, ComponentContribution, ReturnContributionResult,

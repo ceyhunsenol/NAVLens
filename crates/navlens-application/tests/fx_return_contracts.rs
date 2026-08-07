@@ -255,11 +255,6 @@ fn fx_return_gap_variants_preserve_their_typed_context() {
             evidence: evidence.clone(),
             maximum_staleness_calendar_days: 2,
         },
-        ReturnCoverageGapReason::MissingFxEndObservation {
-            required_pair: pair,
-            required_kind: kind,
-            requested_date,
-        },
         ReturnCoverageGapReason::StaleFxEndObservation {
             evidence: evidence.clone(),
             maximum_staleness_calendar_days: 2,
@@ -280,10 +275,10 @@ fn fx_return_gap_variants_preserve_their_typed_context() {
     ));
     assert!(matches!(
         reasons[4],
-        ReturnCoverageGapReason::MissingFxEndObservation { .. }
+        ReturnCoverageGapReason::StaleFxEndObservation { .. }
     ));
 
-    for reason in [&reasons[3], &reasons[5]] {
+    for reason in [&reasons[3], &reasons[4]] {
         let (ReturnCoverageGapReason::StaleFxStartObservation {
             evidence: stored_evidence,
             ..

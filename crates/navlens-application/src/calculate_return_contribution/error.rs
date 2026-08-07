@@ -1,5 +1,6 @@
-use navlens_calendar::PricingError;
-use navlens_core::CoreError;
+use crate::calculate_fx_adjusted_return_contribution::FxReturnContractError;
+use navlens_calendar::{MarketDate, PricingError};
+use navlens_core::{CoreError, CurrencyPair, FxRateKind};
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
@@ -8,6 +9,19 @@ use std::fmt::{Display, Formatter};
 pub enum CalculateReturnContributionError {
     Pricing(PricingError),
     Domain(CoreError),
+    DuplicateFxCandidate {
+        pair: CurrencyPair,
+        kind: FxRateKind,
+    },
+    InvalidStalenessConversion {
+        requested_date: MarketDate,
+        observation_date: MarketDate,
+        staleness: i64,
+    },
+    MissingFxEndAfterStartInvariant {
+        requested_date: MarketDate,
+    },
+    FxContract(FxReturnContractError),
 }
 
 impl Display for CalculateReturnContributionError {
@@ -15,6 +29,27 @@ impl Display for CalculateReturnContributionError {
         match self {
             Self::Pricing(e) => write!(f, "pricing error during contribution calculation: {e}"),
             Self::Domain(e) => write!(f, "domain error during contribution calculation: {e}"),
+            Self::DuplicateFxCandidate { pair, kind } => write!(
+                f,
+                "duplicate FX candidate identity for pair {pair:?} and kind {kind:?}",
+            ),
+            Self::InvalidStalenessConversion {
+                requested_date,
+                observation_date,
+                staleness,
+            } => {
+                write!(
+                    f,
+                    "invalid staleness {staleness} between FX observation {observation_date} and requested boundary {requested_date}"
+                )
+            }
+            Self::MissingFxEndAfterStartInvariant { requested_date } => write!(
+                f,
+                "FX series lost its selected start observation before end boundary {requested_date}"
+            ),
+            Self::FxContract(e) => {
+                write!(f, "FX contract error during contribution calculation: {e}")
+            }
         }
     }
 }
@@ -24,6 +59,10 @@ impl Error for CalculateReturnContributionError {
         match self {
             Self::Pricing(e) => Some(e),
             Self::Domain(e) => Some(e),
+            Self::DuplicateFxCandidate { .. }
+            | Self::InvalidStalenessConversion { .. }
+            | Self::MissingFxEndAfterStartInvariant { .. } => None,
+            Self::FxContract(e) => Some(e),
         }
     }
 }
@@ -37,5 +76,11 @@ impl From<PricingError> for CalculateReturnContributionError {
 impl From<CoreError> for CalculateReturnContributionError {
     fn from(error: CoreError) -> Self {
         Self::Domain(error)
+    }
+}
+
+impl From<FxReturnContractError> for CalculateReturnContributionError {
+    fn from(error: FxReturnContractError) -> Self {
+        Self::FxContract(error)
     }
 }
