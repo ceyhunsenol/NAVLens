@@ -1,4 +1,5 @@
-use crate::CoreError;
+use crate::positive_ratio_return::calculate_positive_ratio_return;
+use crate::{CoreError, DecimalReturn};
 
 /// A finite, strictly positive foreign exchange rate value representing quote units per one base unit.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
@@ -26,4 +27,18 @@ impl FxRate {
     pub const fn quote_currency_per_one_base_currency(self) -> f64 {
         self.0
     }
+}
+
+/// Calculates `(current / previous) - 1` as a foreign exchange decimal return.
+///
+/// # Errors
+/// Returns an error if the finite input rates produce a non-finite result.
+pub fn calculate_fx_decimal_return(
+    previous: FxRate,
+    current: FxRate,
+) -> Result<DecimalReturn, CoreError> {
+    calculate_positive_ratio_return(
+        previous.quote_currency_per_one_base_currency(),
+        current.quote_currency_per_one_base_currency(),
+    )
 }

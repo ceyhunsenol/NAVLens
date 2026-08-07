@@ -38,6 +38,10 @@ planned contracts below are already implemented.
 - separate price-coverage and return-coverage reports;
 - canonical `CurrencyCode`, `CurrencyPair`, `FxRate`, `FxRateKind`,
   `DecimalReturn`, and portfolio contribution types;
+- shared positive-ratio return calculation used by unit prices and FX rates;
+- canonical FX-return (`calculate_fx_decimal_return`) and FX-adjusted-return
+  (`FxAdjustedPeriodReturn`) arithmetic, including `GrossReturnComponent` and
+  non-positive-gross-return rejection in `navlens-core`;
 - chronological `FxRateObservation` and `FxRateSeries` types;
 - point-in-time `FxRateSnapshot` selection in Python;
 - provider-isolated FX acquisition and provenance;
@@ -46,13 +50,12 @@ planned contracts below are already implemented.
 
 **Planned, in implementation order:**
 
-1. canonical FX-return and FX-adjusted-return arithmetic in `navlens-core`;
-2. a pure boundary lookup on `FxRateSeries`;
-3. typed FX return policy, evidence, results, and gaps in
+1. a pure boundary lookup on `FxRateSeries`;
+2. typed FX return policy, evidence, results, and gaps in
    `navlens-application`;
-4. an FX-aware return-contribution capability and explicit foreign-price
+3. an FX-aware return-contribution capability and explicit foreign-price
    permission;
-5. thin PyO3 projections and Python point-in-time orchestration.
+4. thin PyO3 projections and Python point-in-time orchestration.
 
 **Deferred:**
 

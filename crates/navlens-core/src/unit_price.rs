@@ -1,3 +1,4 @@
+use crate::positive_ratio_return::calculate_positive_ratio_return;
 use crate::{CoreError, DecimalReturn};
 
 /// A finite, strictly positive published fund unit price.
@@ -33,5 +34,5 @@ pub fn calculate_decimal_return(
     previous: UnitPrice,
     current: UnitPrice,
 ) -> Result<DecimalReturn, CoreError> {
-    DecimalReturn::new((current.value() / previous.value()) - 1.0)
+    calculate_positive_ratio_return(previous.value(), current.value())
 }

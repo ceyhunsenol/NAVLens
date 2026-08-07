@@ -1,3 +1,4 @@
+use crate::gross_return_component::GrossReturnComponent;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
@@ -17,13 +18,20 @@ pub enum CoreError {
     InstrumentIdTooLong(usize),
     NonFiniteNumber,
     PortfolioWeightOutOfRange(f64),
-    PredictionIntervalBounds { lower: f64, upper: f64 },
+    PredictionIntervalBounds {
+        lower: f64,
+        upper: f64,
+    },
     UnitPriceNotPositive(f64),
     WeightsDoNotSumToOne(f64),
     InvalidCurrencyCode,
     ReturnCoverageExceedsFundTotal(f64),
     FxRateNotPositive(f64),
     IdenticalCurrencyPair,
+    NonPositiveGrossReturn {
+        component: GrossReturnComponent,
+        decimal_return: f64,
+    },
 }
 
 impl Display for CoreError {
@@ -101,6 +109,19 @@ impl Display for CoreError {
             }
             Self::IdenticalCurrencyPair => {
                 formatter.write_str("currency pair base and quote currencies cannot be identical")
+            }
+            Self::NonPositiveGrossReturn {
+                component,
+                decimal_return,
+            } => {
+                let component_str = match component {
+                    GrossReturnComponent::Security => "security",
+                    GrossReturnComponent::ForeignExchange => "foreign exchange",
+                };
+                write!(
+                    formatter,
+                    "{component_str} gross return factor must be positive; got decimal return {decimal_return}"
+                )
             }
         }
     }
