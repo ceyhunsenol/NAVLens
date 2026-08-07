@@ -15,6 +15,7 @@ from .errors import (
     TcmbRevisionAvailabilityError,
     TcmbRevisionIndexError,
     TcmbRevisionIndexIntegrityError,
+    TcmbSnapshotMaterializationError,
     TcmbTransportError,
     TcmbXmlParseError,
 )
@@ -38,6 +39,7 @@ from .revision_index import (
     load_tcmb_revision_index,
     record_tcmb_revision,
 )
+from .snapshot_materialization import materialize_tcmb_fx_rate_snapshots
 
 __all__ = [
     "TCMB_AVAILABILITY_POLICY_ID",
@@ -64,6 +66,7 @@ __all__ = [
     "TcmbRevisionIndexIntegrityError",
     "TcmbRevisionIndexUpdate",
     "TcmbRevisionRecord",
+    "TcmbSnapshotMaterializationError",
     "TcmbTransportError",
     "TcmbVerifiedPublication",
     "TcmbXmlParseError",
@@ -72,6 +75,7 @@ __all__ = [
     "load_tcmb_raw_artifact",
     "load_tcmb_revision_index",
     "map_tcmb_daily_rates",
+    "materialize_tcmb_fx_rate_snapshots",
     "parse_tcmb_daily_rates_xml",
     "record_tcmb_revision",
     "resolve_tcmb_revision_availability",

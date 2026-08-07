@@ -35,3 +35,7 @@ class TcmbRevisionIndexIntegrityError(TcmbRevisionIndexError):
 
 class TcmbRevisionAvailabilityError(ValueError):
     """Raised for invalid parameters or states when resolving revision availability."""
+
+
+class TcmbSnapshotMaterializationError(ValueError):
+    """Raised when TCMB raw artifacts cannot be materialized into point-in-time snapshots."""

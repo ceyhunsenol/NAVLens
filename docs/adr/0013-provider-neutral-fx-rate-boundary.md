@@ -39,12 +39,12 @@ planned code is already implemented.
 - revision-safe TCMB acquisition artifact and provenance (`acquire_tcmb_daily_rates`);
 - content-addressed atomic TCMB raw artifact storage (`store_tcmb_raw_artifact`);
 - persistent versioned TCMB revision index (`record_tcmb_revision`);
-- correction timing resolver (`resolve_tcmb_revision_availability`).
+- correction timing resolver (`resolve_tcmb_revision_availability`);
+- TCMB FxRateSnapshot materialization (`materialize_tcmb_fx_rate_snapshots`).
 
 **Planned:**
 
-- cache-aware request orchestration;
-- `FxRateSnapshot` conversion.
+- cache-aware request orchestration.
 
 **Deferred:**
 
@@ -172,6 +172,10 @@ Selection requires:
 - publication-safe revision precedence for one `market_date`;
 - strictly chronological output;
 - no silent provider mixing.
+
+Materialization of TCMB snapshots is deterministic and emits snapshots for every
+revision in the index. It does not choose the point-in-time winner. The generic
+`select_fx_rate_snapshots` capability remains the canonical correction selector.
 
 The existing private correction-selection utility MAY be reused only when its
 semantics match these rules. It MUST NOT bypass TCMB-specific availability
