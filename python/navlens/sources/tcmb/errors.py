@@ -31,3 +31,7 @@ class TcmbRevisionIndexError(ValueError):
 
 class TcmbRevisionIndexIntegrityError(TcmbRevisionIndexError):
     """Raised when a TCMB revision index on disk is malformed, invalid, or corrupt."""
+
+
+class TcmbRevisionAvailabilityError(ValueError):
+    """Raised for invalid parameters or states when resolving revision availability."""

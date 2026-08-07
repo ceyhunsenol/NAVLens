@@ -38,12 +38,12 @@ planned code is already implemented.
 - separated TCMB XML HTTP transport client (`TcmbHttpClient`);
 - revision-safe TCMB acquisition artifact and provenance (`acquire_tcmb_daily_rates`);
 - content-addressed atomic TCMB raw artifact storage (`store_tcmb_raw_artifact`);
-- persistent versioned TCMB revision index (`record_tcmb_revision`).
+- persistent versioned TCMB revision index (`record_tcmb_revision`);
+- correction timing resolver (`resolve_tcmb_revision_availability`).
 
 **Planned:**
 
 - cache-aware request orchestration;
-- correction timing resolver;
 - `FxRateSnapshot` conversion.
 
 **Deferred:**
@@ -196,12 +196,13 @@ The Rust domain and generic dataset selection know neither TCMB nor its
 publication schedule.
 
 An initial historical observation MAY use the verified scheduled publication
-time. A later revision MUST NOT be assigned that original time unless its
-actual correction-publication time is verifiable.
+time, but requires explicit initial-revision identity. A later revision MUST NOT
+be assigned that original time unless its actual correction-publication time is
+verifiable.
 
 - A verifiable correction uses its source publication timestamp.
-- When that timestamp is unavailable, the correction's `available_at` is its
-  first observed `ingested_at`.
+- When that timestamp is unavailable, the correction's `available_at` defaults
+  conservatively to its first observed `ingested_at`.
 - A correction is never backfilled into earlier prediction timestamps.
 
 ### TCMB acquisition provenance

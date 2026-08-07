@@ -12,6 +12,7 @@ from .errors import (
     TcmbMappingError,
     TcmbRawCacheError,
     TcmbRawCacheIntegrityError,
+    TcmbRevisionAvailabilityError,
     TcmbRevisionIndexError,
     TcmbRevisionIndexIntegrityError,
     TcmbTransportError,
@@ -23,6 +24,12 @@ from .provenance import TCMB_SOURCE_ID, TcmbAcquisitionProvenance
 from .raw_cache import TcmbRawCacheEntry, load_tcmb_raw_artifact, store_tcmb_raw_artifact
 from .records import TcmbCurrencyRecord, TcmbDailyRatesDocument
 from .response import TcmbHttpResponse
+from .revision_availability import (
+    TcmbResolvedRevisionAvailability,
+    TcmbRevisionAvailabilityBasis,
+    TcmbVerifiedPublication,
+    resolve_tcmb_revision_availability,
+)
 from .revision_index import (
     TCMB_REVISION_INDEX_SCHEMA_VERSION,
     TcmbRevisionIndex,
@@ -48,13 +55,17 @@ __all__ = [
     "TcmbRawCacheEntry",
     "TcmbRawCacheError",
     "TcmbRawCacheIntegrityError",
+    "TcmbResolvedRevisionAvailability",
     "TcmbResponseClient",
+    "TcmbRevisionAvailabilityBasis",
+    "TcmbRevisionAvailabilityError",
     "TcmbRevisionIndex",
     "TcmbRevisionIndexError",
     "TcmbRevisionIndexIntegrityError",
     "TcmbRevisionIndexUpdate",
     "TcmbRevisionRecord",
     "TcmbTransportError",
+    "TcmbVerifiedPublication",
     "TcmbXmlParseError",
     "acquire_tcmb_daily_rates",
     "initial_tcmb_available_at",
@@ -63,5 +74,6 @@ __all__ = [
     "map_tcmb_daily_rates",
     "parse_tcmb_daily_rates_xml",
     "record_tcmb_revision",
+    "resolve_tcmb_revision_availability",
     "store_tcmb_raw_artifact",
 ]
