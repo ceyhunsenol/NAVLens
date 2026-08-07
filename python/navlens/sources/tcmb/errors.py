@@ -39,3 +39,11 @@ class TcmbRevisionAvailabilityError(ValueError):
 
 class TcmbSnapshotMaterializationError(ValueError):
     """Raised when TCMB raw artifacts cannot be materialized into point-in-time snapshots."""
+
+
+class TcmbOrchestrationError(ValueError):
+    """Raised when TCMB orchestration fails due to invalid parameters or underlying errors."""
+
+
+class TcmbCacheMissError(TcmbOrchestrationError):
+    """Raised when a required revision index is missing during a cache operation."""

@@ -40,11 +40,8 @@ planned code is already implemented.
 - content-addressed atomic TCMB raw artifact storage (`store_tcmb_raw_artifact`);
 - persistent versioned TCMB revision index (`record_tcmb_revision`);
 - correction timing resolver (`resolve_tcmb_revision_availability`);
-- TCMB FxRateSnapshot materialization (`materialize_tcmb_fx_rate_snapshots`).
-
-**Planned:**
-
-- cache-aware request orchestration.
+- TCMB FxRateSnapshot materialization (`materialize_tcmb_fx_rate_snapshots`);
+- cache-aware request orchestration (`obtain_tcmb_fx_rate_snapshots`).
 
 **Deferred:**
 
@@ -52,7 +49,9 @@ planned code is already implemented.
 - amount conversion and rate inversion APIs;
 - cross-rate triangulation;
 - non-TCMB providers;
-- conflicting-provider resolution.
+- conflicting-provider resolution;
+- automatic correction polling and initial-revision identity discovery;
+- cross-process locking for revision-index read-modify-write cycles.
 
 ## Decision
 
@@ -176,6 +175,18 @@ Selection requires:
 Materialization of TCMB snapshots is deterministic and emits snapshots for every
 revision in the index. It does not choose the point-in-time winner. The generic
 `select_fx_rate_snapshots` capability remains the canonical correction selector.
+
+TCMB request orchestration uses an explicit caller-selected cache policy:
+
+- `cache_only` never performs network I/O and reports a typed cache miss;
+- `prefer_cache` fetches only when the revision index is absent;
+- `refresh` always acquires once before materialization.
+
+An existing index does not prove that TCMB has not published a later correction,
+so `prefer_cache` accepts an explicit staleness risk. Cache corruption, missing
+indexed artifacts, and invalid revision evidence are fatal and never trigger a
+silent network fallback. The orchestration returns every materialized revision;
+point-in-time winner selection remains owned by `select_fx_rate_snapshots`.
 
 The existing private correction-selection utility MAY be reused only when its
 semantics match these rules. It MUST NOT bypass TCMB-specific availability
