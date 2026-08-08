@@ -327,6 +327,6 @@ adapters and infrastructure.
 ## Architectural change process
 
 A change to dependency direction, layer ownership, public data contracts, model
-artifact format, or persistence strategy requires an Architecture Decision
-Record under `docs/adr/`. An ADR records context, decision, consequences, and
-alternatives. It does not silently rewrite this contract.
+artifact format, or persistence strategy must update this contract and any
+affected documentation. The change must state its context, consequences, and
+rejected alternatives instead of silently rewriting architectural ownership.

@@ -83,8 +83,7 @@ cache, storage, and parsing remain in their existing TEFAS modules.
 The aggregate one-month, three-month, and similar return columns on the TEFAS
 fund-returns page are not dated unit prices and cannot feed this pipeline as
 prices. See [`TEFAS_DATA_ACCESS.md`](TEFAS_DATA_ACCESS.md) for the verified
-boundary and provenance requirements, and
-[`ADR-0006`](adr/0006-tefas-data-access.md) for the decision.
+boundary, acquisition policy, and provenance requirements.
 
 ## Holdings dataset snapshot boundary
 

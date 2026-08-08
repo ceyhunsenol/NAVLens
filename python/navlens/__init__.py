@@ -96,9 +96,11 @@ from .reconciliation import (
     InvalidFundPriceSourceError,
     MissingExactFundUnitPriceSnapshotError,
     PointInTimeFundReturnReconciliationResult,
+    PointInTimeFxFundReturnReconciliationResult,
     PointInTimeReconciliationError,
     UnexpectedNativeReturnCardinalityError,
     reconcile_point_in_time_fund_return,
+    reconcile_point_in_time_fx_adjusted_fund_return,
 )
 from .sources import (
     CsvFundUnitPriceSourceError,
@@ -160,6 +162,7 @@ __all__ = [
     "PointInTimeAlignmentRequest",
     "PointInTimeAlignmentResult",
     "PointInTimeFxAdjustedReturnContributionResult",
+    "PointInTimeFxFundReturnReconciliationResult",
     "PointInTimeFxReturnContributionRequest",
     "PointInTimeFundReturnReconciliationResult",
     "PointInTimeReconciliationError",
@@ -208,6 +211,7 @@ __all__ = [
     "reconcile_fund_return",
     "reconcile_fx_adjusted_fund_return",
     "reconcile_point_in_time_fund_return",
+    "reconcile_point_in_time_fx_adjusted_fund_return",
     "select_fund_unit_price_snapshots",
     "select_fx_rate_snapshots",
     "select_latest_holdings_snapshot",
