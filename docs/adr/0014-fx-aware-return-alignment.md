@@ -52,11 +52,8 @@ planned contracts below are already implemented.
   price-alignment policy;
 - explicit foreign-price permission (`PriceCurrencyPolicy`);
 - an FX-aware return-contribution capability;
-- thin PyO3 projections.
-
-**Planned, in implementation order:**
-
-1. Python point-in-time orchestration.
+- thin PyO3 projections;
+- Python point-in-time orchestration.
 
 **Deferred:**
 

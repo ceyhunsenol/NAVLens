@@ -23,3 +23,7 @@ class MissingHoldingsSnapshotError(PointInTimeAlignmentError):
             f"source_id={source_id!r} at "
             f"prediction_timestamp={prediction_timestamp.isoformat()}"
         )
+
+
+class InvalidPointInTimeFxReturnContributionRequestError(PointInTimeAlignmentError):
+    """Raised when a PointInTimeFxReturnContributionRequest fails validation."""
