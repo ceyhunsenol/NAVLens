@@ -74,6 +74,7 @@ from .alignment import (
     align_point_in_time,
     calculate_point_in_time_fx_adjusted_return_contribution,
     calculate_point_in_time_return_contribution,
+    format_fx_return_contribution_result,
     format_return_contribution_result,
 )
 from .datasets import (
@@ -197,6 +198,7 @@ __all__ = [
     "create_return_prediction",
     "estimate_portfolio_return",
     "evaluate_backtest",
+    "format_fx_return_contribution_result",
     "format_return_contribution_result",
     "read_fund_unit_prices_csv",
     "read_fx_rates_csv",

@@ -23,6 +23,7 @@ dependencies = [
 [project.scripts]
 navlens-align-holdings-csv = "navlens.alignment.cli:main"
 navlens-return-contribution-csv = "navlens.alignment.return_contribution_cli:main"
+navlens-fx-return-contribution-csv = "navlens.alignment.fx_return_contribution_cli:main"
 navlens-backtest-tefas = "navlens.evaluation.tefas_cli:main"
 navlens-backtest-batch = "navlens.evaluation.tefas_batch_cli:main"
 navlens-fetch-tefas = "navlens.sources.tefas.cli:main"

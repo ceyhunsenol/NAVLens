@@ -9,6 +9,7 @@ from .errors import (
 from .fx_orchestration import calculate_point_in_time_fx_adjusted_return_contribution
 from .fx_request import PointInTimeFxReturnContributionRequest
 from .fx_result import PointInTimeFxAdjustedReturnContributionResult
+from .fx_return_contribution_formatting import format_fx_return_contribution_result
 from .point_in_time import align_point_in_time
 from .request import PointInTimeAlignmentRequest
 from .result import PointInTimeAlignmentResult
@@ -31,5 +32,6 @@ __all__ = [
     "align_point_in_time",
     "calculate_point_in_time_fx_adjusted_return_contribution",
     "calculate_point_in_time_return_contribution",
+    "format_fx_return_contribution_result",
     "format_return_contribution_result",
 ]
