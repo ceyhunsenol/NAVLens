@@ -79,3 +79,34 @@ Observed Portfolio Contribution (Decimal): 0.100000
 Return Coverage (Ratio): 1.000000
 Reconciliation Residual (Decimal): 0.020000
 ```
+
+## Reconcile published fund return against observed FX-adjusted portfolio contribution
+
+The `navlens-fx-reconcile-fund-csv` Python CLI runs the point-in-time FX-adjusted portfolio
+return contribution pipeline and reconciles its results against the published fund return
+represented by historical snapshots from CSV sources.
+
+```shell
+navlens-fx-reconcile-fund-csv \
+  --holdings-csv holdings.csv \
+  --security-prices-csv prices.csv \
+  --fx-rates-csv fx_rates.csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id FUND1 \
+  --holdings-source-id tefas \
+  --security-price-source-id kap \
+  --fx-source-id tcmb \
+  --fund-price-source-id tefas \
+  --required-fx-rate-kind non_cash_buying \
+  --max-fx-staleness-calendar-days 5 \
+  --prediction-timestamp 2026-07-28T00:00:00Z \
+  --pricing-as-of-date 2026-07-27 \
+  --fund-base-currency TRY \
+  --price-adjustment total_return_adjusted \
+  --minimum-observations 2 \
+  --max-staleness-calendar-days 5 \
+  --return-start-date 2026-07-26 \
+  --return-end-date 2026-07-27
+```
+
+Expected output includes the FX-adjusted component contributions, currency adjustments, coverage ratios, and exact decimal values for the reconciliation terms.

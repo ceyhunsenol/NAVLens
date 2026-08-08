@@ -99,6 +99,8 @@ from .reconciliation import (
     PointInTimeFxFundReturnReconciliationResult,
     PointInTimeReconciliationError,
     UnexpectedNativeReturnCardinalityError,
+    format_point_in_time_fund_return_reconciliation_result,
+    format_point_in_time_fx_adjusted_fund_return_reconciliation_result,
     reconcile_point_in_time_fund_return,
     reconcile_point_in_time_fx_adjusted_fund_return,
 )
@@ -203,6 +205,8 @@ __all__ = [
     "estimate_portfolio_return",
     "evaluate_backtest",
     "format_fx_return_contribution_result",
+    "format_point_in_time_fund_return_reconciliation_result",
+    "format_point_in_time_fx_adjusted_fund_return_reconciliation_result",
     "format_return_contribution_result",
     "read_fund_unit_prices_csv",
     "read_fx_rates_csv",
