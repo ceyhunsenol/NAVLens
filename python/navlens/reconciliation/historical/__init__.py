@@ -8,6 +8,14 @@ from .errors import (
     HistoricalReconciliationDatasetError,
     InvalidHistoricalReconciliationRequestError,
 )
+from .fx_builder import build_historical_fx_reconciliation_dataset
+from .fx_dataset import HistoricalFxReconciliationDataset
+from .fx_outcome import (
+    HistoricalFxReconciliationOutcome,
+    HistoricalFxReconciliationRecord,
+    SkippedFxReconciliationRecord,
+)
+from .fx_request import HistoricalFxReconciliationRequest
 from .outcome import (
     HistoricalReconciliationOutcome,
     HistoricalReconciliationRecord,
@@ -21,6 +29,10 @@ from .request import HistoricalReconciliationRequest
 __all__ = [
     "DecreasingPeriodError",
     "DuplicatePeriodError",
+    "HistoricalFxReconciliationDataset",
+    "HistoricalFxReconciliationOutcome",
+    "HistoricalFxReconciliationRecord",
+    "HistoricalFxReconciliationRequest",
     "HistoricalReconciliationDataset",
     "HistoricalReconciliationDatasetError",
     "HistoricalReconciliationOutcome",
@@ -30,6 +42,8 @@ __all__ = [
     "InvalidHistoricalReconciliationRequestError",
     "MissingFundPriceSkip",
     "MissingHoldingsSkip",
+    "SkippedFxReconciliationRecord",
     "SkippedReconciliationRecord",
+    "build_historical_fx_reconciliation_dataset",
     "build_historical_reconciliation_dataset",
 ]

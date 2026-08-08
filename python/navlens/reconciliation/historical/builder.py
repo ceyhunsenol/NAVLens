@@ -8,8 +8,8 @@ from navlens.datasets import FundUnitPriceSnapshot, HoldingSnapshot, SecurityPri
 
 from ..errors import MissingExactFundUnitPriceSnapshotError
 from ..orchestration import reconcile_point_in_time_fund_return
+from ._ordering import validate_chronological_periods
 from .dataset import HistoricalReconciliationDataset
-from .errors import DecreasingPeriodError, DuplicatePeriodError
 from .outcome import (
     HistoricalReconciliationOutcome,
     HistoricalReconciliationRecord,
@@ -32,7 +32,7 @@ def build_historical_reconciliation_dataset(
     security_prices = tuple(security_price_snapshots)
     fund_prices = tuple(fund_price_snapshots)
 
-    _validate_chronological_ordering(materialized_requests)
+    validate_chronological_periods(tuple(req.period for req in materialized_requests))
 
     outcomes: list[HistoricalReconciliationOutcome] = []
     for req in materialized_requests:
@@ -55,19 +55,3 @@ def build_historical_reconciliation_dataset(
             )
 
     return HistoricalReconciliationDataset(outcomes=tuple(outcomes))
-
-
-def _validate_chronological_ordering(requests: tuple[HistoricalReconciliationRequest, ...]) -> None:
-    seen_periods = []
-    prev_end = None
-    for req in requests:
-        current_period = req.period
-        current_end = current_period.period_end_date
-        if any(current_period == seen_period for seen_period in seen_periods):
-            raise DuplicatePeriodError(f"Duplicate period detected: {current_period}")
-        if prev_end is not None and current_end <= prev_end:
-            raise DecreasingPeriodError(
-                f"Period end dates must be strictly increasing; got {current_end} after {prev_end}"
-            )
-        seen_periods.append(current_period)
-        prev_end = current_end
