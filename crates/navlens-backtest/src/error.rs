@@ -1,4 +1,4 @@
-use navlens_calendar::MarketDate;
+use navlens_calendar::{MarketDate, ReturnPeriod};
 use navlens_core::ConfidenceLevel;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
@@ -23,6 +23,12 @@ pub enum BacktestError {
         prediction: MarketDate,
         target: MarketDate,
     },
+    DuplicateReconciliationPeriod(ReturnPeriod),
+    NonChronologicalReconciliationPeriod {
+        previous: MarketDate,
+        current: MarketDate,
+    },
+    NoReconciliationObservations,
 }
 
 impl Display for BacktestError {
@@ -52,6 +58,19 @@ impl Display for BacktestError {
                 formatter,
                 "prediction date {prediction} must be earlier than target date {target}"
             ),
+            Self::DuplicateReconciliationPeriod(period) => write!(
+                formatter,
+                "duplicate reconciliation period from {} to {}",
+                period.period_start_date(),
+                period.period_end_date()
+            ),
+            Self::NonChronologicalReconciliationPeriod { previous, current } => write!(
+                formatter,
+                "reconciliation period end dates must be chronological; {current} follows {previous}"
+            ),
+            Self::NoReconciliationObservations => {
+                formatter.write_str("reconciliation metrics require at least one observation")
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ mod dated_decimal_return;
 mod error;
 mod estimate_portfolio;
 mod evaluate_backtest;
+mod evaluate_reconciliation_metrics;
 mod fund_return_reconciliation;
 mod fund_return_reconciliation_result;
 mod fx_adjusted_component_contribution;
@@ -43,6 +44,7 @@ mod price_currency_policy;
 mod price_observation;
 mod price_returns;
 mod reconcile_fund_return;
+mod reconciliation_metrics;
 mod return_contribution_result;
 mod return_coverage_gap;
 mod return_coverage_gap_reason;
@@ -70,6 +72,7 @@ use dated_decimal_return::PyDatedDecimalReturn;
 use error::NavlensValidationError;
 use estimate_portfolio::estimate_portfolio_return;
 use evaluate_backtest::evaluate_backtest as evaluate_backtest_fn;
+use evaluate_reconciliation_metrics::evaluate_reconciliation_metrics as evaluate_reconciliation_metrics_fn;
 use fx_rate::PyFxRate;
 use fx_rate_kind::PyFxRateKind;
 use fx_rate_observation::PyFxRateObservation;
@@ -86,6 +89,7 @@ use price_adjustment::PyPriceAdjustment;
 use price_observation::PyPriceObservation;
 use price_returns::{calculate_price_period_returns, calculate_price_returns};
 use pyo3::prelude::*;
+use reconciliation_metrics::PyReconciliationMetrics;
 use return_contribution_result::PyReturnContributionResult;
 use return_coverage_gap::PyReturnCoverageGap;
 use return_coverage_gap_reason::PyReturnCoverageGapReason;
@@ -138,6 +142,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyBacktestObservation>()?;
     module.add_class::<PyIntervalMetrics>()?;
     module.add_class::<PyBacktestMetrics>()?;
+    module.add_class::<PyReconciliationMetrics>()?;
     module.add_class::<PortfolioReturnEstimate>()?;
     module.add_class::<PyPortfolioCoverageReport>()?;
     module.add_class::<PyReturnCoverageGapReason>()?;
@@ -162,6 +167,10 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_period_returns, module)?)?;
     module.add_function(wrap_pyfunction!(evaluate_backtest_fn, module)?)?;
+    module.add_function(wrap_pyfunction!(
+        evaluate_reconciliation_metrics_fn,
+        module
+    )?)?;
     module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
     module.add_function(wrap_pyfunction!(
         calculate_return_contribution::calculate_return_contribution,

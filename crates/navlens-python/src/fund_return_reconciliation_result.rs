@@ -20,6 +20,10 @@ impl PyFundReturnReconciliationResult {
     pub(crate) const fn from_inner(inner: FundReturnReconciliationResult) -> Self {
         Self { inner }
     }
+
+    pub(crate) const fn inner(&self) -> &FundReturnReconciliationResult {
+        &self.inner
+    }
 }
 
 #[pymethods]
