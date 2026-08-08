@@ -515,6 +515,10 @@ def reconcile_fund_return(
     published_fund_return: PeriodDecimalReturn,
     contribution_result: ReturnContributionResult,
 ) -> FundReturnReconciliationResult: ...
+def reconcile_fx_adjusted_fund_return(
+    published_fund_return: PeriodDecimalReturn,
+    contribution_result: FxAdjustedReturnContributionResult,
+) -> FundReturnReconciliationResult: ...
 
 class FxReturnPolicy:
     def __init__(

@@ -60,6 +60,7 @@ from ._native import (
     estimate_portfolio_return,
     evaluate_backtest,
     reconcile_fund_return,
+    reconcile_fx_adjusted_fund_return,
 )
 from .alignment import (
     InvalidPointInTimeAlignmentRequestError,
@@ -205,6 +206,7 @@ __all__ = [
     "read_holdings_snapshots",
     "read_security_prices_csv",
     "reconcile_fund_return",
+    "reconcile_fx_adjusted_fund_return",
     "reconcile_point_in_time_fund_return",
     "select_fund_unit_price_snapshots",
     "select_fx_rate_snapshots",

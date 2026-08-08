@@ -22,6 +22,10 @@ impl PyFxAdjustedReturnContributionResult {
     pub(crate) const fn from_inner(inner: FxAdjustedReturnContributionResult) -> Self {
         Self { inner }
     }
+
+    pub(crate) const fn inner(&self) -> &FxAdjustedReturnContributionResult {
+        &self.inner
+    }
 }
 
 #[pymethods]

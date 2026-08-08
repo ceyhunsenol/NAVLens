@@ -29,4 +29,5 @@ pub use estimate_portfolio_return::{
 };
 pub use reconcile_fund_return::{
     FundReturnReconciliationResult, ReconcileFundReturnError, reconcile_fund_return,
+    reconcile_fx_adjusted_fund_return,
 };

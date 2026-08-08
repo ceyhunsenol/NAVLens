@@ -16,7 +16,9 @@ This document defines the mathematical, architectural, and financial semantics o
 **Current:**
 - `DecimalReturn` and `PortfolioReturnContribution` are present in `navlens-core`.
 - `ReturnPeriod` and `PeriodDecimalReturn` are present in `navlens-calendar`.
-- `ReturnContributionResult` is present in `navlens-application`.
+- `ReturnContributionResult` and `FxAdjustedReturnContributionResult` are
+  present in `navlens-application` and both use the canonical reconciliation
+  path through distinct typed entry points.
 - Core reconciliation arithmetic/result, application exact-period orchestration, and PyO3 bindings are implemented.
 - Python point-in-time provenance orchestration is implemented.
 - Formatter and CLI are implemented.
@@ -24,7 +26,7 @@ This document defines the mathematical, architectural, and financial semantics o
 
 ## Decision
 
-We propose the concept of **Reconciliation Residual** to represent the difference between the published fund return and the observed portfolio contribution for a specific exact period.
+We propose the concept of **Reconciliation Residual** to represent the difference between the published fund return and the observed portfolio contribution for a specific exact period. The observed contribution may come from either the legacy same-currency contribution result or the FX-adjusted contribution result; both delegate to the same period validation and residual calculation.
 
 ### Canonical Equation
 
@@ -73,7 +75,7 @@ Reconciliation can only occur if the published fund return and the observed cove
 ### Layer Ownership
 
 - **navlens-core (Rust):** Owns the scalar financial subtraction, the canonical `PortfolioReturnReconciliation`-like result, published `DecimalReturn`, observed `PortfolioReturnContribution`, reconciliation residual, coverage preservation, and non-finite arithmetic validation. It has no concept of periods and does not depend on `navlens-calendar` types.
-- **navlens-application (Rust):** Compares the periods of `PeriodDecimalReturn` and `ReturnContributionResult`. It owns the exact `ReturnPeriod` equality invariant. It produces a typed application error on a period mismatch. After validation, it delegates the scalar values to the core logic. The application result carries the validated `ReturnPeriod` alongside the core reconciliation result.
+- **navlens-application (Rust):** Compares the periods of `PeriodDecimalReturn` and `ReturnContributionResult` or `FxAdjustedReturnContributionResult` (`reconcile_fund_return` and `reconcile_fx_adjusted_fund_return`). It owns the exact `ReturnPeriod` equality invariant. It produces a typed application error on a period mismatch. After validation, it delegates the scalar values to the core logic. The application result carries the validated `ReturnPeriod` alongside the core reconciliation result. (Note: Python point-in-time and historical FX reconciliation orchestrations are not yet implemented.)
 - **navlens-python (Rust/PyO3 crate):** Performs only thin bindings, type conversions, and error mapping. It does not select datasets or manage provenance.
 - **Python package:** Owns dataset selection, publication-time safety, provider/source orchestration, and the provenance envelope. It must **never** perform financial subtraction.
 

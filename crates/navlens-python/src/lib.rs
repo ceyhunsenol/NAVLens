@@ -175,5 +175,9 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
         reconcile_fund_return::reconcile_fund_return,
         module
     )?)?;
+    module.add_function(wrap_pyfunction!(
+        reconcile_fund_return::reconcile_fx_adjusted_fund_return,
+        module
+    )?)?;
     Ok(())
 }
