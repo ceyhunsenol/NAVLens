@@ -3,7 +3,7 @@ use navlens_calendar::{MarketDate, PriceAdjustment};
 use navlens_core::CurrencyCode;
 
 /// Controls whether price alignment accepts currencies other than the fund base currency.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum PriceCurrencyPolicy {
     /// Accept only security prices denominated in the fund base currency.
     FundBaseOnly,

@@ -22,6 +22,10 @@ impl PyFxRateSeries {
     pub(crate) fn from_inner(inner: FxRateSeries) -> Self {
         Self { inner }
     }
+
+    pub(crate) fn into_inner(self) -> FxRateSeries {
+        self.inner
+    }
 }
 
 #[pymethods]

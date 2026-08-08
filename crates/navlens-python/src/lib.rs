@@ -5,22 +5,29 @@ mod alignment_policy;
 mod asset_class;
 mod backtest_metrics;
 mod backtest_observation;
+mod calculate_fx_adjusted_return_contribution;
 mod calculate_return_contribution;
 mod component_contribution;
 mod coverage_gap_reason;
 mod covered_holding_price;
 mod currency_code;
 mod currency_pair;
+mod currency_return_adjustment;
 mod dated_decimal_return;
 mod error;
 mod estimate_portfolio;
 mod evaluate_backtest;
 mod fund_return_reconciliation;
 mod fund_return_reconciliation_result;
+mod fx_adjusted_component_contribution;
+mod fx_adjusted_return_contribution_result;
+mod fx_adjustment_evidence;
+mod fx_boundary_evidence;
 mod fx_rate;
 mod fx_rate_kind;
 mod fx_rate_observation;
 mod fx_rate_series;
+mod fx_return_policy;
 mod holding_position;
 mod market_calendar;
 mod market_date;
@@ -32,6 +39,7 @@ mod portfolio_return_contribution;
 mod portfolio_return_estimate;
 mod prediction_request;
 mod price_adjustment;
+mod price_currency_policy;
 mod price_observation;
 mod price_returns;
 mod reconcile_fund_return;
@@ -140,6 +148,15 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyReturnContributionResult>()?;
     module.add_class::<fund_return_reconciliation::PyFundReturnReconciliation>()?;
     module.add_class::<fund_return_reconciliation_result::PyFundReturnReconciliationResult>()?;
+    module.add_class::<price_currency_policy::PyPriceCurrencyPolicy>()?;
+    module.add_class::<fx_return_policy::PyFxReturnPolicy>()?;
+    module.add_class::<fx_boundary_evidence::PyFxBoundaryEvidence>()?;
+    module.add_class::<fx_adjustment_evidence::PyFxAdjustmentEvidence>()?;
+    module.add_class::<currency_return_adjustment::PyCurrencyReturnAdjustment>()?;
+    module.add_class::<fx_adjusted_component_contribution::PyFxAdjustedComponentContribution>()?;
+    module
+        .add_class::<fx_adjusted_return_contribution_result::PyFxAdjustedReturnContributionResult>(
+        )?;
     module.add_function(wrap_pyfunction!(estimate_portfolio_return, module)?)?;
     module.add_function(wrap_pyfunction!(create_return_prediction, module)?)?;
     module.add_function(wrap_pyfunction!(calculate_price_returns, module)?)?;
@@ -148,6 +165,10 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
     module.add_function(wrap_pyfunction!(
         calculate_return_contribution::calculate_return_contribution,
+        module
+    )?)?;
+    module.add_function(wrap_pyfunction!(
+        calculate_fx_adjusted_return_contribution::calculate_fx_adjusted_return_contribution,
         module
     )?)?;
     module.add_function(wrap_pyfunction!(

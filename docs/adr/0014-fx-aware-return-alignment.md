@@ -51,11 +51,12 @@ planned contracts below are already implemented.
 - `CoverageGapReason::CurrencyMismatch` for the existing base-currency-only
   price-alignment policy;
 - explicit foreign-price permission (`PriceCurrencyPolicy`);
-- an FX-aware return-contribution capability.
+- an FX-aware return-contribution capability;
+- thin PyO3 projections.
 
 **Planned, in implementation order:**
 
-1. thin PyO3 projections and Python point-in-time orchestration.
+1. Python point-in-time orchestration.
 
 **Deferred:**
 

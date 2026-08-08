@@ -1,6 +1,7 @@
 use crate::currency_code::PyCurrencyCode;
 use crate::market_date::PyMarketDate;
 use crate::price_adjustment::PyPriceAdjustment;
+use crate::price_currency_policy::PyPriceCurrencyPolicy;
 use navlens_application::AlignmentPolicy;
 use pyo3::prelude::*;
 
@@ -70,5 +71,18 @@ impl PyAlignmentPolicy {
     #[getter]
     fn max_staleness_calendar_days(&self) -> u32 {
         self.inner.max_staleness_calendar_days()
+    }
+
+    #[getter]
+    fn price_currency_policy(&self) -> PyPriceCurrencyPolicy {
+        PyPriceCurrencyPolicy::from_inner(self.inner.price_currency_policy())
+    }
+
+    fn with_price_currency_policy(&self, policy: PyPriceCurrencyPolicy) -> Self {
+        Self::from_inner(
+            self.inner
+                .clone()
+                .with_price_currency_policy(policy.into_inner()),
+        )
     }
 }
