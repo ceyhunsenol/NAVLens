@@ -9,6 +9,7 @@ from .errors import (
     InvalidHistoricalReconciliationEvaluationError,
     InvalidHistoricalReconciliationEvaluationScopeError,
     InvalidHistoricalReconciliationRequestError,
+    InvalidHistoricalReconciliationRunConfigurationError,
     MixedHistoricalReconciliationScopeError,
     UnknownOutcomeError,
     UnknownSkipReasonError,
@@ -36,6 +37,11 @@ from .outcome import (
     SkippedReconciliationRecord,
 )
 from .request import HistoricalReconciliationRequest
+from .schedule_csv import (
+    CsvHistoricalScheduleSourceError,
+    HistoricalReconciliationRunConfiguration,
+    read_historical_reconciliation_requests_csv,
+)
 from .scope import (
     HistoricalReconciliationEvaluationScope,
     HistoricalReconciliationKind,
@@ -43,6 +49,7 @@ from .scope import (
 from .serialization import serialize_historical_reconciliation_evaluation
 
 __all__ = [
+    "CsvHistoricalScheduleSourceError",
     "DecreasingPeriodError",
     "DuplicatePeriodError",
     "HistoricalFxReconciliationDataset",
@@ -57,10 +64,12 @@ __all__ = [
     "HistoricalReconciliationOutcome",
     "HistoricalReconciliationRecord",
     "HistoricalReconciliationRequest",
+    "HistoricalReconciliationRunConfiguration",
     "HistoricalReconciliationSkipReason",
     "InvalidHistoricalReconciliationEvaluationError",
     "InvalidHistoricalReconciliationEvaluationScopeError",
     "InvalidHistoricalReconciliationRequestError",
+    "InvalidHistoricalReconciliationRunConfigurationError",
     "MissingFundPriceSkip",
     "MissingHoldingsSkip",
     "MixedHistoricalReconciliationScopeError",
@@ -73,5 +82,6 @@ __all__ = [
     "build_historical_reconciliation_dataset",
     "evaluate_historical_reconciliation_dataset",
     "format_historical_reconciliation_evaluation",
+    "read_historical_reconciliation_requests_csv",
     "serialize_historical_reconciliation_evaluation",
 ]

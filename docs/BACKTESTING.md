@@ -178,3 +178,40 @@ native Rust calculations via `ReconciliationMetrics`; Python does not calculate 
 recalculate financial metrics. These functions provide in-memory presentation of
 existing `HistoricalReconciliationEvaluation` instances and are distinct from CLI
 commands, file persistence, or backtest run manifests.
+
+## Historical reconciliation evaluation CLI
+
+The package provides a provider-neutral CSV command line interface for historical
+fund-return reconciliation evaluation over multiple periods:
+
+```text
+navlens-evaluate-historical-reconciliation-csv \
+  --schedule-csv schedule.csv \
+  --holdings-csv holdings.csv \
+  --security-prices-csv prices.csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id AAL \
+  --holdings-source-id src_h \
+  --security-price-source-id src_p \
+  --fund-price-source-id src_f \
+  --fund-base-currency TRY \
+  --price-adjustment unadjusted \
+  --minimum-observations 2 \
+  --max-staleness-calendar-days 5 \
+  --output-format text
+```
+
+### Schedule CSV format
+
+The request schedule CSV specifies the period schedule and prediction timestamps:
+
+- `return_start_date`: Period start date (`YYYY-MM-DD`).
+- `return_end_date`: Period end date (`YYYY-MM-DD`).
+- `pricing_as_of_date`: Holding/price alignment as-of date (`YYYY-MM-DD`).
+- `prediction_timestamp`: Timezone-aware UTC ISO-8601 timestamp (`YYYY-MM-DDTHH:MM:SSZ`).
+
+### Exit codes
+
+- `0`: Dataset evaluated successfully and 0 periods were skipped.
+- `2`: Evaluation completed, but 1 or more periods were skipped (or all periods were skipped). Command-line syntax or invalid argument choice errors terminate with `argparse`'s standard exit code `2` before evaluation begins.
+- `1`: Handled operational, CSV format/parsing, or domain validation error (message printed to `stderr`).

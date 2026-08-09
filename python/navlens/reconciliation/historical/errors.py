@@ -10,6 +10,10 @@ class HistoricalReconciliationDatasetError(Exception):
     """Base exception for historical reconciliation dataset errors."""
 
 
+class InvalidHistoricalReconciliationRunConfigurationError(ValueError):
+    """Raised when a historical reconciliation run configuration has an invalid value."""
+
+
 class InvalidHistoricalReconciliationRequestError(HistoricalReconciliationDatasetError):
     """Raised when a historical reconciliation request has an invalid field."""
 
