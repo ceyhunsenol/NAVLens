@@ -161,3 +161,20 @@ successful and skipped) in an evaluated dataset shares exact equality for:
 The derived `HistoricalReconciliationEvaluationScope` is exposed on
 `HistoricalReconciliationEvaluation.scope`. Outcome scope mismatches fail fast
 with `MixedHistoricalReconciliationScopeError`.
+
+## Historical reconciliation evaluation reporting
+
+The Python evaluation package provides two in-memory reporting functions under
+`navlens.reconciliation.historical`:
+
+- `format_historical_reconciliation_evaluation(evaluation)`: returns a
+  deterministic multi-line human-readable text report.
+- `serialize_historical_reconciliation_evaluation(evaluation)`: returns
+  deterministic UTF-8 JSON bytes adhering to versioned schema version 1
+  (`schema_version = 1`).
+
+All metrics formatted or serialized by these functions originate strictly from
+native Rust calculations via `ReconciliationMetrics`; Python does not calculate or
+recalculate financial metrics. These functions provide in-memory presentation of
+existing `HistoricalReconciliationEvaluation` instances and are distinct from CLI
+commands, file persistence, or backtest run manifests.

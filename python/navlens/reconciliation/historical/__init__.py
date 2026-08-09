@@ -18,6 +18,7 @@ from .evaluation import (
     HistoricalReconciliationEvaluation,
     evaluate_historical_reconciliation_dataset,
 )
+from .formatting import format_historical_reconciliation_evaluation
 from .fx_builder import build_historical_fx_reconciliation_dataset
 from .fx_dataset import HistoricalFxReconciliationDataset
 from .fx_outcome import (
@@ -39,6 +40,7 @@ from .scope import (
     HistoricalReconciliationEvaluationScope,
     HistoricalReconciliationKind,
 )
+from .serialization import serialize_historical_reconciliation_evaluation
 
 __all__ = [
     "DecreasingPeriodError",
@@ -70,4 +72,6 @@ __all__ = [
     "build_historical_fx_reconciliation_dataset",
     "build_historical_reconciliation_dataset",
     "evaluate_historical_reconciliation_dataset",
+    "format_historical_reconciliation_evaluation",
+    "serialize_historical_reconciliation_evaluation",
 ]
