@@ -15,3 +15,19 @@ class DuplicatePeriodError(HistoricalReconciliationDatasetError):
 
 class DecreasingPeriodError(HistoricalReconciliationDatasetError):
     """Raised when periods are not provided in strictly ascending order."""
+
+
+class InvalidHistoricalReconciliationEvaluationError(HistoricalReconciliationDatasetError):
+    """Raised when a historical reconciliation evaluation result violates contract invariants."""
+
+
+class UnknownOutcomeError(HistoricalReconciliationDatasetError):
+    """Raised when a historical dataset outcome record type is unsupported."""
+
+
+class UnknownSkipReasonError(HistoricalReconciliationDatasetError):
+    """Raised when a historical skipped reconciliation record has an unsupported skip reason."""
+
+
+class UnsupportedHistoricalReconciliationDatasetError(HistoricalReconciliationDatasetError):
+    """Raised when historical evaluation receives an unsupported dataset type."""
