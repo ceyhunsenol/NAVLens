@@ -143,3 +143,21 @@ Exit codes are:
 - `0`: every fund succeeded;
 - `2`: at least one fund succeeded and at least one failed;
 - `1`: every fund failed.
+
+## Historical reconciliation evaluation scope
+
+Evaluating historical reconciliation outcomes across multiple periods requires
+a homogeneous fund and data-source scope.
+`evaluate_historical_reconciliation_dataset` verifies that every outcome (both
+successful and skipped) in an evaluated dataset shares exact equality for:
+
+- `fund_id`;
+- `holdings_source_id`;
+- `security_price_source_id`;
+- `fund_price_source_id`;
+- `fx_source_id` (for FX-aware datasets; `None` for legacy datasets);
+- dataset `kind` (`LEGACY` versus `FX_AWARE`).
+
+The derived `HistoricalReconciliationEvaluationScope` is exposed on
+`HistoricalReconciliationEvaluation.scope`. Outcome scope mismatches fail fast
+with `MixedHistoricalReconciliationScopeError`.

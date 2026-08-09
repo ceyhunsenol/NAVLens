@@ -55,7 +55,15 @@ def test_evaluates_empty_dataset(
 ) -> None:
     evaluation = evaluate_historical_reconciliation_dataset(dataset)
 
-    assert evaluation == HistoricalReconciliationEvaluation(None, 0, 0, 0, 0, 0)
+    assert evaluation == HistoricalReconciliationEvaluation(
+        metrics=None,
+        scope=None,
+        total_period_count=0,
+        evaluated_period_count=0,
+        skipped_period_count=0,
+        missing_holdings_count=0,
+        missing_fund_price_count=0,
+    )
 
 
 @pytest.mark.parametrize(

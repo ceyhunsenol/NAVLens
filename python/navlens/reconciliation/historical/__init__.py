@@ -7,7 +7,9 @@ from .errors import (
     DuplicatePeriodError,
     HistoricalReconciliationDatasetError,
     InvalidHistoricalReconciliationEvaluationError,
+    InvalidHistoricalReconciliationEvaluationScopeError,
     InvalidHistoricalReconciliationRequestError,
+    MixedHistoricalReconciliationScopeError,
     UnknownOutcomeError,
     UnknownSkipReasonError,
     UnsupportedHistoricalReconciliationDatasetError,
@@ -33,6 +35,10 @@ from .outcome import (
     SkippedReconciliationRecord,
 )
 from .request import HistoricalReconciliationRequest
+from .scope import (
+    HistoricalReconciliationEvaluationScope,
+    HistoricalReconciliationKind,
+)
 
 __all__ = [
     "DecreasingPeriodError",
@@ -44,19 +50,23 @@ __all__ = [
     "HistoricalReconciliationDataset",
     "HistoricalReconciliationDatasetError",
     "HistoricalReconciliationEvaluation",
+    "HistoricalReconciliationEvaluationScope",
+    "HistoricalReconciliationKind",
     "HistoricalReconciliationOutcome",
     "HistoricalReconciliationRecord",
     "HistoricalReconciliationRequest",
     "HistoricalReconciliationSkipReason",
     "InvalidHistoricalReconciliationEvaluationError",
+    "InvalidHistoricalReconciliationEvaluationScopeError",
     "InvalidHistoricalReconciliationRequestError",
     "MissingFundPriceSkip",
     "MissingHoldingsSkip",
+    "MixedHistoricalReconciliationScopeError",
     "SkippedFxReconciliationRecord",
     "SkippedReconciliationRecord",
-    "UnsupportedHistoricalReconciliationDatasetError",
     "UnknownOutcomeError",
     "UnknownSkipReasonError",
+    "UnsupportedHistoricalReconciliationDatasetError",
     "build_historical_fx_reconciliation_dataset",
     "build_historical_reconciliation_dataset",
     "evaluate_historical_reconciliation_dataset",

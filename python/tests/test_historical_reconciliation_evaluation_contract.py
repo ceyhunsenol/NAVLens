@@ -6,6 +6,8 @@ import pytest
 from navlens import ReconciliationMetrics
 from navlens.reconciliation.historical import (
     HistoricalReconciliationEvaluation,
+    HistoricalReconciliationEvaluationScope,
+    HistoricalReconciliationKind,
     InvalidHistoricalReconciliationEvaluationError,
     evaluate_historical_reconciliation_dataset,
 )
@@ -20,9 +22,21 @@ def _native_metrics() -> ReconciliationMetrics:
     return evaluation.metrics
 
 
+def _valid_scope() -> HistoricalReconciliationEvaluationScope:
+    return HistoricalReconciliationEvaluationScope(
+        kind=HistoricalReconciliationKind.LEGACY,
+        fund_id="TEST_FUND",
+        holdings_source_id="src_h",
+        security_price_source_id="src_p",
+        fund_price_source_id="src_f",
+        fx_source_id=None,
+    )
+
+
 def _valid_arguments() -> dict[str, object]:
     return {
         "metrics": _native_metrics(),
+        "scope": _valid_scope(),
         "total_period_count": 2,
         "evaluated_period_count": 2,
         "skipped_period_count": 0,
@@ -127,5 +141,45 @@ def test_rejects_native_metrics_sample_count_mismatch() -> None:
     with pytest.raises(
         InvalidHistoricalReconciliationEvaluationError,
         match=r"metrics.sample_count .* must equal evaluated_period_count",
+    ):
+        _construct(arguments)
+
+
+def test_rejects_scope_when_total_period_count_is_zero() -> None:
+    arguments = _valid_arguments()
+    arguments.update(
+        metrics=None,
+        total_period_count=0,
+        evaluated_period_count=0,
+        skipped_period_count=0,
+        missing_holdings_count=0,
+        missing_fund_price_count=0,
+    )
+
+    with pytest.raises(
+        InvalidHistoricalReconciliationEvaluationError,
+        match="scope must be None when total_period_count is 0",
+    ):
+        _construct(arguments)
+
+
+def test_requires_scope_when_total_period_count_is_positive() -> None:
+    arguments = _valid_arguments()
+    arguments["scope"] = None
+
+    with pytest.raises(
+        InvalidHistoricalReconciliationEvaluationError,
+        match="scope must be non-None when total_period_count > 0",
+    ):
+        _construct(arguments)
+
+
+def test_rejects_invalid_scope_type() -> None:
+    arguments = _valid_arguments()
+    arguments["scope"] = "invalid_scope"
+
+    with pytest.raises(
+        InvalidHistoricalReconciliationEvaluationError,
+        match="scope must be HistoricalReconciliationEvaluationScope",
     ):
         _construct(arguments)

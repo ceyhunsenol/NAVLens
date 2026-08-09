@@ -38,11 +38,16 @@ def make_legacy_request(
     pricing_date: MarketDate,
     timestamp: datetime,
     period: ReturnPeriod,
+    *,
+    fund_id: str = "TEST_FUND",
+    holdings_source_id: str = "src_h",
+    security_price_source_id: str = "src_p",
+    fund_price_source_id: str = "src_f",
 ) -> HistoricalReconciliationRequest:
     alignment_request = PointInTimeAlignmentRequest(
-        fund_id="TEST_FUND",
-        holdings_source_id="src_h",
-        security_price_source_id="src_p",
+        fund_id=fund_id,
+        holdings_source_id=holdings_source_id,
+        security_price_source_id=security_price_source_id,
         prediction_timestamp=timestamp,
         policy=AlignmentPolicy(
             CurrencyCode("TRY"),
@@ -55,7 +60,7 @@ def make_legacy_request(
     return HistoricalReconciliationRequest(
         alignment_request=alignment_request,
         period=period,
-        fund_price_source_id="src_f",
+        fund_price_source_id=fund_price_source_id,
     )
 
 
@@ -140,13 +145,26 @@ def make_skipped_legacy_record(
     reason: HistoricalReconciliationSkipReason,
     start_day: int,
     end_day: int,
+    *,
+    fund_id: str = "TEST_FUND",
+    holdings_source_id: str = "src_h",
+    security_price_source_id: str = "src_p",
+    fund_price_source_id: str = "src_f",
 ) -> SkippedReconciliationRecord:
     timestamp = datetime(2026, 1, end_day, 10, tzinfo=UTC)
     period = ReturnPeriod(
         MarketDate(2026, 1, start_day),
         MarketDate(2026, 1, end_day),
     )
-    request = make_legacy_request(period.period_end_date, timestamp, period)
+    request = make_legacy_request(
+        period.period_end_date,
+        timestamp,
+        period,
+        fund_id=fund_id,
+        holdings_source_id=holdings_source_id,
+        security_price_source_id=security_price_source_id,
+        fund_price_source_id=fund_price_source_id,
+    )
     return SkippedReconciliationRecord(request=request, reason=reason)
 
 
