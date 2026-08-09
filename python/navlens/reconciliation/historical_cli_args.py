@@ -22,12 +22,10 @@ class HistoricalReconciliationCliArguments:
     config: HistoricalReconciliationRunConfiguration
 
 
-def build_historical_reconciliation_cli_parser(
-    prog: str = "navlens-evaluate-historical-reconciliation-csv",
-    description: str = "Evaluate historical fund return reconciliation over multiple periods.",
-) -> argparse.ArgumentParser:
-    """Build argument parser for historical reconciliation CLI command."""
-    parser = argparse.ArgumentParser(prog=prog, description=description)
+def add_historical_reconciliation_cli_arguments(
+    parser: argparse.ArgumentParser,
+) -> None:
+    """Register common legacy historical reconciliation arguments on a parser."""
     parser.add_argument(
         "--schedule-csv",
         required=True,
@@ -106,17 +104,23 @@ def build_historical_reconciliation_cli_parser(
         default="text",
         help="Output report format (default: text).",
     )
+
+
+def build_historical_reconciliation_cli_parser(
+    prog: str = "navlens-evaluate-historical-reconciliation-csv",
+    description: str = "Evaluate historical fund return reconciliation over multiple periods.",
+) -> argparse.ArgumentParser:
+    """Build argument parser for historical reconciliation CLI command."""
+    parser = argparse.ArgumentParser(prog=prog, description=description)
+    add_historical_reconciliation_cli_arguments(parser)
     return parser
 
 
-def parse_historical_reconciliation_cli_arguments(
-    argv: Sequence[str] | None = None,
-) -> HistoricalReconciliationCliArguments:
-    """Parse raw CLI arguments into HistoricalReconciliationCliArguments."""
-    parser = build_historical_reconciliation_cli_parser()
-    args = parser.parse_args(argv)
-
-    config = HistoricalReconciliationRunConfiguration(
+def extract_historical_reconciliation_run_configuration(
+    args: argparse.Namespace,
+) -> HistoricalReconciliationRunConfiguration:
+    """Extract validated HistoricalReconciliationRunConfiguration from parsed CLI namespace."""
+    return HistoricalReconciliationRunConfiguration(
         fund_id=args.fund_id,
         holdings_source_id=args.holdings_source_id,
         security_price_source_id=args.security_price_source_id,
@@ -127,6 +131,12 @@ def parse_historical_reconciliation_cli_arguments(
         max_staleness_calendar_days=args.max_staleness_calendar_days,
     )
 
+
+def extract_historical_reconciliation_cli_arguments(
+    args: argparse.Namespace,
+) -> HistoricalReconciliationCliArguments:
+    """Extract HistoricalReconciliationCliArguments from a parsed namespace."""
+    config = extract_historical_reconciliation_run_configuration(args)
     return HistoricalReconciliationCliArguments(
         schedule_csv=args.schedule_csv,
         holdings_csv=args.holdings_csv,
@@ -135,3 +145,12 @@ def parse_historical_reconciliation_cli_arguments(
         output_format=args.output_format,
         config=config,
     )
+
+
+def parse_historical_reconciliation_cli_arguments(
+    argv: Sequence[str] | None = None,
+) -> HistoricalReconciliationCliArguments:
+    """Parse raw CLI arguments into HistoricalReconciliationCliArguments."""
+    parser = build_historical_reconciliation_cli_parser()
+    args = parser.parse_args(argv)
+    return extract_historical_reconciliation_cli_arguments(args)

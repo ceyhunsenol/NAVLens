@@ -30,6 +30,7 @@ navlens-fetch-tefas = "navlens.sources.tefas.cli:main"
 navlens-reconcile-fund-csv = "navlens.reconciliation.cli:main"
 navlens-fx-reconcile-fund-csv = "navlens.reconciliation.fx_cli:main"
 navlens-evaluate-historical-reconciliation-csv = "navlens.reconciliation.historical_cli:main"
+navlens-evaluate-historical-fx-reconciliation-csv = "navlens.reconciliation.historical_fx_cli:main"
 
 [project.optional-dependencies]
 dev = [

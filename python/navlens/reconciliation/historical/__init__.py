@@ -28,6 +28,10 @@ from .fx_outcome import (
     SkippedFxReconciliationRecord,
 )
 from .fx_request import HistoricalFxReconciliationRequest
+from .fx_schedule_csv import (
+    HistoricalFxReconciliationRunConfiguration,
+    read_historical_fx_reconciliation_requests_csv,
+)
 from .outcome import (
     HistoricalReconciliationOutcome,
     HistoricalReconciliationRecord,
@@ -56,6 +60,7 @@ __all__ = [
     "HistoricalFxReconciliationOutcome",
     "HistoricalFxReconciliationRecord",
     "HistoricalFxReconciliationRequest",
+    "HistoricalFxReconciliationRunConfiguration",
     "HistoricalReconciliationDataset",
     "HistoricalReconciliationDatasetError",
     "HistoricalReconciliationEvaluation",
@@ -82,6 +87,7 @@ __all__ = [
     "build_historical_reconciliation_dataset",
     "evaluate_historical_reconciliation_dataset",
     "format_historical_reconciliation_evaluation",
+    "read_historical_fx_reconciliation_requests_csv",
     "read_historical_reconciliation_requests_csv",
     "serialize_historical_reconciliation_evaluation",
 ]

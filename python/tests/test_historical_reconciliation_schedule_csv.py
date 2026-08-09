@@ -318,7 +318,7 @@ def test_unexpected_programmer_error_propagates_unchanged(tmp_path: Path) -> Non
     csv_file.write_text(content, encoding="utf-8")
 
     with patch(
-        "navlens.reconciliation.historical.schedule_csv.ReturnPeriod",
+        "navlens.reconciliation.historical._schedule_csv_entry.ReturnPeriod",
         side_effect=RuntimeError("unexpected construction bug"),
     ):
         with pytest.raises(RuntimeError, match="unexpected construction bug"):

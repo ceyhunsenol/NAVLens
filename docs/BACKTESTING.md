@@ -215,3 +215,39 @@ The request schedule CSV specifies the period schedule and prediction timestamps
 - `0`: Dataset evaluated successfully and 0 periods were skipped.
 - `2`: Evaluation completed, but 1 or more periods were skipped (or all periods were skipped). Command-line syntax or invalid argument choice errors terminate with `argparse`'s standard exit code `2` before evaluation begins.
 - `1`: Handled operational, CSV format/parsing, or domain validation error (message printed to `stderr`).
+
+## Historical FX reconciliation evaluation CLI
+
+The package also provides an FX-aware historical reconciliation command line interface
+(`navlens-evaluate-historical-fx-reconciliation-csv`) extending legacy evaluation:
+
+```text
+navlens-evaluate-historical-fx-reconciliation-csv \
+  --schedule-csv schedule.csv \
+  --holdings-csv holdings.csv \
+  --security-prices-csv prices.csv \
+  --fx-rates-csv fx_rates.csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id AAL \
+  --holdings-source-id src_h \
+  --security-price-source-id src_p \
+  --fx-source-id src_fx \
+  --fund-price-source-id src_f \
+  --fund-base-currency TRY \
+  --price-adjustment unadjusted \
+  --required-fx-rate-kind non_cash_buying \
+  --minimum-observations 2 \
+  --max-staleness-calendar-days 5 \
+  --max-fx-staleness-calendar-days 3 \
+  --output-format text
+```
+
+It includes four FX-specific arguments:
+- `--fx-rates-csv`: Path to CSV containing FX rate observations.
+- `--fx-source-id`: Source identifier for FX rates.
+- `--required-fx-rate-kind`: Required FX rate variant (e.g. `non_cash_buying`).
+- `--max-fx-staleness-calendar-days`: Maximum allowed FX rate staleness in calendar days.
+
+`navlens-evaluate-historical-fx-reconciliation-csv` shares the exact schedule CSV format,
+output formats (`text`, `json`), and exit-code semantics (`0`, `2`, `1`) with the legacy
+historical reconciliation CLI.
