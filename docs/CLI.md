@@ -110,3 +110,22 @@ navlens-fx-reconcile-fund-csv \
 ```
 
 Expected output includes the FX-adjusted component contributions, currency adjustments, coverage ratios, and exact decimal values for the reconciliation terms.
+
+## Predict next published NAV return from CSV fund unit price snapshots
+
+The `navlens-predict-fund-csv` CLI runs the provider-neutral point-in-time prediction pipeline for a single fund return.
+
+```shell
+navlens-predict-fund-csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id AAL \
+  --source-id tefas \
+  --prediction-timestamp 2026-07-28T00:00:00Z \
+  --prediction-date 2026-07-27 \
+  --pricing-as-of-date 2026-07-27 \
+  --target-date 2026-07-28 \
+  --lookback 5 \
+  --output-format text
+```
+
+JSON output (`--output-format json`) emits deterministic UTF-8 versioned JSON matching schema `navlens-single-return-prediction-v1`.

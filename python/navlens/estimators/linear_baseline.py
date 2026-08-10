@@ -16,6 +16,44 @@ from navlens.features import LaggedReturnDataset, build_latest_feature_row
 MODEL_NAME = "linear-regression-baseline"
 
 
+@dataclass(frozen=True, slots=True)
+class LinearBaselineConfig:
+    """Canonical model configuration and minimum training history rules."""
+
+    lookback: int = 5
+    minimum_training_returns: int | None = None
+
+    def __post_init__(self) -> None:
+        if (
+            isinstance(self.lookback, bool)
+            or not isinstance(self.lookback, int)
+            or self.lookback < 1
+        ):
+            raise ValueError("lookback must be at least one")
+        if self.minimum_training_returns is not None:
+            if isinstance(self.minimum_training_returns, bool) or not isinstance(
+                self.minimum_training_returns, int
+            ):
+                raise ValueError("minimum_training_returns must be an integer or None")
+            required = self.required_minimum_returns
+            if self.minimum_training_returns < required:
+                raise ValueError(f"minimum_training_returns must be at least {required}")
+
+    @property
+    def required_minimum_returns(self) -> int:
+        """The absolute minimum allowed returns threshold for fitting (lookback + 3)."""
+        return self.lookback + 3
+
+    @property
+    def resolved_minimum_training_returns(self) -> int:
+        """The resolved minimum training returns threshold required for this execution."""
+        return (
+            self.minimum_training_returns
+            if self.minimum_training_returns is not None
+            else self.required_minimum_returns
+        )
+
+
 @dataclass(frozen=True)
 class LinearBaselineArtifact:
     """A fitted estimator plus the metadata required to reproduce its contract."""

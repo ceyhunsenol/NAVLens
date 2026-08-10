@@ -103,6 +103,13 @@ The supported end-to-end command is:
 navlens-backtest-tefas AAL --days 365 --lookback 5
 ```
 
+Single point-in-time predictions for the next published NAV return are executed via:
+
+```text
+navlens-predict-fund-csv --fund-unit-prices-csv data.csv --fund-id AAL --source-id tefas --prediction-timestamp 2026-07-28T00:00:00Z --prediction-date 2026-07-27 --pricing-as-of-date 2026-07-27 --target-date 2026-07-28
+```
+
+
 Python owns model fitting and chronological orchestration. Rust owns series
 validation and the published backtest metrics:
 

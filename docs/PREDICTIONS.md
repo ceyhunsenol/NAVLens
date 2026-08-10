@@ -68,3 +68,14 @@ be reported together.
 NAVLens transports the model version, feature-set version, data cut-off, target
 date, and nominal confidence with every probabilistic prediction. Persistence
 and UI display of that metadata remain future adapter responsibilities.
+
+## Single point-in-time predictions
+
+Provider-neutral point-in-time single predictions are executed via
+`predict_next_published_nav_return_from_snapshots` (or CLI `navlens-predict-fund-csv`).
+
+The pipeline selects snapshots available at or before `prediction_timestamp` up to
+`pricing_as_of_date`, delegates return calculation to Rust `calculate_price_returns`,
+trains baseline models on visible historical returns, and packages the result as a
+`SingleReturnPredictionResult` containing immutable provenance metadata and a schema-versioned
+`navlens-single-return-prediction-v1` JSON representation. Current single predictions consume price-history baseline models; holdings-aware, FX-aware, and intraday predictions remain planned capabilities.
