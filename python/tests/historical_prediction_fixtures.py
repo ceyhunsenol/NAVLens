@@ -9,8 +9,10 @@ from navlens.prediction import (
     predict_next_published_nav_return_from_snapshots,
 )
 from navlens.prediction.historical import (
+    HistoricalPredictionDataset,
     HistoricalPredictionEvaluationScope,
     HistoricalPredictionRequest,
+    build_historical_prediction_dataset,
 )
 
 
@@ -166,3 +168,16 @@ def make_period_return(
         end_date = MarketDate(2026, 1, 11)
     period = ReturnPeriod(start_date, end_date)
     return PeriodDecimalReturn(period, return_decimal)
+
+
+def make_real_historical_prediction_dataset(
+    requests: tuple[HistoricalPredictionRequest, ...],
+    snapshots: list[FundUnitPriceSnapshot] | None = None,
+    scope: HistoricalPredictionEvaluationScope | None = None,
+) -> HistoricalPredictionDataset:
+    """Produce a real HistoricalPredictionDataset via the orchestrator."""
+    if scope is None:
+        scope = make_scope()
+    if snapshots is None:
+        snapshots = sample_snapshots(fund_id=scope.fund_id, source_id=scope.source_id, count=20)
+    return build_historical_prediction_dataset(scope, requests, snapshots)

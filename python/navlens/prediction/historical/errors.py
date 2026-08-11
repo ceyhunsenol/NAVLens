@@ -70,3 +70,19 @@ class MissingHistoricalPredictionStartObservationError(HistoricalPredictionDatas
 
 class UnexpectedHistoricalPredictionReturnCardinalityError(HistoricalPredictionDatasetError):
     """Raised when native return calculation produces an unexpected number of period returns."""
+
+
+class InvalidHistoricalPredictionEvaluationError(HistoricalPredictionDatasetError):
+    """Raised when a historical prediction evaluation violates contract invariants."""
+
+
+class UnsupportedHistoricalPredictionDatasetError(HistoricalPredictionDatasetError):
+    """Raised when a dataset type is unsupported for historical prediction evaluation."""
+
+
+class UnknownHistoricalPredictionOutcomeError(HistoricalPredictionDatasetError):
+    """Raised when a dataset outcome type is unrecognized during evaluation."""
+
+
+class UnknownHistoricalPredictionSkipReasonError(HistoricalPredictionDatasetError):
+    """Raised when a dataset skip reason type is unrecognized during evaluation."""

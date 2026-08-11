@@ -7,12 +7,20 @@ from .errors import (
     DuplicateHistoricalPredictionScheduleError,
     HistoricalPredictionDatasetError,
     InvalidHistoricalPredictionDatasetError,
+    InvalidHistoricalPredictionEvaluationError,
     InvalidHistoricalPredictionOutcomeError,
     InvalidHistoricalPredictionRequestError,
     InvalidHistoricalPredictionScopeError,
     MissingHistoricalPredictionStartObservationError,
     MixedHistoricalPredictionScopeError,
     UnexpectedHistoricalPredictionReturnCardinalityError,
+    UnknownHistoricalPredictionOutcomeError,
+    UnknownHistoricalPredictionSkipReasonError,
+    UnsupportedHistoricalPredictionDatasetError,
+)
+from .evaluation import (
+    HistoricalPredictionEvaluation,
+    evaluate_historical_prediction_dataset,
 )
 from .outcome import (
     HistoricalPredictionOutcome,
@@ -34,6 +42,7 @@ __all__ = [
     "DuplicateHistoricalPredictionScheduleError",
     "HistoricalPredictionDataset",
     "HistoricalPredictionDatasetError",
+    "HistoricalPredictionEvaluation",
     "HistoricalPredictionEvaluationScope",
     "HistoricalPredictionOutcome",
     "HistoricalPredictionRecord",
@@ -41,6 +50,7 @@ __all__ = [
     "HistoricalPredictionSkipReason",
     "InsufficientVisiblePredictionHistorySkip",
     "InvalidHistoricalPredictionDatasetError",
+    "InvalidHistoricalPredictionEvaluationError",
     "InvalidHistoricalPredictionOutcomeError",
     "InvalidHistoricalPredictionRequestError",
     "InvalidHistoricalPredictionScopeError",
@@ -51,5 +61,9 @@ __all__ = [
     "SkippedPredictionRecord",
     "TargetObservationNotYetAvailableSkip",
     "UnexpectedHistoricalPredictionReturnCardinalityError",
+    "UnknownHistoricalPredictionOutcomeError",
+    "UnknownHistoricalPredictionSkipReasonError",
+    "UnsupportedHistoricalPredictionDatasetError",
     "build_historical_prediction_dataset",
+    "evaluate_historical_prediction_dataset",
 ]
