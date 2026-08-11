@@ -129,3 +129,34 @@ navlens-predict-fund-csv \
 ```
 
 JSON output (`--output-format json`) emits deterministic UTF-8 versioned JSON matching schema `navlens-single-return-prediction-v1`.
+
+## Evaluate historical point-in-time NAV return predictions
+
+The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological
+prediction schedule against provider-neutral fund unit-price snapshots. Each
+prediction sees only snapshots available at its `prediction_timestamp`; the
+realized target is selected independently at `evaluation_timestamp`.
+
+```shell
+navlens-evaluate-historical-prediction-csv \
+  --schedule-csv prediction_schedule.csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id AAL \
+  --source-id tefas \
+  --lookback 5 \
+  --confidence-level 0.90 \
+  --model-version v1 \
+  --output-format text
+```
+
+The schedule CSV requires these columns:
+
+```text
+prediction_date,pricing_as_of_date,target_date,prediction_timestamp,evaluation_timestamp
+```
+
+Dates use `YYYY-MM-DD`; timestamps must be timezone-aware UTC values. Text
+output summarizes Rust-produced backtest metrics and typed skip counts. JSON
+output is deterministic UTF-8 schema version `1`. Exit code `0` means every
+period was evaluated, `2` means at least one period was skipped, and `1` means
+an operational input or evaluation error occurred.

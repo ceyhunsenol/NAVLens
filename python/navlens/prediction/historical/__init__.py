@@ -29,6 +29,10 @@ from .outcome import (
     SkippedPredictionRecord,
 )
 from .request import HistoricalPredictionRequest
+from .schedule_csv import (
+    CsvHistoricalPredictionScheduleSourceError,
+    read_historical_prediction_requests_csv,
+)
 from .scope import HistoricalPredictionEvaluationScope
 from .serialization import serialize_historical_prediction_evaluation
 from .skip_reason import (
@@ -40,6 +44,7 @@ from .skip_reason import (
 )
 
 __all__ = [
+    "CsvHistoricalPredictionScheduleSourceError",
     "DecreasingHistoricalPredictionScheduleError",
     "DuplicateHistoricalPredictionScheduleError",
     "HistoricalPredictionDataset",
@@ -69,5 +74,6 @@ __all__ = [
     "build_historical_prediction_dataset",
     "evaluate_historical_prediction_dataset",
     "format_historical_prediction_evaluation",
+    "read_historical_prediction_requests_csv",
     "serialize_historical_prediction_evaluation",
 ]
