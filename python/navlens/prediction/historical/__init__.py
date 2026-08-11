@@ -1,5 +1,6 @@
 """Provider-neutral point-in-time historical prediction contracts."""
 
+from .builder import build_historical_prediction_dataset
 from .dataset import HistoricalPredictionDataset
 from .errors import (
     DecreasingHistoricalPredictionScheduleError,
@@ -9,7 +10,9 @@ from .errors import (
     InvalidHistoricalPredictionOutcomeError,
     InvalidHistoricalPredictionRequestError,
     InvalidHistoricalPredictionScopeError,
+    MissingHistoricalPredictionStartObservationError,
     MixedHistoricalPredictionScopeError,
+    UnexpectedHistoricalPredictionReturnCardinalityError,
 )
 from .outcome import (
     HistoricalPredictionOutcome,
@@ -41,9 +44,12 @@ __all__ = [
     "InvalidHistoricalPredictionOutcomeError",
     "InvalidHistoricalPredictionRequestError",
     "InvalidHistoricalPredictionScopeError",
+    "MissingHistoricalPredictionStartObservationError",
     "MissingRealizedObservationSkip",
     "MixedHistoricalPredictionScopeError",
     "NoEligiblePredictionSnapshotsSkip",
     "SkippedPredictionRecord",
     "TargetObservationNotYetAvailableSkip",
+    "UnexpectedHistoricalPredictionReturnCardinalityError",
+    "build_historical_prediction_dataset",
 ]

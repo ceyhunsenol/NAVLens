@@ -62,3 +62,11 @@ class MixedHistoricalPredictionScopeError(HistoricalPredictionDatasetError):
             f"expected {expected_text}, got {actual_text}{req_text}"
         )
         super().__init__(message)
+
+
+class MissingHistoricalPredictionStartObservationError(HistoricalPredictionDatasetError):
+    """Raised when evaluation-time exact start snapshot selection returns nothing."""
+
+
+class UnexpectedHistoricalPredictionReturnCardinalityError(HistoricalPredictionDatasetError):
+    """Raised when native return calculation produces an unexpected number of period returns."""
