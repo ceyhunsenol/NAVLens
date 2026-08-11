@@ -22,6 +22,7 @@ from .evaluation import (
     HistoricalPredictionEvaluation,
     evaluate_historical_prediction_dataset,
 )
+from .formatting import format_historical_prediction_evaluation
 from .outcome import (
     HistoricalPredictionOutcome,
     HistoricalPredictionRecord,
@@ -29,6 +30,7 @@ from .outcome import (
 )
 from .request import HistoricalPredictionRequest
 from .scope import HistoricalPredictionEvaluationScope
+from .serialization import serialize_historical_prediction_evaluation
 from .skip_reason import (
     HistoricalPredictionSkipReason,
     InsufficientVisiblePredictionHistorySkip,
@@ -66,4 +68,6 @@ __all__ = [
     "UnsupportedHistoricalPredictionDatasetError",
     "build_historical_prediction_dataset",
     "evaluate_historical_prediction_dataset",
+    "format_historical_prediction_evaluation",
+    "serialize_historical_prediction_evaluation",
 ]
