@@ -3,10 +3,11 @@
 from pathlib import Path
 
 from navlens.prediction.historical import (
+    HistoricalPredictionRunResult,
     build_historical_prediction_dataset,
     evaluate_historical_prediction_dataset,
     read_historical_prediction_requests_csv,
-    serialize_historical_prediction_evaluation,
+    serialize_historical_prediction_run_result,
 )
 from navlens.prediction.historical_cli_args import (
     HistoricalPredictionCliArguments,
@@ -28,13 +29,16 @@ def test_csv_orchestration_matches_direct_canonical_pipeline(tmp_path: Path) -> 
     requests = read_historical_prediction_requests_csv(arguments.schedule_csv)
     snapshots = read_fund_unit_prices_csv(arguments.fund_unit_prices_csv)
     dataset = build_historical_prediction_dataset(arguments.scope, requests, snapshots)
-    expected = evaluate_historical_prediction_dataset(dataset)
-
-    assert serialize_historical_prediction_evaluation(actual) == (
-        serialize_historical_prediction_evaluation(expected)
+    expected = HistoricalPredictionRunResult(
+        dataset=dataset,
+        evaluation=evaluate_historical_prediction_dataset(dataset),
     )
-    assert actual.total_period_count == 2
-    assert actual.evaluated_period_count == 2
+
+    assert serialize_historical_prediction_run_result(actual) == (
+        serialize_historical_prediction_run_result(expected)
+    )
+    assert actual.evaluation.total_period_count == 2
+    assert actual.evaluation.evaluated_period_count == 2
 
 
 def test_future_target_snapshot_is_classified_without_leaking(tmp_path: Path) -> None:
@@ -48,25 +52,25 @@ def test_future_target_snapshot_is_classified_without_leaking(tmp_path: Path) ->
         encoding="utf-8",
     )
 
-    evaluation = evaluate_historical_prediction_from_csv(
+    result = evaluate_historical_prediction_from_csv(
         parse_historical_prediction_cli_arguments(argv)
     )
 
-    assert evaluation.evaluated_period_count == 0
-    assert evaluation.target_not_yet_available_count == 1
-    assert evaluation.missing_target_observation_count == 0
+    assert result.evaluation.evaluated_period_count == 0
+    assert result.evaluation.target_not_yet_available_count == 1
+    assert result.evaluation.missing_target_observation_count == 0
 
 
 def test_wrong_source_is_reported_as_typed_skip(tmp_path: Path) -> None:
     argv = write_historical_prediction_cli_files(tmp_path)
     argv[argv.index("--source-id") + 1] = "OTHER_SOURCE"
 
-    evaluation = evaluate_historical_prediction_from_csv(
+    result = evaluate_historical_prediction_from_csv(
         parse_historical_prediction_cli_arguments(argv)
     )
 
-    assert evaluation.evaluated_period_count == 0
-    assert evaluation.no_eligible_snapshots_count == 2
+    assert result.evaluation.evaluated_period_count == 0
+    assert result.evaluation.no_eligible_snapshots_count == 2
 
 
 def test_orchestrator_rejects_wrong_argument_contract() -> None:

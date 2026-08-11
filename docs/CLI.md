@@ -156,7 +156,10 @@ prediction_date,pricing_as_of_date,target_date,prediction_timestamp,evaluation_t
 ```
 
 Dates use `YYYY-MM-DD`; timestamps must be timezone-aware UTC values. Text
-output summarizes Rust-produced backtest metrics and typed skip counts. JSON
-output is deterministic UTF-8 schema version `1`. Exit code `0` means every
-period was evaluated, `2` means at least one period was skipped, and `1` means
-an operational input or evaluation error occurred.
+output reports Rust-produced aggregate backtest metrics followed by one ordered
+audit row per period. Successful rows include predicted and realized decimal
+returns; skipped rows include a stable typed reason code. JSON output contains
+the same aggregate evaluation and period provenance as deterministic UTF-8
+schema version `1`. Exit code `0` means every period was evaluated, `2` means
+at least one period was skipped, and `1` means an operational input or
+evaluation error occurred.

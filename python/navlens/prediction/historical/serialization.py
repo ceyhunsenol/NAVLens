@@ -21,13 +21,19 @@ def serialize_historical_prediction_evaluation(
             f"evaluation must be a HistoricalPredictionEvaluation instance, got {target_type}"
         )
 
-    payload = {
+    return _encode_json(_evaluation_payload(evaluation))
+
+
+def _evaluation_payload(evaluation: HistoricalPredictionEvaluation) -> dict[str, Any]:
+    return {
         "counts": _counts_payload(evaluation),
         "metrics": _metrics_payload(evaluation.metrics),
         "schema_version": _SCHEMA_VERSION,
         "scope": _scope_payload(evaluation.scope),
     }
 
+
+def _encode_json(payload: dict[str, Any]) -> bytes:
     return (json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n").encode("utf-8")
 
 

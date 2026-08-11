@@ -76,6 +76,10 @@ class InvalidHistoricalPredictionEvaluationError(HistoricalPredictionDatasetErro
     """Raised when a historical prediction evaluation violates contract invariants."""
 
 
+class InvalidHistoricalPredictionRunResultError(HistoricalPredictionDatasetError):
+    """Raised when a historical prediction run result is internally inconsistent."""
+
+
 class UnsupportedHistoricalPredictionDatasetError(HistoricalPredictionDatasetError):
     """Raised when a dataset type is unsupported for historical prediction evaluation."""
 

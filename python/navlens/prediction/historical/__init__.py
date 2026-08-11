@@ -10,6 +10,7 @@ from .errors import (
     InvalidHistoricalPredictionEvaluationError,
     InvalidHistoricalPredictionOutcomeError,
     InvalidHistoricalPredictionRequestError,
+    InvalidHistoricalPredictionRunResultError,
     InvalidHistoricalPredictionScopeError,
     MissingHistoricalPredictionStartObservationError,
     MixedHistoricalPredictionScopeError,
@@ -29,6 +30,9 @@ from .outcome import (
     SkippedPredictionRecord,
 )
 from .request import HistoricalPredictionRequest
+from .run_formatting import format_historical_prediction_run_result
+from .run_result import HistoricalPredictionRunResult
+from .run_serialization import serialize_historical_prediction_run_result
 from .schedule_csv import (
     CsvHistoricalPredictionScheduleSourceError,
     read_historical_prediction_requests_csv,
@@ -54,12 +58,14 @@ __all__ = [
     "HistoricalPredictionOutcome",
     "HistoricalPredictionRecord",
     "HistoricalPredictionRequest",
+    "HistoricalPredictionRunResult",
     "HistoricalPredictionSkipReason",
     "InsufficientVisiblePredictionHistorySkip",
     "InvalidHistoricalPredictionDatasetError",
     "InvalidHistoricalPredictionEvaluationError",
     "InvalidHistoricalPredictionOutcomeError",
     "InvalidHistoricalPredictionRequestError",
+    "InvalidHistoricalPredictionRunResultError",
     "InvalidHistoricalPredictionScopeError",
     "MissingHistoricalPredictionStartObservationError",
     "MissingRealizedObservationSkip",
@@ -74,6 +80,8 @@ __all__ = [
     "build_historical_prediction_dataset",
     "evaluate_historical_prediction_dataset",
     "format_historical_prediction_evaluation",
+    "format_historical_prediction_run_result",
     "read_historical_prediction_requests_csv",
     "serialize_historical_prediction_evaluation",
+    "serialize_historical_prediction_run_result",
 ]

@@ -5,16 +5,14 @@ from unittest.mock import patch
 
 import pytest
 from navlens.prediction.historical import (
-    format_historical_prediction_evaluation,
-    serialize_historical_prediction_evaluation,
+    format_historical_prediction_run_result,
+    serialize_historical_prediction_run_result,
 )
 from navlens.prediction.historical_cli import main
 from navlens.prediction.historical_cli_args import (
     parse_historical_prediction_cli_arguments,
 )
-from navlens.prediction.historical_cli_output import (
-    write_historical_prediction_evaluation,
-)
+from navlens.prediction.historical_cli_output import write_historical_prediction_run_result
 from navlens.prediction.historical_csv import evaluate_historical_prediction_from_csv
 from tests.historical_prediction_cli_fixtures import (
     write_historical_prediction_cli_files,
@@ -27,12 +25,12 @@ def test_main_defaults_to_exact_text_output(
 ) -> None:
     argv = write_historical_prediction_cli_files(tmp_path)
     arguments = parse_historical_prediction_cli_arguments(argv)
-    evaluation = evaluate_historical_prediction_from_csv(arguments)
+    result = evaluate_historical_prediction_from_csv(arguments)
 
     assert arguments.output_format == "text"
     assert main(argv) == 0
     captured = capsys.readouterr()
-    assert captured.out == format_historical_prediction_evaluation(evaluation) + "\n"
+    assert captured.out == format_historical_prediction_run_result(result) + "\n"
     assert captured.err == ""
 
 
@@ -42,11 +40,11 @@ def test_main_writes_exact_json_bytes(
 ) -> None:
     argv = write_historical_prediction_cli_files(tmp_path) + ["--output-format", "json"]
     arguments = parse_historical_prediction_cli_arguments(argv)
-    evaluation = evaluate_historical_prediction_from_csv(arguments)
+    result = evaluate_historical_prediction_from_csv(arguments)
 
     assert main(argv) == 0
     captured = capsysbinary.readouterr()
-    assert captured.out == serialize_historical_prediction_evaluation(evaluation)
+    assert captured.out == serialize_historical_prediction_run_result(result)
     assert captured.err == b""
 
 
@@ -110,11 +108,11 @@ def test_output_writer_rejects_unsupported_format(tmp_path: Path) -> None:
     arguments = parse_historical_prediction_cli_arguments(
         write_historical_prediction_cli_files(tmp_path)
     )
-    evaluation = evaluate_historical_prediction_from_csv(arguments)
+    result = evaluate_historical_prediction_from_csv(arguments)
 
     with pytest.raises(ValueError, match="unsupported output format"):
-        write_historical_prediction_evaluation(
-            evaluation,
+        write_historical_prediction_run_result(
+            result,
             "xml",
             text_stream=None,  # type: ignore[arg-type]
             binary_stream=None,  # type: ignore[arg-type]

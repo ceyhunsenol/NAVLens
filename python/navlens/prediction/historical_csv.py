@@ -3,7 +3,7 @@
 from navlens.sources import read_fund_unit_prices_csv
 
 from .historical import (
-    HistoricalPredictionEvaluation,
+    HistoricalPredictionRunResult,
     build_historical_prediction_dataset,
     evaluate_historical_prediction_dataset,
     read_historical_prediction_requests_csv,
@@ -13,8 +13,8 @@ from .historical_cli_args import HistoricalPredictionCliArguments
 
 def evaluate_historical_prediction_from_csv(
     arguments: HistoricalPredictionCliArguments,
-) -> HistoricalPredictionEvaluation:
-    """Read inputs, build the historical prediction dataset, and evaluate it."""
+) -> HistoricalPredictionRunResult:
+    """Read inputs and retain both ordered outcomes and their native evaluation."""
     if not isinstance(arguments, HistoricalPredictionCliArguments):
         target_type = type(arguments).__name__
         raise TypeError(
@@ -24,4 +24,5 @@ def evaluate_historical_prediction_from_csv(
     requests = read_historical_prediction_requests_csv(arguments.schedule_csv)
     snapshots = read_fund_unit_prices_csv(arguments.fund_unit_prices_csv)
     dataset = build_historical_prediction_dataset(arguments.scope, requests, snapshots)
-    return evaluate_historical_prediction_dataset(dataset)
+    evaluation = evaluate_historical_prediction_dataset(dataset)
+    return HistoricalPredictionRunResult(dataset=dataset, evaluation=evaluation)
