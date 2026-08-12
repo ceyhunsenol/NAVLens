@@ -9,12 +9,26 @@ description = "Explainable investment-fund return research powered by Rust and P
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "NAVLens contributors" }]
+keywords = [
+    "backtesting",
+    "finance",
+    "investment-funds",
+    "pyo3",
+    "rust",
+]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "License :: OSI Approved :: MIT License",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Typing :: Typed",
 ]
 dependencies = [
     "numpy>=2.0,<3",
@@ -22,6 +36,12 @@ dependencies = [
     "scikit-learn>=1.6,<2",
     "tzdata>=2024.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/ceyhunsenol/NAVLens"
+Repository = "https://github.com/ceyhunsenol/NAVLens"
+Issues = "https://github.com/ceyhunsenol/NAVLens/issues"
+Changelog = "https://github.com/ceyhunsenol/NAVLens/blob/master/CHANGELOG.md"
 
 [project.scripts]
 navlens-align-holdings-csv = "navlens.alignment.cli:main"
