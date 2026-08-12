@@ -229,10 +229,26 @@ missing. It never substitutes a nearby date. The report includes predicted and
 realized returns, signed and absolute error, direction correctness, interval
 coverage, evaluation timestamp, and TEFAS raw-artifact provenance.
 
+For multiple explicit prediction artifacts, use the failure-isolated batch
+command:
+
+```shell
+navlens-evaluate-tefas-prediction-batch \
+  artifacts/predictions/aal-2026-08-14.json \
+  artifacts/predictions/aal-2026-08-15.json \
+  --as-of 2026-08-16 --output-format json \
+  --output artifacts/evaluations/aal-batch.json
+```
+
+An expected failure in one artifact does not discard successful evaluations.
+The exit code is `0` for complete success, `2` for partial success, and `1`
+when every artifact fails. Successful entries retain the complete versioned
+evaluation contract and can be consumed directly by the history command.
+
 ### Summarize stored live prediction evaluations
 
-`navlens-summarize-prediction-evaluations` combines explicit evaluation
-artifacts into one native backtest report:
+`navlens-summarize-prediction-evaluations` combines explicit single or batch
+evaluation artifacts into one native backtest report:
 
 ```shell
 navlens-summarize-prediction-evaluations \

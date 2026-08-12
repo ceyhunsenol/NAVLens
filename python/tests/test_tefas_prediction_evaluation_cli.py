@@ -48,3 +48,19 @@ def test_cli_evaluates_and_stores_json_report(monkeypatch, capsys, tmp_path: Pat
     assert payload["schema_version"] == "navlens-live-prediction-evaluation-v1"
     assert payload["predicted_return_decimal"] == 0.01
     assert payload["realized_return_decimal"] == pytest.approx(0.02)
+
+
+def test_cli_rejects_target_after_evaluation_as_of(monkeypatch, capsys, tmp_path: Path) -> None:
+    artifact_path = write_prediction_artifact(tmp_path / "prediction.json")
+    monkeypatch.setattr(
+        tefas_evaluation_cli,
+        "AcquireTefasPrices",
+        lambda client, raw_root: _FakeAcquisition(),
+    )
+
+    exit_code = tefas_evaluation_cli.main([str(artifact_path), "--as-of", "2026-07-20"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert captured.out == ""
+    assert "after evaluation as-of date" in captured.err

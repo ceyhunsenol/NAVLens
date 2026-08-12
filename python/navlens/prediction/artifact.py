@@ -17,6 +17,7 @@ from navlens._timestamps import validate_utc_timestamp
 from .artifact_schemas import (
     LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION,
     SINGLE_RETURN_PREDICTION_SCHEMA_VERSION,
+    TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION,
 )
 from .errors import InvalidPredictionArtifactError
 
@@ -40,6 +41,14 @@ _REQUIRED_EVALUATION_KEYS = (_REQUIRED_KEYS - {"expected_return_decimal"}) | {
     "evaluated_at",
     "predicted_return_decimal",
     "realized_return_decimal",
+}
+_REQUIRED_EVALUATION_BATCH_KEYS = {
+    "failed_count",
+    "failures",
+    "schema_version",
+    "succeeded_count",
+    "successes",
+    "total_count",
 }
 
 
@@ -93,7 +102,59 @@ def load_live_prediction_evaluation_artifact(
     path: str | Path,
 ) -> LivePredictionEvaluationArtifact:
     """Load a live-evaluation JSON artifact for aggregate native evaluation."""
+    return _build_live_prediction_evaluation_artifact(_read_payload(Path(path)))
+
+
+def load_live_prediction_evaluation_artifacts(
+    path: str | Path,
+) -> tuple[LivePredictionEvaluationArtifact, ...]:
+    """Load one evaluation artifact or all successes from one batch artifact."""
     payload = _read_payload(Path(path))
+    if payload.get("schema_version") == LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION:
+        return (_build_live_prediction_evaluation_artifact(payload),)
+    if payload.get("schema_version") != TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION:
+        raise InvalidPredictionArtifactError(
+            f"unsupported evaluation artifact schema: {payload.get('schema_version')!r}"
+        )
+    successes = _evaluation_batch_successes(payload)
+    if not successes:
+        raise InvalidPredictionArtifactError(
+            "evaluation batch must contain at least one successful evaluation"
+        )
+    return tuple(_build_live_prediction_evaluation_artifact(item) for item in successes)
+
+
+def _evaluation_batch_successes(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    missing = sorted(_REQUIRED_EVALUATION_BATCH_KEYS - payload.keys())
+    if missing:
+        raise InvalidPredictionArtifactError(
+            f"evaluation batch is missing required fields: {', '.join(missing)}"
+        )
+    successes = payload["successes"]
+    failures = payload["failures"]
+    if not isinstance(successes, list) or not all(isinstance(item, dict) for item in successes):
+        raise InvalidPredictionArtifactError("evaluation batch successes must be objects")
+    if not isinstance(failures, list):
+        raise InvalidPredictionArtifactError("evaluation batch failures must be a list")
+    counts = tuple(
+        _strict_count(payload, field)
+        for field in ("succeeded_count", "failed_count", "total_count")
+    )
+    if counts != (len(successes), len(failures), len(successes) + len(failures)):
+        raise InvalidPredictionArtifactError("evaluation batch counts do not match its outcomes")
+    return successes
+
+
+def _strict_count(payload: dict[str, Any], field: str) -> int:
+    value = payload[field]
+    if type(value) is not int or value < 0:
+        raise InvalidPredictionArtifactError(f"{field} must be a non-negative integer")
+    return value
+
+
+def _build_live_prediction_evaluation_artifact(
+    payload: dict[str, Any],
+) -> LivePredictionEvaluationArtifact:
     missing = sorted(_REQUIRED_EVALUATION_KEYS - payload.keys())
     if missing:
         raise InvalidPredictionArtifactError(

@@ -3,3 +3,4 @@
 SINGLE_RETURN_PREDICTION_SCHEMA_VERSION = "navlens-single-return-prediction-v1"
 LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION = "navlens-live-prediction-evaluation-v1"
 LIVE_PREDICTION_HISTORY_SCHEMA_VERSION = "navlens-live-prediction-history-v1"
+TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION = "navlens-tefas-prediction-evaluation-batch-v1"

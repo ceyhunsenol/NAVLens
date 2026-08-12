@@ -4,6 +4,7 @@ from .artifact import (
     LivePredictionEvaluationArtifact,
     SingleReturnPredictionArtifact,
     load_live_prediction_evaluation_artifact,
+    load_live_prediction_evaluation_artifacts,
     load_single_return_prediction_artifact,
 )
 from .contracts import SingleReturnPredictionResult
@@ -69,6 +70,7 @@ __all__ = [
     "format_prediction_text",
     "load_single_return_prediction_artifact",
     "load_live_prediction_evaluation_artifact",
+    "load_live_prediction_evaluation_artifacts",
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",
     "predict_next_published_nav_return_from_tefas_acquisition",

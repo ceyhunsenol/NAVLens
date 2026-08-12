@@ -16,6 +16,7 @@ follows Semantic Versioning from the first public release.
 - Atomic, no-overwrite artifact output for single and batch TEFAS predictions.
 - Canonical realized-return evaluation for stored single-fund TEFAS predictions.
 - Aggregate native performance reports across stored live prediction evaluations.
+- Failure-isolated batch evaluation for stored TEFAS prediction artifacts.
 
 ## [0.1.0] - 2026-08-12
 
