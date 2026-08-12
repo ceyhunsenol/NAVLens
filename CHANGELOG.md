@@ -5,6 +5,8 @@ follows Semantic Versioning from the first public release.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-12
+
 ### Added
 
 - Canonical Rust financial types, calendars, portfolio-return calculations,
@@ -23,3 +25,6 @@ follows Semantic Versioning from the first public release.
 - Intraday portfolio changes cannot be reconstructed from monthly disclosures.
 - The implemented prediction model is a research baseline, not investment
   advice or a promise of future returns.
+
+[Unreleased]: https://github.com/ceyhunsenol/NAVLens/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ceyhunsenol/NAVLens/releases/tag/v0.1.0
