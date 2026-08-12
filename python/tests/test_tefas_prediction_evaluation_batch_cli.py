@@ -7,7 +7,10 @@ from navlens.prediction import live_history_cli, tefas_evaluation_batch_cli
 from navlens.prediction.artifact import load_live_prediction_evaluation_artifacts
 from navlens.prediction.errors import InvalidPredictionArtifactError
 from navlens.sources.tefas import TefasAcquisitionResult, TefasPriceRecord
-from prediction_artifact_fixtures import write_prediction_artifact
+from prediction_artifact_fixtures import (
+    prediction_artifact_payload,
+    write_prediction_artifact,
+)
 
 
 class _FakeAcquisition:
@@ -65,6 +68,50 @@ def test_history_cli_consumes_successes_from_batch_artifact(
     assert captured.out == ""
     assert captured.err == ""
     assert payload["sample_count"] == 1
+
+
+def test_evaluation_batch_consumes_prediction_batch_artifact(
+    monkeypatch, capsys, tmp_path: Path
+) -> None:
+    prediction_batch = tmp_path / "predictions.json"
+    prediction_batch.write_text(
+        json.dumps(
+            {
+                "failed_count": 0,
+                "failures": [],
+                "schema_version": "navlens-tefas-prediction-batch-v1",
+                "succeeded_count": 2,
+                "successes": [
+                    prediction_artifact_payload(),
+                    prediction_artifact_payload(fund_id="PHE"),
+                ],
+                "total_count": 2,
+            }
+        ),
+        encoding="utf-8",
+    )
+    output = tmp_path / "evaluations.json"
+    _replace_acquisition(monkeypatch)
+
+    exit_code = tefas_evaluation_batch_cli.main(
+        [
+            str(prediction_batch),
+            "--as-of",
+            "2026-08-12",
+            "--output-format",
+            "json",
+            "--output",
+            str(output),
+        ]
+    )
+
+    captured = capsys.readouterr()
+    payload = json.loads(output.read_bytes())
+    assert exit_code == 0
+    assert captured.out == ""
+    assert captured.err == ""
+    assert payload["succeeded_count"] == 2
+    assert [item["fund_id"] for item in payload["successes"]] == ["AAL", "PHE"]
 
 
 def test_batch_loader_rejects_inconsistent_outcome_counts(tmp_path: Path) -> None:

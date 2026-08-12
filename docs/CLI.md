@@ -229,8 +229,8 @@ missing. It never substitutes a nearby date. The report includes predicted and
 realized returns, signed and absolute error, direction correctness, interval
 coverage, evaluation timestamp, and TEFAS raw-artifact provenance.
 
-For multiple explicit prediction artifacts, use the failure-isolated batch
-command:
+For multiple explicit prediction artifacts, or one JSON artifact produced by
+`navlens-predict-tefas-batch`, use the failure-isolated batch command:
 
 ```shell
 navlens-evaluate-tefas-prediction-batch \

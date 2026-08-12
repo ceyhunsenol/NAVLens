@@ -10,10 +10,11 @@ from navlens.sources.tefas.batch import (
     TefasBatchSuccess,
 )
 
+from .artifact_schemas import TEFAS_PREDICTION_BATCH_SCHEMA_VERSION
 from .contracts import SingleReturnPredictionResult
 from .serialization import serialize_single_return_prediction
 
-SCHEMA_VERSION = "navlens-tefas-prediction-batch-v1"
+SCHEMA_VERSION = TEFAS_PREDICTION_BATCH_SCHEMA_VERSION
 HEADER = (
     "fund",
     "status",

@@ -39,6 +39,7 @@ from .live_history_output import (
 )
 from .options import PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
+from .prediction_artifact_collection import load_single_return_prediction_artifacts
 from .serialization import serialize_single_return_prediction
 from .tefas import predict_next_published_nav_return_from_tefas_acquisition
 from .text_formatting import format_prediction_text
@@ -69,6 +70,7 @@ __all__ = [
     "format_live_prediction_history",
     "format_prediction_text",
     "load_single_return_prediction_artifact",
+    "load_single_return_prediction_artifacts",
     "load_live_prediction_evaluation_artifact",
     "load_live_prediction_evaluation_artifacts",
     "predict_next_published_nav_return_from_csv",

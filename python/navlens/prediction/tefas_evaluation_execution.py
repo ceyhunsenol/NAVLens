@@ -2,12 +2,11 @@
 
 from dataclasses import dataclass
 from datetime import date, datetime
-from pathlib import Path
 
 from navlens import MarketDate
 from navlens.sources.tefas import AcquireTefasPrices, TefasPriceRequest
 
-from .artifact import load_single_return_prediction_artifact
+from .artifact import SingleReturnPredictionArtifact
 from .errors import PredictionArtifactError
 from .live_evaluation import LivePredictionEvaluationResult, evaluate_tefas_prediction_artifact
 
@@ -20,8 +19,8 @@ class EvaluateTefasPredictionArtifact:
     as_of: date
     evaluated_at: datetime
 
-    def execute(self, path: Path) -> LivePredictionEvaluationResult:
-        artifact = load_single_return_prediction_artifact(path)
+    def evaluate(self, artifact: SingleReturnPredictionArtifact) -> LivePredictionEvaluationResult:
+        """Acquire realized prices and evaluate one validated artifact."""
         validate_evaluation_as_of(artifact.target_date, self.as_of)
         request = _build_request(
             artifact.fund_id,

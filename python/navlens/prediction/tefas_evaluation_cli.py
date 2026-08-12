@@ -11,6 +11,7 @@ from navlens.sources.tefas import (
     TefasSourceError,
 )
 
+from .artifact import load_single_return_prediction_artifact
 from .errors import PredictionArtifactError
 from .live_evaluation import LivePredictionEvaluationResult
 from .live_evaluation_output import (
@@ -32,7 +33,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             arguments.as_of,
             evaluated_at,
         )
-        result = evaluator.execute(arguments.prediction_artifact)
+        artifact = load_single_return_prediction_artifact(arguments.prediction_artifact)
+        result = evaluator.evaluate(artifact)
         publish_prediction_output(
             _render(result, arguments.output_format),
             output_path=arguments.output_path,

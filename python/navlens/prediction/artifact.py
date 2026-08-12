@@ -14,6 +14,7 @@ from navlens import (
 )
 from navlens._timestamps import validate_utc_timestamp
 
+from .artifact_batch_payload import require_batch_successes
 from .artifact_schemas import (
     LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION,
     SINGLE_RETURN_PREDICTION_SCHEMA_VERSION,
@@ -41,14 +42,6 @@ _REQUIRED_EVALUATION_KEYS = (_REQUIRED_KEYS - {"expected_return_decimal"}) | {
     "evaluated_at",
     "predicted_return_decimal",
     "realized_return_decimal",
-}
-_REQUIRED_EVALUATION_BATCH_KEYS = {
-    "failed_count",
-    "failures",
-    "schema_version",
-    "succeeded_count",
-    "successes",
-    "total_count",
 }
 
 
@@ -78,78 +71,37 @@ def load_single_return_prediction_artifact(
     path: str | Path,
 ) -> SingleReturnPredictionArtifact:
     """Load a v1 JSON artifact and rebuild its native prediction types."""
-    payload = _read_payload(Path(path))
-    missing = sorted(_REQUIRED_KEYS - payload.keys())
-    if missing:
-        raise InvalidPredictionArtifactError(
-            f"prediction artifact is missing required fields: {', '.join(missing)}"
-        )
-    if payload["schema_version"] != SINGLE_RETURN_PREDICTION_SCHEMA_VERSION:
-        raise InvalidPredictionArtifactError(
-            f"unsupported prediction artifact schema: {payload['schema_version']!r}"
-        )
-    try:
-        return _build_artifact(payload)
-    except InvalidPredictionArtifactError:
-        raise
-    except (TypeError, ValueError) as error:
-        raise InvalidPredictionArtifactError(
-            "prediction artifact contains invalid native prediction values"
-        ) from error
+    return build_single_return_prediction_artifact(read_prediction_artifact_payload(Path(path)))
 
 
 def load_live_prediction_evaluation_artifact(
     path: str | Path,
 ) -> LivePredictionEvaluationArtifact:
     """Load a live-evaluation JSON artifact for aggregate native evaluation."""
-    return _build_live_prediction_evaluation_artifact(_read_payload(Path(path)))
+    return _build_live_prediction_evaluation_artifact(read_prediction_artifact_payload(Path(path)))
 
 
 def load_live_prediction_evaluation_artifacts(
     path: str | Path,
 ) -> tuple[LivePredictionEvaluationArtifact, ...]:
     """Load one evaluation artifact or all successes from one batch artifact."""
-    payload = _read_payload(Path(path))
+    payload = read_prediction_artifact_payload(Path(path))
     if payload.get("schema_version") == LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION:
         return (_build_live_prediction_evaluation_artifact(payload),)
     if payload.get("schema_version") != TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION:
         raise InvalidPredictionArtifactError(
             f"unsupported evaluation artifact schema: {payload.get('schema_version')!r}"
         )
-    successes = _evaluation_batch_successes(payload)
+    successes = require_batch_successes(
+        payload,
+        expected_schema=TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION,
+        artifact_kind="evaluation",
+    )
     if not successes:
         raise InvalidPredictionArtifactError(
             "evaluation batch must contain at least one successful evaluation"
         )
     return tuple(_build_live_prediction_evaluation_artifact(item) for item in successes)
-
-
-def _evaluation_batch_successes(payload: dict[str, Any]) -> list[dict[str, Any]]:
-    missing = sorted(_REQUIRED_EVALUATION_BATCH_KEYS - payload.keys())
-    if missing:
-        raise InvalidPredictionArtifactError(
-            f"evaluation batch is missing required fields: {', '.join(missing)}"
-        )
-    successes = payload["successes"]
-    failures = payload["failures"]
-    if not isinstance(successes, list) or not all(isinstance(item, dict) for item in successes):
-        raise InvalidPredictionArtifactError("evaluation batch successes must be objects")
-    if not isinstance(failures, list):
-        raise InvalidPredictionArtifactError("evaluation batch failures must be a list")
-    counts = tuple(
-        _strict_count(payload, field)
-        for field in ("succeeded_count", "failed_count", "total_count")
-    )
-    if counts != (len(successes), len(failures), len(successes) + len(failures)):
-        raise InvalidPredictionArtifactError("evaluation batch counts do not match its outcomes")
-    return successes
-
-
-def _strict_count(payload: dict[str, Any], field: str) -> int:
-    value = payload[field]
-    if type(value) is not int or value < 0:
-        raise InvalidPredictionArtifactError(f"{field} must be a non-negative integer")
-    return value
 
 
 def _build_live_prediction_evaluation_artifact(
@@ -169,7 +121,7 @@ def _build_live_prediction_evaluation_artifact(
     prediction_payload["schema_version"] = SINGLE_RETURN_PREDICTION_SCHEMA_VERSION
     try:
         return LivePredictionEvaluationArtifact(
-            _build_artifact(prediction_payload),
+            build_single_return_prediction_artifact(prediction_payload),
             _number(payload, "realized_return_decimal"),
             _timestamp(payload, "evaluated_at"),
         )
@@ -181,8 +133,32 @@ def _build_live_prediction_evaluation_artifact(
         ) from error
 
 
-def _build_artifact(payload: dict[str, Any]) -> SingleReturnPredictionArtifact:
-    prediction_timestamp = _timestamp(payload, "prediction_timestamp")
+def build_single_return_prediction_artifact(
+    payload: dict[str, Any],
+) -> SingleReturnPredictionArtifact:
+    """Validate one payload and rebuild its native prediction types."""
+    missing = sorted(_REQUIRED_KEYS - payload.keys())
+    if missing:
+        raise InvalidPredictionArtifactError(
+            f"prediction artifact is missing required fields: {', '.join(missing)}"
+        )
+    if payload["schema_version"] != SINGLE_RETURN_PREDICTION_SCHEMA_VERSION:
+        raise InvalidPredictionArtifactError(
+            f"unsupported prediction artifact schema: {payload['schema_version']!r}"
+        )
+    try:
+        artifact = _build_native_artifact(payload)
+        _validate_date_order(artifact)
+        return artifact
+    except InvalidPredictionArtifactError:
+        raise
+    except (TypeError, ValueError) as error:
+        raise InvalidPredictionArtifactError(
+            "prediction artifact contains invalid native prediction values"
+        ) from error
+
+
+def _build_native_artifact(payload: dict[str, Any]) -> SingleReturnPredictionArtifact:
     prediction = create_return_prediction(
         _number(payload, "expected_return_decimal"),
         _number(payload, "prediction_interval_lower_decimal"),
@@ -194,20 +170,18 @@ def _build_artifact(payload: dict[str, Any]) -> SingleReturnPredictionArtifact:
             _text(payload, "feature_schema_version"),
         ),
     )
-    artifact = SingleReturnPredictionArtifact(
+    return SingleReturnPredictionArtifact(
         _text(payload, "fund_id"),
         _text(payload, "source_id"),
         _market_date(payload, "prediction_date"),
         _market_date(payload, "target_date"),
         _market_date(payload, "last_observation_date"),
-        prediction_timestamp,
+        _timestamp(payload, "prediction_timestamp"),
         prediction,
     )
-    _validate_date_order(artifact)
-    return artifact
 
 
-def _read_payload(path: Path) -> dict[str, Any]:
+def read_prediction_artifact_payload(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_bytes(), object_pairs_hook=_unique_object)
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
