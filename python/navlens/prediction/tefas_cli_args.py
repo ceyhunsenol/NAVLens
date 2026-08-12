@@ -5,7 +5,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 
-from navlens import MarketDate
+from navlens import (
+    MarketCalendar,
+    MarketDate,
+    NavlensValidationError,
+    SessionKind,
+    SessionOverride,
+)
 from navlens.sources.tefas.cli_arguments import (
     TefasCliArguments,
     build_tefas_cli_parser,
@@ -43,25 +49,52 @@ def parse_tefas_prediction_arguments(
         prog="navlens-predict-tefas",
         description="Acquire TEFAS prices and predict the next published NAV return.",
     )
-    parser.add_argument("--target-date", type=_market_date, required=True)
+    _add_target_date_arguments(parser)
     add_prediction_model_options(parser)
     parser.add_argument("--max-price-age-days", type=_non_negative_integer, default=4)
     parser.add_argument("--output-format", choices=["text", "json"], default="text")
     values = parser.parse_args(argv)
     acquisition = tefas_cli_arguments_from_namespace(parser, values, current_date)
     prediction_date = _to_market_date(acquisition.as_of)
-    if values.target_date <= prediction_date:
-        parser.error("--target-date must be later than the prediction date")
+    target_date = _resolve_target_date(parser, values, prediction_date)
     model = prediction_model_options_from_namespace(parser, values)
     freshness = FundUnitPriceFreshnessPolicy(values.max_price_age_days)
     return TefasPredictionCliArguments(
         acquisition,
         prediction_date,
-        values.target_date,
+        target_date,
         model,
         freshness,
         values.output_format,
     )
+
+
+def _add_target_date_arguments(parser: argparse.ArgumentParser) -> None:
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("--target-date", type=_market_date)
+    target.add_argument("--auto-target-date", action="store_true")
+    parser.add_argument("--closed-date", type=_market_date, action="append", default=[])
+
+
+def _resolve_target_date(
+    parser: argparse.ArgumentParser,
+    values: argparse.Namespace,
+    prediction_date: MarketDate,
+) -> MarketDate:
+    if values.target_date is not None:
+        if values.closed_date:
+            parser.error("--closed-date requires --auto-target-date")
+        if values.target_date <= prediction_date:
+            parser.error("--target-date must be later than the prediction date")
+        return values.target_date
+    try:
+        overrides = [
+            SessionOverride(closed_date, SessionKind("closed"))
+            for closed_date in values.closed_date
+        ]
+        return MarketCalendar(overrides).next_open_date(prediction_date)
+    except NavlensValidationError as error:
+        parser.error(str(error))
 
 
 def _market_date(value: str) -> MarketDate:

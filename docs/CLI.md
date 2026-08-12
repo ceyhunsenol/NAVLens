@@ -151,13 +151,31 @@ JSON output (`--output-format json`) emits deterministic UTF-8 versioned JSON ma
 
 The `navlens-predict-tefas` CLI combines keyless TEFAS acquisition with the
 same canonical point-in-time prediction pipeline used by the CSV command.
-The target date remains explicit because provider price history does not
-encode the fund's future publication calendar.
+The target date can be explicit or selected by the canonical Rust market
+calendar. Provider price history does not encode exceptional future closures,
+so automatic selection accepts repeatable `--closed-date` overrides.
 
 ```shell
 navlens-predict-tefas AAL --days 365 --target-date 2026-08-13 \
   --lookback 5 --confidence-level 0.90 --max-price-age-days 4
 ```
+
+To select the next open weekday automatically:
+
+```shell
+navlens-predict-tefas AAL --days 365 --auto-target-date
+```
+
+Declare known holidays or exceptional closures explicitly. The Rust calendar
+then skips both weekends and the supplied dates:
+
+```shell
+navlens-predict-tefas AAL --days 365 --auto-target-date \
+  --closed-date 2026-08-14 --closed-date 2026-08-17
+```
+
+NAVLens does not yet embed an official Turkish market-holiday provider.
+Use explicit `--target-date` when the future publication calendar is uncertain.
 
 Use `--output-format json` for the versioned single-prediction JSON schema.
 Historical TEFAS observations do not include individual publication

@@ -45,3 +45,62 @@ def test_rejects_target_on_prediction_date() -> None:
             ["AAL", "--target-date", "2026-08-12"],
             today=date(2026, 8, 12),
         )
+
+
+def test_selects_next_weekday_automatically() -> None:
+    arguments = parse_tefas_prediction_arguments(
+        ["AAL", "--auto-target-date"],
+        today=date(2026, 8, 12),
+    )
+
+    assert str(arguments.target_date) == "2026-08-13"
+
+
+def test_automatic_target_skips_weekend() -> None:
+    arguments = parse_tefas_prediction_arguments(
+        ["AAL", "--auto-target-date"],
+        today=date(2026, 8, 14),
+    )
+
+    assert str(arguments.target_date) == "2026-08-17"
+
+
+def test_automatic_target_skips_declared_closure() -> None:
+    arguments = parse_tefas_prediction_arguments(
+        ["AAL", "--auto-target-date", "--closed-date", "2026-08-17"],
+        today=date(2026, 8, 14),
+    )
+
+    assert str(arguments.target_date) == "2026-08-18"
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    [
+        ["AAL"],
+        [
+            "AAL",
+            "--target-date",
+            "2026-08-13",
+            "--auto-target-date",
+        ],
+        [
+            "AAL",
+            "--target-date",
+            "2026-08-13",
+            "--closed-date",
+            "2026-08-14",
+        ],
+        [
+            "AAL",
+            "--auto-target-date",
+            "--closed-date",
+            "2026-08-14",
+            "--closed-date",
+            "2026-08-14",
+        ],
+    ],
+)
+def test_rejects_ambiguous_target_configuration(arguments: list[str]) -> None:
+    with pytest.raises(SystemExit):
+        parse_tefas_prediction_arguments(arguments, today=date(2026, 8, 12))

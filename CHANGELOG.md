@@ -11,6 +11,7 @@ follows Semantic Versioning from the first public release.
   runs the canonical point-in-time next-NAV baseline prediction pipeline.
 - Shared baseline model options across CSV and direct TEFAS prediction commands.
 - Explicit TEFAS unit-price freshness enforcement backed by Rust date arithmetic.
+- Calendar-aware TEFAS target-date selection with explicit closure overrides.
 
 ## [0.1.0] - 2026-08-12
 
