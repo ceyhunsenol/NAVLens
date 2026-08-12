@@ -47,7 +47,22 @@ def _verify_console_scripts(names: list[str]) -> None:
         raise SystemExit("installed package does not publish any console scripts")
 
     for name in names:
-        _run_command([_resolve_console_script(name), "--help"])
+        executable = _resolve_console_script(name)
+        _run_command([executable, "--help"])
+        result = subprocess.run([executable], capture_output=True, text=True, encoding="utf-8")
+        valid_usage_error = (
+            result.returncode == 2
+            and not result.stdout
+            and "usage:" in result.stderr
+            and "error:" in result.stderr
+            and "Traceback" not in result.stderr
+        )
+        if not valid_usage_error:
+            raise SystemExit(
+                f"invalid missing-argument behavior for {name}: "
+                f"exit={result.returncode}, stdout={result.stdout!r}, "
+                f"stderr={result.stderr!r}"
+            )
 
 
 def main() -> None:

@@ -59,17 +59,51 @@ Focused documentation:
 - [`docs/TEFAS_DATA_ACCESS.md`](docs/TEFAS_DATA_ACCESS.md): supported TEFAS
   export workflow and automation limits.
 
+## Installation
+
+NAVLens requires Python 3.11 or newer. Starting with v0.1.0, GitHub Releases
+provide wheels for Linux x86_64, Windows x86_64, macOS Apple Silicon, and macOS
+Intel. Download the wheel matching your platform, then install it locally:
+
+```shell
+python -m pip install path/to/downloaded-navlens-wheel.whl
+```
+
+Release wheels contain the native Rust extension and install the Python runtime
+dependencies automatically. NAVLens is not published to PyPI yet.
+
+For development, clone the repository and install the mixed Python/Rust package
+in editable mode:
+
+```shell
+python -m pip install -e ".[dev]"
+```
+
 Run the Rust test suite with:
 
 ```shell
 cargo test --workspace
 ```
 
-Install the mixed Python/Rust development package with:
+## Command-line tools
 
-```shell
-python -m pip install -e ".[dev]"
-```
+| Command | Purpose |
+| --- | --- |
+| `navlens-fetch-tefas` | Acquire and cache TEFAS fund unit prices. |
+| `navlens-backtest-tefas` | Backtest one fund from TEFAS prices. |
+| `navlens-backtest-batch` | Run isolated backtests for multiple funds. |
+| `navlens-align-holdings-csv` | Align holdings with point-in-time security prices. |
+| `navlens-return-contribution-csv` | Calculate covered portfolio return contribution. |
+| `navlens-fx-return-contribution-csv` | Calculate FX-adjusted return contribution. |
+| `navlens-reconcile-fund-csv` | Reconcile contribution with a published fund return. |
+| `navlens-fx-reconcile-fund-csv` | Reconcile an FX-adjusted contribution. |
+| `navlens-evaluate-historical-reconciliation-csv` | Evaluate historical reconciliation periods. |
+| `navlens-evaluate-historical-fx-reconciliation-csv` | Evaluate FX-aware historical reconciliation periods. |
+| `navlens-predict-fund-csv` | Produce one point-in-time next-NAV prediction. |
+| `navlens-evaluate-historical-prediction-csv` | Evaluate historical point-in-time predictions. |
+
+Every command supports `--help`. Detailed arguments, output contracts, and exit
+codes are documented in [`docs/CLI.md`](docs/CLI.md).
 
 The public `navlens.__version__` value is read from installed package metadata
 and matches the Rust workspace release version. NumPy, pandas, and scikit-learn

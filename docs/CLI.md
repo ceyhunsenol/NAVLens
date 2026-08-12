@@ -9,6 +9,23 @@ the command dispatcher, write output/error, and select an exit code. Command
 definitions, mapping, formatting, and use-case behavior live in focused modules
 or inner crates.
 
+## Exit-code and error contract
+
+All public Python commands use the same process-level conventions:
+
+- `--help` writes usage information and exits with `0`.
+- Missing or invalid command-line arguments are handled by `argparse`, write to
+  stderr, and exit with `2` before application orchestration starts.
+- Expected data, validation, filesystem, and provider failures write an
+  `error:` message to stderr without a traceback and return `1`.
+- Unexpected programming errors are not converted into operational failures;
+  they propagate so defects remain visible during development and CI.
+
+Commands that support partial batch or historical outcomes may also return `2`
+after producing a valid report. Their command-specific sections describe that
+partial-success meaning. Scripts consuming NAVLens output must therefore use
+both the documented command contract and the process exit code.
+
 ## Estimate a weighted portfolio return
 
 Each `--component` uses `WEIGHT:DECIMAL_RETURN` format. Weights must sum to one.
