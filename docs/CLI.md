@@ -147,6 +147,14 @@ navlens-predict-fund-csv \
 
 JSON output (`--output-format json`) emits deterministic UTF-8 versioned JSON matching schema `navlens-single-return-prediction-v1`.
 
+The CSV, single-fund TEFAS, and batch TEFAS prediction commands accept
+`--model linear`, `--model historical-mean`, or `--model last-return`.
+`linear` remains the default. `--lookback` configures only the linear model;
+the reported effective lookback is `1` for last-return and the complete
+visible return history for historical-mean. Naive models require at least
+three returns by default, and all models accept an explicit
+`--minimum-training-returns` threshold.
+
 ## Acquire TEFAS prices and predict the next published NAV return
 
 The `navlens-predict-tefas` CLI combines keyless TEFAS acquisition with the
@@ -157,7 +165,7 @@ so automatic selection accepts repeatable `--closed-date` overrides.
 
 ```shell
 navlens-predict-tefas AAL --days 365 --target-date 2026-08-13 \
-  --lookback 5 --confidence-level 0.90 --max-price-age-days 4
+  --model linear --lookback 5 --confidence-level 0.90 --max-price-age-days 4
 ```
 
 To select the next open weekday automatically:

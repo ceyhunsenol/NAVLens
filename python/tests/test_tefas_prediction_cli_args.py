@@ -2,6 +2,7 @@ from datetime import date
 from pathlib import Path
 
 import pytest
+from navlens.prediction import PredictionModelKind
 from navlens.prediction.tefas_cli_args import parse_tefas_prediction_arguments
 
 
@@ -15,6 +16,8 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
             "2026-08-13",
             "--lookback",
             "7",
+            "--model",
+            "historical-mean",
             "--minimum-training-returns",
             "12",
             "--confidence-level",
@@ -35,6 +38,7 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
     assert str(arguments.prediction_date) == "2026-08-12"
     assert str(arguments.target_date) == "2026-08-13"
     assert arguments.model.lookback == 7
+    assert arguments.model.model_kind is PredictionModelKind.HISTORICAL_MEAN
     assert arguments.model.minimum_training_returns == 12
     assert arguments.model.confidence_level == 0.95
     assert arguments.model.model_version == "baseline-v2"

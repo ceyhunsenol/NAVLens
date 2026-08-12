@@ -12,6 +12,7 @@ from .model_cli_options import (
     add_prediction_model_options,
     prediction_model_options_from_namespace,
 )
+from .options import PredictionModelKind
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,6 +30,7 @@ class PredictionCliArguments:
     minimum_training_returns: int | None
     confidence_level: float
     model_version: str
+    model_kind: PredictionModelKind
     output_format: str
 
 
@@ -111,6 +113,7 @@ def parse_prediction_cli_arguments(
         minimum_training_returns=model.minimum_training_returns,
         confidence_level=model.confidence_level,
         model_version=model.model_version,
+        model_kind=model.model_kind,
         output_format=args.output_format,
     )
 

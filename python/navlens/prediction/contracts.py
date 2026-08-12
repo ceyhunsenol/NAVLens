@@ -112,11 +112,12 @@ class SingleReturnPredictionResult:
                 f"training_target_row_count ({self.training_target_row_count}) must be at least 3"
             )
 
-        expected_start = self.selected_snapshots[self.lookback + 1].observation.date
+        target_start_index = self.lookback + 1 if self._uses_lagged_targets else 1
+        expected_start = self.selected_snapshots[target_start_index].observation.date
         if self.training_target_start_date != expected_start:
             raise ValueError(
                 f"training_target_start_date ({self.training_target_start_date}) must match "
-                f"selected_snapshots[lookback + 1].observation.date ({expected_start})"
+                f"the model training window start ({expected_start})"
             )
 
         expected_end = self.selected_snapshots[-1].observation.date
@@ -136,7 +137,13 @@ class SingleReturnPredictionResult:
 
     @property
     def training_target_row_count(self) -> int:
-        return self.training_return_count - self.lookback
+        if self._uses_lagged_targets:
+            return self.training_return_count - self.lookback
+        return self.training_return_count
+
+    @property
+    def _uses_lagged_targets(self) -> bool:
+        return self.model_name == "linear-regression-baseline"
 
     @property
     def actual_data_as_of(self) -> datetime:

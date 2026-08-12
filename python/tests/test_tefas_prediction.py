@@ -6,6 +6,7 @@ from navlens import MarketDate
 from navlens.prediction import (
     FundUnitPriceFreshnessPolicy,
     NoEligibleSnapshotsError,
+    PredictionModelKind,
     PredictionModelOptions,
     StaleFundUnitPriceHistoryError,
     predict_next_published_nav_return_from_tefas_acquisition,
@@ -70,6 +71,32 @@ def test_preserves_user_selected_model_configuration() -> None:
     assert result.lookback == 7
     assert result.confidence_level == 0.95
     assert result.model_version == "baseline-v2"
+
+
+@pytest.mark.parametrize(
+    ("model_kind", "expected_name", "expected_lookback"),
+    [
+        (PredictionModelKind.LAST_RETURN, "last-return-baseline", 1),
+        (PredictionModelKind.HISTORICAL_MEAN, "historical-mean-baseline", 13),
+    ],
+)
+def test_selects_transparent_live_baseline(
+    model_kind: PredictionModelKind,
+    expected_name: str,
+    expected_lookback: int,
+) -> None:
+    result = predict_next_published_nav_return_from_tefas_acquisition(
+        _acquisition(),
+        acquired_at=datetime(2026, 8, 12, 12, tzinfo=UTC),
+        prediction_date=MarketDate(2026, 8, 2),
+        target_date=MarketDate(2026, 8, 3),
+        model=PredictionModelOptions(model_kind=model_kind),
+    )
+
+    assert result.model_name == expected_name
+    assert result.lookback == expected_lookback
+    assert result.training_target_row_count == result.training_return_count
+    assert result.training_target_start_date == result.selected_snapshots[1].observation.date
 
 
 def test_rejects_stale_latest_tefas_price_by_default() -> None:

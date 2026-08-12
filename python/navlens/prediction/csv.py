@@ -7,6 +7,7 @@ from navlens import MarketDate
 from navlens.sources.fund_unit_prices_csv import read_fund_unit_prices_csv
 
 from .contracts import SingleReturnPredictionResult
+from .options import PredictionModelKind
 from .orchestration import predict_next_published_nav_return_from_snapshots
 
 
@@ -23,6 +24,7 @@ def predict_next_published_nav_return_from_csv(
     minimum_training_returns: int | None = None,
     confidence_level: float = 0.90,
     model_version: str = "v1",
+    model_kind: PredictionModelKind = PredictionModelKind.LINEAR,
 ) -> SingleReturnPredictionResult:
     """Parse provider-neutral CSV snapshots and orchestrate a point-in-time prediction."""
     snapshots = read_fund_unit_prices_csv(csv_path)
@@ -38,4 +40,5 @@ def predict_next_published_nav_return_from_csv(
         minimum_training_returns=minimum_training_returns,
         confidence_level=confidence_level,
         model_version=model_version,
+        model_kind=model_kind,
     )

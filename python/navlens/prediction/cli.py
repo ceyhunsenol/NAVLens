@@ -30,6 +30,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             minimum_training_returns=args.minimum_training_returns,
             confidence_level=args.confidence_level,
             model_version=args.model_version,
+            model_kind=args.model_kind,
         )
     except (
         CsvFundUnitPriceSourceError,

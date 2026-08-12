@@ -49,4 +49,5 @@ def predict_next_published_nav_return_from_tefas_acquisition(
         minimum_training_returns=selected_model.minimum_training_returns,
         confidence_level=selected_model.confidence_level,
         model_version=selected_model.model_version,
+        model_kind=selected_model.model_kind,
     )

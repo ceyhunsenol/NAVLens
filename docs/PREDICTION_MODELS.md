@@ -114,6 +114,14 @@ Single point-in-time predictions for the next published NAV return are executed 
 navlens-predict-fund-csv --fund-unit-prices-csv data.csv --fund-id AAL --source-id tefas --prediction-timestamp 2026-07-28T00:00:00Z --prediction-date 2026-07-27 --pricing-as-of-date 2026-07-27 --target-date 2026-07-28
 ```
 
+The CSV and TEFAS live-prediction commands expose all three implemented
+baselines through `--model linear|historical-mean|last-return`. Every choice
+uses the same point-in-time snapshot selection, Rust-calculated canonical
+returns, Rust `ReturnPrediction` validation, provenance envelope, and artifact
+format. The artifact's `lookback` is the effective point-estimate history:
+configured `N` for linear, `1` for last-return, and all visible returns for
+historical-mean.
+
 
 Python owns model fitting and chronological orchestration. Rust owns series
 validation and the published backtest metrics:

@@ -29,7 +29,7 @@ def format_prediction_text(result: SingleReturnPredictionResult) -> str:
             f"Training Target Window: {result.training_target_start_date} "
             f"to {result.training_target_end_date}"
         ),
-        f"Lookback: {result.lookback}",
+        f"Effective Lookback: {result.lookback}",
         f"Model: {result.model_name} ({result.model_version})",
         f"Feature Schema: {result.feature_schema_version}",
         f"Target Semantics: {result.target_definition}",

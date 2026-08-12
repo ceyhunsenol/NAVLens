@@ -46,7 +46,7 @@ from .live_history_output import (
     format_live_prediction_history,
     serialize_live_prediction_history,
 )
-from .options import PredictionModelOptions
+from .options import PredictionModelKind, PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .prediction_artifact_collection import load_single_return_prediction_artifacts
 from .serialization import serialize_single_return_prediction
@@ -64,6 +64,7 @@ __all__ = [
     "MissingRealizedPriceObservationError",
     "PointInTimePredictionError",
     "PredictionArtifactError",
+    "PredictionModelKind",
     "FundUnitPriceFreshnessPolicy",
     "PredictionModelOptions",
     "SingleReturnPredictionResult",

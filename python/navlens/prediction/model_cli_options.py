@@ -2,12 +2,18 @@
 
 import argparse
 
-from .options import PredictionModelOptions
+from .options import PredictionModelKind, PredictionModelOptions
 
 
 def add_prediction_model_options(parser: argparse.ArgumentParser) -> None:
     """Add the shared baseline-model options to a command parser."""
     parser.add_argument("--lookback", type=_positive_integer, default=5)
+    parser.add_argument(
+        "--model",
+        type=PredictionModelKind,
+        choices=list(PredictionModelKind),
+        default=PredictionModelKind.LINEAR,
+    )
     parser.add_argument("--minimum-training-returns", type=_positive_integer)
     parser.add_argument("--confidence-level", type=_confidence_level, default=0.90)
     parser.add_argument("--model-version", default="v1")
@@ -26,6 +32,7 @@ def prediction_model_options_from_namespace(
         values.minimum_training_returns,
         values.confidence_level,
         model_version,
+        values.model,
     )
 
 

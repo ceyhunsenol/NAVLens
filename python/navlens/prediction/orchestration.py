@@ -8,8 +8,6 @@ from navlens._timestamps import datetime_to_utc_timestamp, validate_utc_timestam
 from navlens.datasets import select_fund_unit_price_snapshots
 from navlens.datasets.fund_unit_price_snapshots import FundUnitPriceSnapshot
 from navlens.datasets.pandas_returns import dated_returns_to_series
-from navlens.estimators import LinearBaselineConfig
-from navlens.training import fit_predict_linear_baseline
 
 from .contracts import SingleReturnPredictionResult
 from .errors import (
@@ -19,6 +17,8 @@ from .errors import (
     NoEligibleSnapshotsError,
     PointInTimePredictionError,
 )
+from .model_execution import fit_prediction_model, resolve_required_training_returns
+from .options import PredictionModelKind
 
 TARGET_DEFINITION = "next_published_nav_return_decimal"
 
@@ -36,6 +36,7 @@ def predict_next_published_nav_return_from_snapshots(
     minimum_training_returns: int | None = None,
     confidence_level: float = 0.90,
     model_version: str = "v1",
+    model_kind: PredictionModelKind = PredictionModelKind.LINEAR,
 ) -> SingleReturnPredictionResult:
     """Orchestrate a provider-neutral point-in-time next published NAV return prediction."""
     validate_utc_timestamp(prediction_timestamp, "prediction_timestamp", PointInTimePredictionError)
@@ -51,9 +52,10 @@ def predict_next_published_nav_return_from_snapshots(
         )
 
     try:
-        config = LinearBaselineConfig(
-            lookback=lookback,
-            minimum_training_returns=minimum_training_returns,
+        required_training_returns = resolve_required_training_returns(
+            model_kind,
+            lookback,
+            minimum_training_returns,
         )
     except ValueError as error:
         raise InvalidPredictionConfigurationError(str(error)) from error
@@ -79,12 +81,12 @@ def predict_next_published_nav_return_from_snapshots(
             f"prediction_date ({prediction_date})"
         )
 
-    required_snapshot_count = config.resolved_minimum_training_returns + 1
+    required_snapshot_count = required_training_returns + 1
     if len(selected) < required_snapshot_count:
         raise InsufficientVisibleHistoryError(
             f"selected snapshot count ({len(selected)}) is less than required minimum "
             f"({required_snapshot_count}) for resolved training returns threshold "
-            f"({config.resolved_minimum_training_returns})"
+            f"({required_training_returns})"
         )
 
     observations = [snapshot.observation for snapshot in selected]
@@ -97,12 +99,15 @@ def predict_next_published_nav_return_from_snapshots(
 
     returns = dated_returns_to_series(dated_returns)
 
-    fitted = fit_predict_linear_baseline(
+    model_fit = fit_prediction_model(
         returns,
-        lookback=config.lookback,
+        model_kind=model_kind,
+        lookback=lookback,
+        minimum_training_returns=minimum_training_returns,
         model_version=model_version,
         confidence_level=confidence_level,
     )
+    fitted = model_fit.fitted
 
     actual_data_as_of = max(snapshot.available_at for snapshot in selected)
 
@@ -142,6 +147,6 @@ def predict_next_published_nav_return_from_snapshots(
         training_return_count=len(dated_returns),
         training_target_start_date=training_target_start_date,
         training_target_end_date=training_target_end_date,
-        lookback=config.lookback,
+        lookback=model_fit.effective_lookback,
         target_definition=TARGET_DEFINITION,
     )
