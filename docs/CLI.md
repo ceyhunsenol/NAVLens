@@ -155,7 +155,8 @@ The target date remains explicit because provider price history does not
 encode the fund's future publication calendar.
 
 ```shell
-navlens-predict-tefas AAL --days 365 --target-date 2026-08-13
+navlens-predict-tefas AAL --days 365 --target-date 2026-08-13 \
+  --lookback 5 --confidence-level 0.90
 ```
 
 Use `--output-format json` for the versioned single-prediction JSON schema.

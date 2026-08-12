@@ -5,6 +5,7 @@ import pytest
 from navlens import MarketDate
 from navlens.prediction import (
     NoEligibleSnapshotsError,
+    PredictionModelOptions,
     predict_next_published_nav_return_from_tefas_acquisition,
 )
 from navlens.sources.tefas import TefasAcquisitionResult, TefasPriceRecord
@@ -47,6 +48,25 @@ def test_rejects_empty_acquisition() -> None:
             prediction_date=MarketDate(2026, 8, 12),
             target_date=MarketDate(2026, 8, 13),
         )
+
+
+def test_preserves_user_selected_model_configuration() -> None:
+    result = predict_next_published_nav_return_from_tefas_acquisition(
+        _acquisition(count=20),
+        acquired_at=datetime(2026, 8, 12, 12, tzinfo=UTC),
+        prediction_date=MarketDate(2026, 8, 12),
+        target_date=MarketDate(2026, 8, 13),
+        model=PredictionModelOptions(
+            lookback=7,
+            minimum_training_returns=12,
+            confidence_level=0.95,
+            model_version="baseline-v2",
+        ),
+    )
+
+    assert result.lookback == 7
+    assert result.confidence_level == 0.95
+    assert result.model_version == "baseline-v2"
 
 
 def test_rejects_mixed_fund_acquisition() -> None:

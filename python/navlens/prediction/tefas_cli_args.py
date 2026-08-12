@@ -12,6 +12,12 @@ from navlens.sources.tefas.cli_arguments import (
     tefas_cli_arguments_from_namespace,
 )
 
+from .model_cli_options import (
+    PredictionModelOptions,
+    add_prediction_model_options,
+    prediction_model_options_from_namespace,
+)
+
 
 @dataclass(frozen=True, slots=True)
 class TefasPredictionCliArguments:
@@ -20,6 +26,7 @@ class TefasPredictionCliArguments:
     acquisition: TefasCliArguments
     prediction_date: MarketDate
     target_date: MarketDate
+    model: PredictionModelOptions
     output_format: str
 
 
@@ -35,16 +42,19 @@ def parse_tefas_prediction_arguments(
         description="Acquire TEFAS prices and predict the next published NAV return.",
     )
     parser.add_argument("--target-date", type=_market_date, required=True)
+    add_prediction_model_options(parser)
     parser.add_argument("--output-format", choices=["text", "json"], default="text")
     values = parser.parse_args(argv)
     acquisition = tefas_cli_arguments_from_namespace(parser, values, current_date)
     prediction_date = _to_market_date(acquisition.as_of)
     if values.target_date <= prediction_date:
         parser.error("--target-date must be later than the prediction date")
+    model = prediction_model_options_from_namespace(parser, values)
     return TefasPredictionCliArguments(
         acquisition,
         prediction_date,
         values.target_date,
+        model,
         values.output_format,
     )
 

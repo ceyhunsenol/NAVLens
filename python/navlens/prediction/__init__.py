@@ -9,6 +9,7 @@ from .errors import (
     NoEligibleSnapshotsError,
     PointInTimePredictionError,
 )
+from .options import PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .serialization import serialize_single_return_prediction
 from .tefas import predict_next_published_nav_return_from_tefas_acquisition
@@ -20,6 +21,7 @@ __all__ = [
     "InvalidPredictionWindowError",
     "NoEligibleSnapshotsError",
     "PointInTimePredictionError",
+    "PredictionModelOptions",
     "SingleReturnPredictionResult",
     "format_prediction_text",
     "predict_next_published_nav_return_from_csv",

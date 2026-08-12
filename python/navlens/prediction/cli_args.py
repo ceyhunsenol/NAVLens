@@ -8,6 +8,11 @@ from pathlib import Path
 
 from navlens import MarketDate
 
+from .model_cli_options import (
+    add_prediction_model_options,
+    prediction_model_options_from_namespace,
+)
+
 
 @dataclass(frozen=True, slots=True)
 class PredictionCliArguments:
@@ -78,30 +83,7 @@ def parse_prediction_cli_arguments(
         required=True,
         help="ISO 8601 target MarketDate for predicted return (e.g. 2026-07-28).",
     )
-    parser.add_argument(
-        "--lookback",
-        type=_parse_positive_int,
-        default=5,
-        help="Number of lagged return features (default: 5).",
-    )
-    parser.add_argument(
-        "--minimum-training-returns",
-        type=_parse_positive_int,
-        default=None,
-        help="Minimum required historical returns for fitting (default: lookback + 3).",
-    )
-    parser.add_argument(
-        "--confidence-level",
-        type=_parse_confidence_level,
-        default=0.90,
-        help="Prediction interval confidence level in (0, 1) (default: 0.90).",
-    )
-    parser.add_argument(
-        "--model-version",
-        type=str,
-        default="v1",
-        help="Model version string identifier (default: v1).",
-    )
+    add_prediction_model_options(parser)
     parser.add_argument(
         "--output-format",
         choices=["text", "json"],
@@ -115,8 +97,7 @@ def parse_prediction_cli_arguments(
         parser.error("--fund-id cannot be empty")
     if not args.source_id.strip():
         parser.error("--source-id cannot be empty")
-    if not args.model_version.strip():
-        parser.error("--model-version cannot be empty")
+    model = prediction_model_options_from_namespace(parser, args)
 
     return PredictionCliArguments(
         fund_unit_prices_csv=args.fund_unit_prices_csv,
@@ -126,10 +107,10 @@ def parse_prediction_cli_arguments(
         prediction_date=args.prediction_date,
         pricing_as_of_date=args.pricing_as_of_date,
         target_date=args.target_date,
-        lookback=args.lookback,
-        minimum_training_returns=args.minimum_training_returns,
-        confidence_level=args.confidence_level,
-        model_version=args.model_version.strip(),
+        lookback=model.lookback,
+        minimum_training_returns=model.minimum_training_returns,
+        confidence_level=model.confidence_level,
+        model_version=model.model_version,
         output_format=args.output_format,
     )
 
@@ -152,25 +133,3 @@ def _parse_utc_datetime(val_str: str) -> datetime:
         return dt
     except ValueError as err:
         raise argparse.ArgumentTypeError(f"invalid ISO UTC timestamp {val_str!r}: {err}") from err
-
-
-def _parse_positive_int(val_str: str) -> int:
-    try:
-        val = int(val_str)
-        if val < 1:
-            raise ValueError
-        return val
-    except ValueError as err:
-        raise argparse.ArgumentTypeError(f"expected positive integer, got {val_str!r}") from err
-
-
-def _parse_confidence_level(val_str: str) -> float:
-    try:
-        val = float(val_str)
-        if not (0.0 < val < 1.0):
-            raise ValueError
-        return val
-    except ValueError as err:
-        raise argparse.ArgumentTypeError(
-            f"confidence level must be a float between 0 and 1, got {val_str!r}"
-        ) from err

@@ -11,6 +11,7 @@ from navlens.sources.tefas import (
 
 from .contracts import SingleReturnPredictionResult
 from .errors import NoEligibleSnapshotsError
+from .options import PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 
 
@@ -20,6 +21,7 @@ def predict_next_published_nav_return_from_tefas_acquisition(
     acquired_at: datetime,
     prediction_date: MarketDate,
     target_date: MarketDate,
+    model: PredictionModelOptions | None = None,
 ) -> SingleReturnPredictionResult:
     """Predict from one acquired TEFAS artifact through the canonical pipeline."""
     snapshots = to_fund_unit_price_snapshots(acquisition, acquired_at=acquired_at)
@@ -30,6 +32,7 @@ def predict_next_published_nav_return_from_tefas_acquisition(
         raise ValueError("TEFAS acquisition must contain records for exactly one fund")
 
     latest_market_date = max(snapshot.observation.date for snapshot in snapshots)
+    selected_model = model or PredictionModelOptions()
     return predict_next_published_nav_return_from_snapshots(
         snapshots,
         fund_id=snapshots[0].fund_id,
@@ -38,4 +41,8 @@ def predict_next_published_nav_return_from_tefas_acquisition(
         prediction_date=prediction_date,
         pricing_as_of_date=latest_market_date,
         target_date=target_date,
+        lookback=selected_model.lookback,
+        minimum_training_returns=selected_model.minimum_training_returns,
+        confidence_level=selected_model.confidence_level,
+        model_version=selected_model.model_version,
     )

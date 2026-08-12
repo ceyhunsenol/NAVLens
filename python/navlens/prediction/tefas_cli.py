@@ -56,4 +56,5 @@ def _predict(
         acquired_at=acquired_at,
         prediction_date=arguments.prediction_date,
         target_date=arguments.target_date,
+        model=arguments.model,
     )
