@@ -33,10 +33,33 @@ jobs:
           cargo --version
 
       - name: Install development package
-        run: python -m pip install -e ".[dev,research]"
+        run: python -m pip install -e ".[dev]"
 
       - name: Run Python tests
         run: python -m pytest
 
       - name: Run Ruff
         run: python -m ruff check python
+
+      - name: Check Python formatting
+        run: python -m ruff format --check python
+
+      - name: Build release wheel
+        run: python -m maturin build --release --locked --out dist
+
+      - name: Verify installed release wheel
+        shell: bash
+        run: |
+          python -m pip uninstall -y navlens
+          python -m pip install dist/*.whl
+          python -c "import navlens; from importlib.metadata import version; assert navlens.__version__ == version('navlens'); assert navlens.__version__ != '0+unknown'"
+          navlens-evaluate-historical-prediction-csv --help
+          navlens-evaluate-historical-prediction-csv \
+            --schedule-csv examples/historical_prediction/prediction_schedule.csv \
+            --fund-unit-prices-csv examples/historical_prediction/fund_unit_prices.csv \
+            --fund-id DEMO \
+            --source-id example \
+            --lookback 5 \
+            --confidence-level 0.95 \
+            --model-version v1.0 \
+            --output-format json

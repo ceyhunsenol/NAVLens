@@ -128,8 +128,10 @@ from .sources import (
     read_holdings_snapshots,
     read_security_prices_csv,
 )
+from .version import __version__
 
 __all__ = [
+    "__version__",
     "AlignmentPolicy",
     "AssetClass",
     "BacktestMetrics",

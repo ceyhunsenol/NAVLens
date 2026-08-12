@@ -65,6 +65,17 @@ Run the Rust test suite with:
 cargo test --workspace
 ```
 
+Install the mixed Python/Rust development package with:
+
+```shell
+python -m pip install -e ".[dev]"
+```
+
+The public `navlens.__version__` value is read from installed package metadata
+and matches the Rust workspace release version. NumPy, pandas, and scikit-learn
+are regular package dependencies because the public prediction commands use
+the implemented linear baseline at runtime; they are not optional extras.
+
 ## Try the historical prediction pipeline
 
 After installing the Python package with `maturin develop`, run the complete

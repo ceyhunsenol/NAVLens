@@ -5,6 +5,11 @@ by NAVLens. It covers machine-learning and statistical prediction models only;
 Rust domain models, persistence records, API DTOs, and view models are governed
 by the taxonomy in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
+The installable Python package includes NumPy, pandas, and scikit-learn as
+runtime dependencies. The public prediction CLI executes the implemented
+linear baseline, so these libraries are required by an advertised command
+rather than being development-only extras.
+
 ## Status definitions
 
 - **Implemented:** executable, tested, and reachable through a documented API
