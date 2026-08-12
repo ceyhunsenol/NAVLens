@@ -156,7 +156,9 @@ Its feature schema is `last-return-v1`; its interval radius is the configured
 quantile of absolute differences between consecutive historical returns.
 
 Both are intentionally simple reference points, not claims about fund-market
-behaviour. They implement `WalkForwardEstimator`, cross the Rust
+behaviour. Their implementations and shared `NextReturnEstimator` contract
+live under `navlens.estimators`; `navlens.evaluation.WalkForwardEstimator`
+remains a compatibility alias for evaluation consumers. They cross the Rust
 `ReturnPrediction` validation boundary, and are evaluated by the same Rust
 metrics as the trainable baseline. A trainable model that cannot consistently
 beat these references has not demonstrated useful incremental signal.
@@ -169,7 +171,7 @@ A new estimator is accepted only when all of the following are satisfied:
 2. Its target and decimal/percentage units are documented.
 3. Its feature schema has a version and lists every input.
 4. Training receives an explicit dataset and performs no hidden network access.
-5. It implements the consumer-owned `WalkForwardEstimator` protocol.
+5. It implements the shared `NextReturnEstimator` protocol.
 6. Its output crosses the validated Rust `ReturnPrediction` boundary.
 7. Tests demonstrate that target and future observations cannot affect an
    earlier prediction.

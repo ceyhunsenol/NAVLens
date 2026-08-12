@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from navlens.estimators import LinearBaselineConfig, predict_next_return
-from navlens.training import train_linear_baseline
+from navlens.estimators import LinearBaselineConfig
+from navlens.training import fit_predict_linear_baseline
 
 from .contracts import FittedPrediction
 
@@ -32,14 +32,9 @@ class LinearBaselineWalkForward:
 
     def fit_predict(self, history: pd.Series) -> FittedPrediction:
         """Fit on the supplied history and predict its next return."""
-        artifact = train_linear_baseline(
+        return fit_predict_linear_baseline(
             history,
             lookback=self.lookback,
             model_version=self.model_version,
             confidence_level=self.confidence_level,
-        )
-        return FittedPrediction(
-            prediction=predict_next_return(artifact, history),
-            training_start=artifact.training_start,
-            training_end=artifact.training_end,
         )

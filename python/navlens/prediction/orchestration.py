@@ -8,8 +8,8 @@ from navlens._timestamps import datetime_to_utc_timestamp, validate_utc_timestam
 from navlens.datasets import select_fund_unit_price_snapshots
 from navlens.datasets.fund_unit_price_snapshots import FundUnitPriceSnapshot
 from navlens.datasets.pandas_returns import dated_returns_to_series
-from navlens.estimators import LinearBaselineConfig, predict_next_return
-from navlens.training import train_linear_baseline
+from navlens.estimators import LinearBaselineConfig
+from navlens.training import fit_predict_linear_baseline
 
 from .contracts import SingleReturnPredictionResult
 from .errors import (
@@ -97,13 +97,12 @@ def predict_next_published_nav_return_from_snapshots(
 
     returns = dated_returns_to_series(dated_returns)
 
-    artifact = train_linear_baseline(
+    fitted = fit_predict_linear_baseline(
         returns,
         lookback=config.lookback,
         model_version=model_version,
         confidence_level=confidence_level,
     )
-    prediction = predict_next_return(artifact, returns)
 
     actual_data_as_of = max(snapshot.available_at for snapshot in selected)
 
@@ -123,19 +122,19 @@ def predict_next_published_nav_return_from_snapshots(
     )
 
     training_target_start_date = MarketDate(
-        artifact.training_start.year,
-        artifact.training_start.month,
-        artifact.training_start.day,
+        fitted.training_start.year,
+        fitted.training_start.month,
+        fitted.training_start.day,
     )
     training_target_end_date = MarketDate(
-        artifact.training_end.year,
-        artifact.training_end.month,
-        artifact.training_end.day,
+        fitted.training_end.year,
+        fitted.training_end.month,
+        fitted.training_end.day,
     )
 
     return SingleReturnPredictionResult(
         request=request,
-        prediction=prediction,
+        prediction=fitted.prediction,
         source_id=source_id,
         prediction_timestamp=prediction_timestamp,
         pricing_as_of_date=pricing_as_of_date,
