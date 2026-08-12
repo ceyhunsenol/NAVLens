@@ -23,3 +23,23 @@ class InvalidPredictionConfigurationError(PointInTimePredictionError):
 
 class StaleFundUnitPriceHistoryError(PointInTimePredictionError):
     """Raised when the latest visible fund price exceeds the explicit age policy."""
+
+
+class PredictionArtifactError(ValueError):
+    """Base error for stored prediction artifact loading and evaluation."""
+
+
+class InvalidPredictionArtifactError(PredictionArtifactError):
+    """Raised when a stored prediction artifact violates its versioned schema."""
+
+
+class UnsupportedPredictionArtifactSourceError(PredictionArtifactError):
+    """Raised when an evaluator cannot acquire the artifact's declared source."""
+
+
+class MissingRealizedPriceObservationError(PredictionArtifactError):
+    """Raised when an exact realized period-boundary price is unavailable."""
+
+
+class UnexpectedRealizedReturnCardinalityError(PredictionArtifactError):
+    """Raised when two exact prices do not produce one native period return."""

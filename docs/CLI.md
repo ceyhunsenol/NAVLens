@@ -210,6 +210,25 @@ Batch output supports `--output PATH` with the same atomic, no-overwrite
 contract. This is the recommended form for retaining prediction artifacts that
 will later be compared with published NAV returns.
 
+### Evaluate a stored TEFAS prediction
+
+`navlens-evaluate-tefas-prediction` loads a JSON artifact produced by
+`navlens-predict-tefas`, acquires the exact last-observation and target-date NAV
+values, and delegates realized-return and prediction-metric calculations to
+the canonical Rust boundaries.
+
+```shell
+navlens-evaluate-tefas-prediction artifacts/predictions/aal.json \
+  --as-of 2026-08-14 --output-format json \
+  --output artifacts/evaluations/aal.json
+```
+
+Evaluation fails explicitly when the artifact schema or source is unsupported,
+the target date is later than `--as-of`, or either exact period-boundary NAV is
+missing. It never substitutes a nearby date. The report includes predicted and
+realized returns, signed and absolute error, direction correctness, interval
+coverage, evaluation timestamp, and TEFAS raw-artifact provenance.
+
 ## Evaluate historical point-in-time NAV return predictions
 
 The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological

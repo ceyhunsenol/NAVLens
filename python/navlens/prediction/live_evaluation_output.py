@@ -1,0 +1,51 @@
+"""Deterministic reports for one live prediction evaluation."""
+
+import json
+
+from .live_evaluation import LivePredictionEvaluationResult
+
+SCHEMA_VERSION = "navlens-live-prediction-evaluation-v1"
+
+
+def format_live_prediction_evaluation(result: LivePredictionEvaluationResult) -> str:
+    """Format predicted-versus-realized values and native one-sample metrics."""
+    interval = result.metrics.interval
+    lines = [
+        "=== NAVLens Live Prediction Evaluation ===",
+        f"Fund ID: {result.artifact.fund_id}",
+        f"Prediction Date: {result.artifact.prediction_date}",
+        f"Target Date: {result.artifact.target_date}",
+        f"Evaluated At: {result.evaluated_at.isoformat()}",
+        f"Predicted Return (Decimal): {result.artifact.prediction.expected_return:.10f}",
+        f"Realized Return (Decimal): {result.realized_return.return_decimal:.10f}",
+        f"Absolute Error (Decimal): {result.metrics.mean_absolute_error:.10f}",
+        f"Signed Error (Decimal): {result.metrics.mean_error:.10f}",
+        f"Direction Correct: {result.metrics.direction_accuracy == 1.0}",
+        f"Interval Covered: {interval is not None and interval.coverage == 1.0}",
+        f"Source Artifact: {result.source_artifact_path}",
+        f"Source Cache Hit: {result.source_from_cache}",
+    ]
+    return "\n".join(lines)
+
+
+def serialize_live_prediction_evaluation(result: LivePredictionEvaluationResult) -> bytes:
+    """Serialize a live evaluation through a deterministic versioned JSON schema."""
+    interval = result.metrics.interval
+    payload = {
+        "absolute_error_decimal": result.metrics.mean_absolute_error,
+        "direction_correct": result.metrics.direction_accuracy == 1.0,
+        "evaluated_at": result.evaluated_at.isoformat(),
+        "fund_id": result.artifact.fund_id,
+        "interval_covered": interval is not None and interval.coverage == 1.0,
+        "prediction_date": str(result.artifact.prediction_date),
+        "prediction_timestamp": result.artifact.prediction_timestamp.isoformat(),
+        "predicted_return_decimal": result.artifact.prediction.expected_return,
+        "realized_return_decimal": result.realized_return.return_decimal,
+        "schema_version": SCHEMA_VERSION,
+        "signed_error_decimal": result.metrics.mean_error,
+        "source_artifact_path": str(result.source_artifact_path),
+        "source_cache_hit": result.source_from_cache,
+        "source_id": result.artifact.source_id,
+        "target_date": str(result.artifact.target_date),
+    }
+    return json.dumps(payload, indent=2, sort_keys=True, allow_nan=False).encode("utf-8")
