@@ -1,0 +1,145 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate release source
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Read and validate release version
+        id: version
+        shell: bash
+        run: |
+          version=$(python -c "import tomllib; print(tomllib.load(open('Cargo.toml', 'rb'))['workspace']['package']['version'])")
+          if [[ "${GITHUB_REF}" == refs/tags/* && "${GITHUB_REF_NAME}" != "v${version}" ]]; then
+            echo "tag ${GITHUB_REF_NAME} does not match workspace version ${version}" >&2
+            exit 1
+          fi
+          if [[ "${GITHUB_REF}" == refs/tags/* ]] && ! grep -Fq "## [${version}]" CHANGELOG.md; then
+            echo "CHANGELOG.md does not contain a ${version} release section" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
+      - name: Install development package
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run Python quality gates
+        run: |
+          python -m ruff check python .github/scripts
+          python -m ruff format --check python .github/scripts
+          python -m pytest
+
+      - name: Run Rust quality gates
+        run: |
+          cargo fmt --all -- --check
+          cargo test --workspace --locked
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+
+  build-wheels:
+    name: Build ${{ matrix.name }} wheel
+    needs: validate
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            os: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            manylinux: "2_17"
+          - name: Windows x86_64
+            os: windows-2022
+            target: x86_64-pc-windows-msvc
+            manylinux: "off"
+          - name: macOS Apple Silicon
+            os: macos-14
+            target: aarch64-apple-darwin
+            manylinux: "off"
+          - name: macOS Intel
+            os: macos-15-intel
+            target: x86_64-apple-darwin
+            manylinux: "off"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Build wheel
+        uses: PyO3/maturin-action@86b9d133d34bc1b40018696f782949dac11bd380 # v1.49.4
+        with:
+          maturin-version: v1.13.3
+          target: ${{ matrix.target }}
+          manylinux: ${{ matrix.manylinux }}
+          args: --release --locked --compatibility pypi --out dist
+
+      - name: Install built wheel
+        shell: bash
+        run: |
+          wheel=$(python -c "import glob; wheels = glob.glob('dist/*.whl'); assert len(wheels) == 1, wheels; print(wheels[0])")
+          python -m pip install "${wheel}"
+
+      - name: Verify installed wheel
+        run: >-
+          python .github/scripts/verify_installed_package.py
+          --expected-version "${{ needs.validate.outputs.version }}"
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: navlens-${{ matrix.target }}
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [validate, build-wheels]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download wheels
+        uses: actions/download-artifact@v5
+        with:
+          pattern: navlens-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${GITHUB_REF_NAME}" dist/*.whl
+          --repo "${GITHUB_REPOSITORY}"
+          --verify-tag
+          --title "NAVLens ${GITHUB_REF_NAME}"
+          --generate-notes
