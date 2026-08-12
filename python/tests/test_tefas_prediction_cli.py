@@ -37,6 +37,8 @@ def test_main_acquires_and_predicts_without_an_intermediate_csv(monkeypatch, cap
             "14",
             "--target-date",
             "2026-08-13",
+            "--max-price-age-days",
+            "10",
         ]
     )
 

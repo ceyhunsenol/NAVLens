@@ -44,4 +44,10 @@ impl PyMarketDate {
     fn __repr__(&self) -> String {
         format!("MarketDate('{}')", self.inner)
     }
+
+    /// Return signed calendar days from `earlier` to this date.
+    #[must_use]
+    fn calendar_days_since(&self, earlier: &Self) -> i64 {
+        self.inner.calendar_days_since(earlier.inner)
+    }
 }

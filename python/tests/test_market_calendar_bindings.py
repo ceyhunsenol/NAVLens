@@ -33,6 +33,14 @@ def test_session_kind_variants_and_properties() -> None:
     assert closed == SessionKind("CLOSED")
 
 
+def test_market_date_exposes_signed_native_calendar_day_difference() -> None:
+    earlier = MarketDate(2026, 7, 31)
+    later = MarketDate(2026, 8, 2)
+
+    assert later.calendar_days_since(earlier) == 2
+    assert earlier.calendar_days_since(later) == -2
+
+
 def test_session_kind_rejects_unknown_kind() -> None:
     with pytest.raises(NavlensValidationError, match="unknown session kind"):
         SessionKind("unknown_kind")

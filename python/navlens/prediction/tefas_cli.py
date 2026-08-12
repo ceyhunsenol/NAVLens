@@ -57,4 +57,5 @@ def _predict(
         prediction_date=arguments.prediction_date,
         target_date=arguments.target_date,
         model=arguments.model,
+        freshness=arguments.freshness,
     )

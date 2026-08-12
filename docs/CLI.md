@@ -156,13 +156,16 @@ encode the fund's future publication calendar.
 
 ```shell
 navlens-predict-tefas AAL --days 365 --target-date 2026-08-13 \
-  --lookback 5 --confidence-level 0.90
+  --lookback 5 --confidence-level 0.90 --max-price-age-days 4
 ```
 
 Use `--output-format json` for the versioned single-prediction JSON schema.
 Historical TEFAS observations do not include individual publication
 timestamps, so this command conservatively treats every acquired observation
 as available at the current acquisition timestamp.
+The command rejects a latest unit price older than four calendar days by
+default. Use `--max-price-age-days` to set an explicit alternative for known
+market closures; the configured limit is never silently relaxed.
 
 ## Evaluate historical point-in-time NAV return predictions
 

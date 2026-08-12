@@ -19,3 +19,7 @@ class InvalidPredictionWindowError(PointInTimePredictionError):
 
 class InvalidPredictionConfigurationError(PointInTimePredictionError):
     """Raised when model configuration parameters (lookback, minimum history) are invalid."""
+
+
+class StaleFundUnitPriceHistoryError(PointInTimePredictionError):
+    """Raised when the latest visible fund price exceeds the explicit age policy."""

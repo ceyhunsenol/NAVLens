@@ -12,6 +12,7 @@ from navlens.sources.tefas.cli_arguments import (
     tefas_cli_arguments_from_namespace,
 )
 
+from .freshness import FundUnitPriceFreshnessPolicy
 from .model_cli_options import (
     PredictionModelOptions,
     add_prediction_model_options,
@@ -27,6 +28,7 @@ class TefasPredictionCliArguments:
     prediction_date: MarketDate
     target_date: MarketDate
     model: PredictionModelOptions
+    freshness: FundUnitPriceFreshnessPolicy
     output_format: str
 
 
@@ -43,6 +45,7 @@ def parse_tefas_prediction_arguments(
     )
     parser.add_argument("--target-date", type=_market_date, required=True)
     add_prediction_model_options(parser)
+    parser.add_argument("--max-price-age-days", type=_non_negative_integer, default=4)
     parser.add_argument("--output-format", choices=["text", "json"], default="text")
     values = parser.parse_args(argv)
     acquisition = tefas_cli_arguments_from_namespace(parser, values, current_date)
@@ -50,11 +53,13 @@ def parse_tefas_prediction_arguments(
     if values.target_date <= prediction_date:
         parser.error("--target-date must be later than the prediction date")
     model = prediction_model_options_from_namespace(parser, values)
+    freshness = FundUnitPriceFreshnessPolicy(values.max_price_age_days)
     return TefasPredictionCliArguments(
         acquisition,
         prediction_date,
         values.target_date,
         model,
+        freshness,
         values.output_format,
     )
 
@@ -68,3 +73,13 @@ def _market_date(value: str) -> MarketDate:
 
 def _to_market_date(value: date) -> MarketDate:
     return MarketDate(value.year, value.month, value.day)
+
+
+def _non_negative_integer(value: str) -> int:
+    try:
+        number = int(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError("expected a non-negative integer") from error
+    if number < 0:
+        raise argparse.ArgumentTypeError("expected a non-negative integer")
+    return number

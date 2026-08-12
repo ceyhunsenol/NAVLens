@@ -8,7 +8,9 @@ from .errors import (
     InvalidPredictionWindowError,
     NoEligibleSnapshotsError,
     PointInTimePredictionError,
+    StaleFundUnitPriceHistoryError,
 )
+from .freshness import FundUnitPriceFreshnessPolicy
 from .options import PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .serialization import serialize_single_return_prediction
@@ -21,8 +23,10 @@ __all__ = [
     "InvalidPredictionWindowError",
     "NoEligibleSnapshotsError",
     "PointInTimePredictionError",
+    "FundUnitPriceFreshnessPolicy",
     "PredictionModelOptions",
     "SingleReturnPredictionResult",
+    "StaleFundUnitPriceHistoryError",
     "format_prediction_text",
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",

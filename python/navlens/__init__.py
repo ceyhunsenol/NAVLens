@@ -95,6 +95,7 @@ from .datasets import (
     select_security_price_snapshots,
 )
 from .prediction import (
+    FundUnitPriceFreshnessPolicy,
     InsufficientVisibleHistoryError,
     InvalidPredictionConfigurationError,
     InvalidPredictionWindowError,
@@ -102,6 +103,7 @@ from .prediction import (
     PointInTimePredictionError,
     PredictionModelOptions,
     SingleReturnPredictionResult,
+    StaleFundUnitPriceHistoryError,
     format_prediction_text,
     predict_next_published_nav_return_from_csv,
     predict_next_published_nav_return_from_snapshots,
@@ -190,7 +192,9 @@ __all__ = [
     "PointInTimeFxReturnContributionRequest",
     "PointInTimeFundReturnReconciliationResult",
     "PointInTimePredictionError",
+    "FundUnitPriceFreshnessPolicy",
     "PredictionModelOptions",
+    "StaleFundUnitPriceHistoryError",
     "PointInTimeReconciliationError",
     "PointInTimeReturnContributionResult",
     "PortfolioComponentContribution",

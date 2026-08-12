@@ -20,6 +20,8 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
             "0.95",
             "--model-version",
             "baseline-v2",
+            "--max-price-age-days",
+            "6",
             "--output-format",
             "json",
         ],
@@ -33,6 +35,7 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
     assert arguments.model.minimum_training_returns == 12
     assert arguments.model.confidence_level == 0.95
     assert arguments.model.model_version == "baseline-v2"
+    assert arguments.freshness.maximum_age_calendar_days == 6
     assert arguments.output_format == "json"
 
 
