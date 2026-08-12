@@ -52,41 +52,5 @@ jobs:
         run: |
           python -m pip uninstall -y navlens
           python -m pip install dist/*.whl
-          python -c "import navlens; from importlib.metadata import version; assert navlens.__version__ == version('navlens'); assert navlens.__version__ != '0+unknown'"
-          python - <<'PY'
-          import subprocess
-          from importlib.metadata import distribution
-
-          entry_points = sorted(
-              (
-                  entry_point
-                  for entry_point in distribution("navlens").entry_points
-                  if entry_point.group == "console_scripts"
-              ),
-              key=lambda entry_point: entry_point.name,
-          )
-          if not entry_points:
-              raise SystemExit("release wheel does not publish any console scripts")
-
-          for entry_point in entry_points:
-              result = subprocess.run(
-                  [entry_point.name, "--help"],
-                  capture_output=True,
-                  text=True,
-              )
-              if result.returncode != 0:
-                  raise SystemExit(
-                      f"{entry_point.name} --help failed:\n{result.stderr}"
-                  )
-
-          print(f"verified {len(entry_points)} installed console scripts")
-          PY
-          navlens-evaluate-historical-prediction-csv \
-            --schedule-csv examples/historical_prediction/prediction_schedule.csv \
-            --fund-unit-prices-csv examples/historical_prediction/fund_unit_prices.csv \
-            --fund-id DEMO \
-            --source-id example \
-            --lookback 5 \
-            --confidence-level 0.95 \
-            --model-version v1.0 \
-            --output-format json
+          expected_version=$(python -c "import tomllib; print(tomllib.load(open('Cargo.toml', 'rb'))['workspace']['package']['version'])")
+          python .github/scripts/verify_installed_package.py --expected-version "${expected_version}"
