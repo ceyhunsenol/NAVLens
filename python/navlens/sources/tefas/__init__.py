@@ -9,6 +9,7 @@ from .policy import TefasAccessPolicy
 from .provenance import TefasPayloadProvenance, capture_payload_provenance
 from .records import TefasPriceRecord
 from .request import TefasPriceRequest
+from .snapshots import TEFAS_SOURCE_ID, to_fund_unit_price_snapshots
 
 __all__ = [
     "TefasAccessPolicy",
@@ -21,8 +22,10 @@ __all__ = [
     "TefasRequestError",
     "TefasSourceError",
     "TefasTransportError",
+    "TEFAS_SOURCE_ID",
     "AcquireTefasPrices",
     "capture_payload_provenance",
     "parse_price_records",
     "to_price_observations",
+    "to_fund_unit_price_snapshots",
 ]

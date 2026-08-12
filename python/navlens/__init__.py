@@ -104,6 +104,7 @@ from .prediction import (
     format_prediction_text,
     predict_next_published_nav_return_from_csv,
     predict_next_published_nav_return_from_snapshots,
+    predict_next_published_nav_return_from_tefas_acquisition,
     serialize_single_return_prediction,
 )
 from .reconciliation import (
@@ -235,6 +236,7 @@ __all__ = [
     "format_return_contribution_result",
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",
+    "predict_next_published_nav_return_from_tefas_acquisition",
     "read_fund_unit_prices_csv",
     "read_fx_rates_csv",
     "read_holdings_snapshots",

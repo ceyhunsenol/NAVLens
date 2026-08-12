@@ -5,6 +5,11 @@ follows Semantic Versioning from the first public release.
 
 ## [Unreleased]
 
+### Added
+
+- Keyless `navlens-predict-tefas` command that acquires TEFAS unit prices and
+  runs the canonical point-in-time next-NAV baseline prediction pipeline.
+
 ## [0.1.0] - 2026-08-12
 
 ### Added

@@ -147,6 +147,22 @@ navlens-predict-fund-csv \
 
 JSON output (`--output-format json`) emits deterministic UTF-8 versioned JSON matching schema `navlens-single-return-prediction-v1`.
 
+## Acquire TEFAS prices and predict the next published NAV return
+
+The `navlens-predict-tefas` CLI combines keyless TEFAS acquisition with the
+same canonical point-in-time prediction pipeline used by the CSV command.
+The target date remains explicit because provider price history does not
+encode the fund's future publication calendar.
+
+```shell
+navlens-predict-tefas AAL --days 365 --target-date 2026-08-13
+```
+
+Use `--output-format json` for the versioned single-prediction JSON schema.
+Historical TEFAS observations do not include individual publication
+timestamps, so this command conservatively treats every acquired observation
+as available at the current acquisition timestamp.
+
 ## Evaluate historical point-in-time NAV return predictions
 
 The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological

@@ -55,6 +55,7 @@ navlens-fx-reconcile-fund-csv = "navlens.reconciliation.fx_cli:main"
 navlens-evaluate-historical-reconciliation-csv = "navlens.reconciliation.historical_cli:main"
 navlens-evaluate-historical-fx-reconciliation-csv = "navlens.reconciliation.historical_fx_cli:main"
 navlens-predict-fund-csv = "navlens.prediction.cli:main"
+navlens-predict-tefas = "navlens.prediction.tefas_cli:main"
 navlens-evaluate-historical-prediction-csv = "navlens.prediction.historical_cli:main"
 
 
