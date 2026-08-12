@@ -11,6 +11,7 @@ from .contracts import SingleReturnPredictionResult
 from .csv import predict_next_published_nav_return_from_csv
 from .errors import (
     InsufficientVisibleHistoryError,
+    InvalidLivePredictionHistoryComparisonError,
     InvalidLivePredictionHistoryError,
     InvalidPredictionArtifactError,
     InvalidPredictionConfigurationError,
@@ -33,6 +34,14 @@ from .live_evaluation_output import (
     serialize_live_prediction_evaluation,
 )
 from .live_history import LivePredictionHistoryResult, evaluate_live_prediction_history
+from .live_history_comparison import (
+    LivePredictionHistoryComparisonResult,
+    compare_live_prediction_histories,
+)
+from .live_history_comparison_output import (
+    format_live_prediction_history_comparison,
+    serialize_live_prediction_history_comparison,
+)
 from .live_history_output import (
     format_live_prediction_history,
     serialize_live_prediction_history,
@@ -49,6 +58,7 @@ __all__ = [
     "InvalidPredictionArtifactError",
     "InvalidPredictionConfigurationError",
     "InvalidLivePredictionHistoryError",
+    "InvalidLivePredictionHistoryComparisonError",
     "InvalidPredictionWindowError",
     "NoEligibleSnapshotsError",
     "MissingRealizedPriceObservationError",
@@ -64,10 +74,13 @@ __all__ = [
     "LivePredictionEvaluationResult",
     "LivePredictionEvaluationArtifact",
     "LivePredictionHistoryResult",
+    "LivePredictionHistoryComparisonResult",
+    "compare_live_prediction_histories",
     "evaluate_tefas_prediction_artifact",
     "evaluate_live_prediction_history",
     "format_live_prediction_evaluation",
     "format_live_prediction_history",
+    "format_live_prediction_history_comparison",
     "format_prediction_text",
     "load_single_return_prediction_artifact",
     "load_single_return_prediction_artifacts",
@@ -79,4 +92,5 @@ __all__ = [
     "serialize_single_return_prediction",
     "serialize_live_prediction_evaluation",
     "serialize_live_prediction_history",
+    "serialize_live_prediction_history_comparison",
 ]

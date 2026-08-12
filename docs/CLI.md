@@ -264,6 +264,23 @@ Duplicate or decreasing dates are rejected by the canonical Rust backtest
 boundary. Aggregate error, direction, and interval metrics are also calculated
 there. File output is atomic and refuses to overwrite an existing artifact.
 
+### Compare live model histories fairly
+
+Use one repeated `--history` group per model. Every group may contain single
+evaluation artifacts, batch evaluation artifacts, or a mixture:
+
+```shell
+navlens-compare-prediction-histories \
+  --history ridge-day-1.json ridge-day-2.json \
+  --history last-return-day-1.json last-return-day-2.json \
+  --output-format json --output model-comparison.json
+```
+
+Comparison requires the same fund, source, prediction/target periods, realized
+returns, and confidence level. Model identities must be unique. NAVLens reports
+each model's Rust-produced error, direction, and interval metrics without
+declaring a subjective winner or silently ranking unlike samples.
+
 ## Evaluate historical point-in-time NAV return predictions
 
 The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological

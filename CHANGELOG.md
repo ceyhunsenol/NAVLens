@@ -18,6 +18,7 @@ follows Semantic Versioning from the first public release.
 - Aggregate native performance reports across stored live prediction evaluations.
 - Failure-isolated batch evaluation for stored TEFAS prediction artifacts.
 - Direct chaining from batch prediction artifacts into batch evaluation.
+- Fair side-by-side comparison of live model histories over identical realized periods.
 
 ## [0.1.0] - 2026-08-12
 

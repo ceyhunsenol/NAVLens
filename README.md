@@ -105,6 +105,7 @@ cargo test --workspace
 | `navlens-evaluate-tefas-prediction` | Compare a stored prediction with its published NAV. |
 | `navlens-evaluate-tefas-prediction-batch` | Evaluate multiple stored predictions with failure isolation. |
 | `navlens-summarize-prediction-evaluations` | Aggregate stored live prediction evaluations. |
+| `navlens-compare-prediction-histories` | Fairly compare model histories over identical periods. |
 | `navlens-evaluate-historical-prediction-csv` | Evaluate historical point-in-time predictions. |
 
 Every command supports `--help`. Detailed arguments, output contracts, and exit

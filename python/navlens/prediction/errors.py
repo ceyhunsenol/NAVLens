@@ -47,3 +47,7 @@ class UnexpectedRealizedReturnCardinalityError(PredictionArtifactError):
 
 class InvalidLivePredictionHistoryError(PredictionArtifactError):
     """Raised when evaluation artifacts cannot form one comparable history."""
+
+
+class InvalidLivePredictionHistoryComparisonError(PredictionArtifactError):
+    """Raised when live histories do not form one fair model comparison."""
