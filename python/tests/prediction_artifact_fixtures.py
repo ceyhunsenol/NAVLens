@@ -29,3 +29,35 @@ def write_prediction_artifact(path: Path, **overrides) -> Path:
         encoding="utf-8",
     )
     return path
+
+
+def evaluation_artifact_payload(**overrides) -> dict[str, object]:
+    prediction = prediction_artifact_payload()
+    payload = {
+        "confidence_level": prediction["confidence_level"],
+        "evaluated_at": "2026-07-21T12:00:00+00:00",
+        "feature_schema_version": prediction["feature_schema_version"],
+        "fund_id": prediction["fund_id"],
+        "last_observation_date": prediction["last_observation_date"],
+        "model_name": prediction["model_name"],
+        "model_version": prediction["model_version"],
+        "predicted_return_decimal": prediction["expected_return_decimal"],
+        "prediction_date": prediction["prediction_date"],
+        "prediction_interval_lower_decimal": prediction["prediction_interval_lower_decimal"],
+        "prediction_interval_upper_decimal": prediction["prediction_interval_upper_decimal"],
+        "prediction_timestamp": prediction["prediction_timestamp"],
+        "realized_return_decimal": 0.02,
+        "schema_version": "navlens-live-prediction-evaluation-v1",
+        "source_id": prediction["source_id"],
+        "target_date": prediction["target_date"],
+    }
+    payload.update(overrides)
+    return payload
+
+
+def write_evaluation_artifact(path: Path, **overrides) -> Path:
+    path.write_text(
+        json.dumps(evaluation_artifact_payload(**overrides)),
+        encoding="utf-8",
+    )
+    return path

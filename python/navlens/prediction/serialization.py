@@ -2,9 +2,10 @@
 
 import json
 
+from .artifact_schemas import SINGLE_RETURN_PREDICTION_SCHEMA_VERSION
 from .contracts import SingleReturnPredictionResult
 
-SCHEMA_VERSION = "navlens-single-return-prediction-v1"
+SCHEMA_VERSION = SINGLE_RETURN_PREDICTION_SCHEMA_VERSION
 
 
 def serialize_single_return_prediction(result: SingleReturnPredictionResult) -> bytes:

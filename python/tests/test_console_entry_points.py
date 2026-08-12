@@ -12,6 +12,7 @@ EXPECTED_CONSOLE_SCRIPTS = {
         "navlens.reconciliation.historical_cli:main"
     ),
     "navlens-evaluate-tefas-prediction": "navlens.prediction.tefas_evaluation_cli:main",
+    "navlens-summarize-prediction-evaluations": ("navlens.prediction.live_history_cli:main"),
     "navlens-fetch-tefas": "navlens.sources.tefas.cli:main",
     "navlens-fx-reconcile-fund-csv": "navlens.reconciliation.fx_cli:main",
     "navlens-fx-return-contribution-csv": ("navlens.alignment.fx_return_contribution_cli:main"),

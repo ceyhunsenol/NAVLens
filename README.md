@@ -103,6 +103,7 @@ cargo test --workspace
 | `navlens-predict-tefas` | Acquire TEFAS prices and produce one next-NAV prediction. |
 | `navlens-predict-tefas-batch` | Produce isolated next-NAV predictions for multiple funds. |
 | `navlens-evaluate-tefas-prediction` | Compare a stored prediction with its published NAV. |
+| `navlens-summarize-prediction-evaluations` | Aggregate stored live prediction evaluations. |
 | `navlens-evaluate-historical-prediction-csv` | Evaluate historical point-in-time predictions. |
 
 Every command supports `--help`. Detailed arguments, output contracts, and exit

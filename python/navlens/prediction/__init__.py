@@ -1,13 +1,16 @@
 """Provider-neutral point-in-time NAV return prediction capability."""
 
 from .artifact import (
+    LivePredictionEvaluationArtifact,
     SingleReturnPredictionArtifact,
+    load_live_prediction_evaluation_artifact,
     load_single_return_prediction_artifact,
 )
 from .contracts import SingleReturnPredictionResult
 from .csv import predict_next_published_nav_return_from_csv
 from .errors import (
     InsufficientVisibleHistoryError,
+    InvalidLivePredictionHistoryError,
     InvalidPredictionArtifactError,
     InvalidPredictionConfigurationError,
     InvalidPredictionWindowError,
@@ -28,6 +31,11 @@ from .live_evaluation_output import (
     format_live_prediction_evaluation,
     serialize_live_prediction_evaluation,
 )
+from .live_history import LivePredictionHistoryResult, evaluate_live_prediction_history
+from .live_history_output import (
+    format_live_prediction_history,
+    serialize_live_prediction_history,
+)
 from .options import PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .serialization import serialize_single_return_prediction
@@ -38,6 +46,7 @@ __all__ = [
     "InsufficientVisibleHistoryError",
     "InvalidPredictionArtifactError",
     "InvalidPredictionConfigurationError",
+    "InvalidLivePredictionHistoryError",
     "InvalidPredictionWindowError",
     "NoEligibleSnapshotsError",
     "MissingRealizedPriceObservationError",
@@ -51,13 +60,19 @@ __all__ = [
     "UnexpectedRealizedReturnCardinalityError",
     "UnsupportedPredictionArtifactSourceError",
     "LivePredictionEvaluationResult",
+    "LivePredictionEvaluationArtifact",
+    "LivePredictionHistoryResult",
     "evaluate_tefas_prediction_artifact",
+    "evaluate_live_prediction_history",
     "format_live_prediction_evaluation",
+    "format_live_prediction_history",
     "format_prediction_text",
     "load_single_return_prediction_artifact",
+    "load_live_prediction_evaluation_artifact",
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",
     "predict_next_published_nav_return_from_tefas_acquisition",
     "serialize_single_return_prediction",
     "serialize_live_prediction_evaluation",
+    "serialize_live_prediction_history",
 ]

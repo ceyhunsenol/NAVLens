@@ -2,9 +2,10 @@
 
 import json
 
+from .artifact_schemas import LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION
 from .live_evaluation import LivePredictionEvaluationResult
 
-SCHEMA_VERSION = "navlens-live-prediction-evaluation-v1"
+SCHEMA_VERSION = LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION
 
 
 def format_live_prediction_evaluation(result: LivePredictionEvaluationResult) -> str:
@@ -33,13 +34,20 @@ def serialize_live_prediction_evaluation(result: LivePredictionEvaluationResult)
     interval = result.metrics.interval
     payload = {
         "absolute_error_decimal": result.metrics.mean_absolute_error,
+        "confidence_level": result.artifact.prediction.confidence_level,
         "direction_correct": result.metrics.direction_accuracy == 1.0,
         "evaluated_at": result.evaluated_at.isoformat(),
         "fund_id": result.artifact.fund_id,
+        "feature_schema_version": result.artifact.prediction.model.feature_set_version,
         "interval_covered": interval is not None and interval.coverage == 1.0,
+        "last_observation_date": str(result.artifact.last_observation_date),
+        "model_name": result.artifact.prediction.model.name,
+        "model_version": result.artifact.prediction.model.version,
         "prediction_date": str(result.artifact.prediction_date),
         "prediction_timestamp": result.artifact.prediction_timestamp.isoformat(),
         "predicted_return_decimal": result.artifact.prediction.expected_return,
+        "prediction_interval_lower_decimal": result.artifact.prediction.lower_bound,
+        "prediction_interval_upper_decimal": result.artifact.prediction.upper_bound,
         "realized_return_decimal": result.realized_return.return_decimal,
         "schema_version": SCHEMA_VERSION,
         "signed_error_decimal": result.metrics.mean_error,

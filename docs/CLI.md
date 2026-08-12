@@ -229,6 +229,25 @@ missing. It never substitutes a nearby date. The report includes predicted and
 realized returns, signed and absolute error, direction correctness, interval
 coverage, evaluation timestamp, and TEFAS raw-artifact provenance.
 
+### Summarize stored live prediction evaluations
+
+`navlens-summarize-prediction-evaluations` combines explicit evaluation
+artifacts into one native backtest report:
+
+```shell
+navlens-summarize-prediction-evaluations \
+  artifacts/evaluations/aal-2026-08-14.json \
+  artifacts/evaluations/aal-2026-08-15.json \
+  --output-format json \
+  --output artifacts/evaluations/aal-history.json
+```
+
+All inputs must describe the same fund, source, and model identity, and must be
+supplied in chronological order. NAVLens performs no implicit directory scan.
+Duplicate or decreasing dates are rejected by the canonical Rust backtest
+boundary. Aggregate error, direction, and interval metrics are also calculated
+there. File output is atomic and refuses to overwrite an existing artifact.
+
 ## Evaluate historical point-in-time NAV return predictions
 
 The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological

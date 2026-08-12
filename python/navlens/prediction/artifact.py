@@ -14,8 +14,11 @@ from navlens import (
 )
 from navlens._timestamps import validate_utc_timestamp
 
+from .artifact_schemas import (
+    LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION,
+    SINGLE_RETURN_PREDICTION_SCHEMA_VERSION,
+)
 from .errors import InvalidPredictionArtifactError
-from .serialization import SCHEMA_VERSION
 
 _REQUIRED_KEYS = {
     "confidence_level",
@@ -33,6 +36,11 @@ _REQUIRED_KEYS = {
     "source_id",
     "target_date",
 }
+_REQUIRED_EVALUATION_KEYS = (_REQUIRED_KEYS - {"expected_return_decimal"}) | {
+    "evaluated_at",
+    "predicted_return_decimal",
+    "realized_return_decimal",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +56,15 @@ class SingleReturnPredictionArtifact:
     prediction: ReturnPrediction
 
 
+@dataclass(frozen=True, slots=True)
+class LivePredictionEvaluationArtifact:
+    """Validated prediction and realized return loaded from one evaluation artifact."""
+
+    prediction_artifact: SingleReturnPredictionArtifact
+    realized_return_decimal: float
+    evaluated_at: datetime
+
+
 def load_single_return_prediction_artifact(
     path: str | Path,
 ) -> SingleReturnPredictionArtifact:
@@ -58,7 +75,7 @@ def load_single_return_prediction_artifact(
         raise InvalidPredictionArtifactError(
             f"prediction artifact is missing required fields: {', '.join(missing)}"
         )
-    if payload["schema_version"] != SCHEMA_VERSION:
+    if payload["schema_version"] != SINGLE_RETURN_PREDICTION_SCHEMA_VERSION:
         raise InvalidPredictionArtifactError(
             f"unsupported prediction artifact schema: {payload['schema_version']!r}"
         )
@@ -69,6 +86,37 @@ def load_single_return_prediction_artifact(
     except (TypeError, ValueError) as error:
         raise InvalidPredictionArtifactError(
             "prediction artifact contains invalid native prediction values"
+        ) from error
+
+
+def load_live_prediction_evaluation_artifact(
+    path: str | Path,
+) -> LivePredictionEvaluationArtifact:
+    """Load a live-evaluation JSON artifact for aggregate native evaluation."""
+    payload = _read_payload(Path(path))
+    missing = sorted(_REQUIRED_EVALUATION_KEYS - payload.keys())
+    if missing:
+        raise InvalidPredictionArtifactError(
+            f"evaluation artifact is missing required fields: {', '.join(missing)}"
+        )
+    if payload["schema_version"] != LIVE_PREDICTION_EVALUATION_SCHEMA_VERSION:
+        raise InvalidPredictionArtifactError(
+            f"unsupported evaluation artifact schema: {payload['schema_version']!r}"
+        )
+    prediction_payload = dict(payload)
+    prediction_payload["expected_return_decimal"] = payload["predicted_return_decimal"]
+    prediction_payload["schema_version"] = SINGLE_RETURN_PREDICTION_SCHEMA_VERSION
+    try:
+        return LivePredictionEvaluationArtifact(
+            _build_artifact(prediction_payload),
+            _number(payload, "realized_return_decimal"),
+            _timestamp(payload, "evaluated_at"),
+        )
+    except InvalidPredictionArtifactError:
+        raise
+    except (TypeError, ValueError) as error:
+        raise InvalidPredictionArtifactError(
+            "evaluation artifact contains invalid native prediction values"
         ) from error
 
 

@@ -43,3 +43,7 @@ class MissingRealizedPriceObservationError(PredictionArtifactError):
 
 class UnexpectedRealizedReturnCardinalityError(PredictionArtifactError):
     """Raised when two exact prices do not produce one native period return."""
+
+
+class InvalidLivePredictionHistoryError(PredictionArtifactError):
+    """Raised when evaluation artifacts cannot form one comparable history."""
