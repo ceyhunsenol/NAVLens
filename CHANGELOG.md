@@ -12,6 +12,7 @@ follows Semantic Versioning from the first public release.
 - Shared baseline model options across CSV and direct TEFAS prediction commands.
 - Explicit TEFAS unit-price freshness enforcement backed by Rust date arithmetic.
 - Calendar-aware TEFAS target-date selection with explicit closure overrides.
+- Sequential multi-fund TEFAS predictions with per-fund failure isolation.
 
 ## [0.1.0] - 2026-08-12
 

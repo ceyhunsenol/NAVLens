@@ -177,6 +177,26 @@ navlens-predict-tefas AAL --days 365 --auto-target-date \
 NAVLens does not yet embed an official Turkish market-holiday provider.
 Use explicit `--target-date` when the future publication calendar is uncertain.
 
+### Predict multiple TEFAS funds
+
+`navlens-predict-tefas-batch` applies one acquisition interval, target-date
+policy, freshness policy, and model configuration to multiple unique funds.
+Funds execute sequentially in input order. An expected provider or validation
+failure is isolated to its fund and does not discard successful predictions.
+
+```shell
+navlens-predict-tefas-batch AAL PHE TLY --days 365 --auto-target-date \
+  --lookback 5 --max-price-age-days 4
+```
+
+Text output contains batch counts followed by CSV-compatible success and
+failure rows. `--output-format json` emits the deterministic
+`navlens-tefas-prediction-batch-v1` schema; each successful entry embeds the
+existing single-prediction schema without recalculating prediction fields.
+
+Exit code `0` means every fund succeeded, `2` means partial success, and `1`
+means every requested fund failed.
+
 Use `--output-format json` for the versioned single-prediction JSON schema.
 Historical TEFAS observations do not include individual publication
 timestamps, so this command conservatively treats every acquired observation

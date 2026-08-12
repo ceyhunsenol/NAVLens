@@ -101,6 +101,7 @@ cargo test --workspace
 | `navlens-evaluate-historical-fx-reconciliation-csv` | Evaluate FX-aware historical reconciliation periods. |
 | `navlens-predict-fund-csv` | Produce one point-in-time next-NAV prediction. |
 | `navlens-predict-tefas` | Acquire TEFAS prices and produce one next-NAV prediction. |
+| `navlens-predict-tefas-batch` | Produce isolated next-NAV predictions for multiple funds. |
 | `navlens-evaluate-historical-prediction-csv` | Evaluate historical point-in-time predictions. |
 
 Every command supports `--help`. Detailed arguments, output contracts, and exit

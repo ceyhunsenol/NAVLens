@@ -61,6 +61,16 @@ def tefas_cli_arguments_for_fund(
     return TefasCliArguments(request, values.as_of, values.raw_root)
 
 
+def reject_duplicate_tefas_funds(
+    parser: argparse.ArgumentParser,
+    acquisitions: tuple[TefasCliArguments, ...],
+) -> None:
+    """Reject duplicate normalized fund codes in a multi-fund command."""
+    normalized = [item.request.normalized_fund_code for item in acquisitions]
+    if len(set(normalized)) != len(normalized):
+        parser.error("fund codes must be unique")
+
+
 def build_tefas_cli_parser(
     *,
     today: date,

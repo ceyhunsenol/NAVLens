@@ -9,6 +9,7 @@ from pathlib import Path
 from navlens.sources.tefas.cli_arguments import (
     TefasCliArguments,
     add_tefas_acquisition_arguments,
+    reject_duplicate_tefas_funds,
     tefas_cli_arguments_for_fund,
 )
 
@@ -46,15 +47,6 @@ def parse_tefas_batch_arguments(
         tefas_cli_arguments_for_fund(parser, values, current_date, fund_code)
         for fund_code in values.fund_codes
     )
-    _reject_duplicate_funds(parser, acquisitions)
+    reject_duplicate_tefas_funds(parser, acquisitions)
     options = backtest_cli_options_from_namespace(parser, values)
     return TefasBatchCliArguments(acquisitions, options.estimator, options.run_root)
-
-
-def _reject_duplicate_funds(
-    parser: argparse.ArgumentParser,
-    acquisitions: tuple[TefasCliArguments, ...],
-) -> None:
-    normalized = [item.request.normalized_fund_code for item in acquisitions]
-    if len(set(normalized)) != len(normalized):
-        parser.error("fund codes must be unique")
