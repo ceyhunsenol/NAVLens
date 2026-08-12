@@ -163,3 +163,7 @@ the same aggregate evaluation and period provenance as deterministic UTF-8
 schema version `1`. Exit code `0` means every period was evaluated, `2` means
 at least one period was skipped, and `1` means an operational input or
 evaluation error occurred.
+
+A network-free executable example is available under
+[`examples/historical_prediction`](../examples/historical_prediction/README.md).
+It uses synthetic provider-neutral snapshots and exercises the same CLI path.

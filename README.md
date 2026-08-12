@@ -65,6 +65,14 @@ Run the Rust test suite with:
 cargo test --workspace
 ```
 
+## Try the historical prediction pipeline
+
+After installing the Python package with `maturin develop`, run the complete
+offline example in
+[`examples/historical_prediction`](examples/historical_prediction/README.md).
+It evaluates two point-in-time predictions, reports Rust-produced aggregate
+metrics, and prints the predicted and realized return for each period.
+
 ## Data licensing
 
 The MIT license covers NAVLens source code only. It does not grant rights to
