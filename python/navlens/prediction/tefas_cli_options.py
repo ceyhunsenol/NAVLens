@@ -3,6 +3,7 @@
 import argparse
 from dataclasses import dataclass
 from datetime import date
+from pathlib import Path
 
 from navlens import (
     MarketCalendar,
@@ -29,6 +30,7 @@ class TefasPredictionCliOptions:
     model: PredictionModelOptions
     freshness: FundUnitPriceFreshnessPolicy
     output_format: str
+    output_path: Path | None
 
 
 def add_tefas_prediction_options(parser: argparse.ArgumentParser) -> None:
@@ -40,6 +42,7 @@ def add_tefas_prediction_options(parser: argparse.ArgumentParser) -> None:
     add_prediction_model_options(parser)
     parser.add_argument("--max-price-age-days", type=_non_negative_integer, default=4)
     parser.add_argument("--output-format", choices=["text", "json"], default="text")
+    parser.add_argument("--output", type=Path)
 
 
 def tefas_prediction_options_from_namespace(
@@ -58,6 +61,7 @@ def tefas_prediction_options_from_namespace(
         model,
         freshness,
         values.output_format,
+        values.output,
     )
 
 

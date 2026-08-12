@@ -10,6 +10,7 @@ from navlens.sources.tefas import AcquireTefasPrices, TefasHttpClient, TefasSour
 
 from .contracts import SingleReturnPredictionResult
 from .errors import PointInTimePredictionError
+from .output import publish_prediction_output
 from .serialization import serialize_single_return_prediction
 from .tefas import predict_next_published_nav_return_from_tefas_acquisition
 from .tefas_cli_args import TefasPredictionCliArguments, parse_tefas_prediction_arguments
@@ -22,6 +23,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     acquired_at = datetime.now(UTC).replace(microsecond=0)
     try:
         result = _predict(arguments, acquired_at)
+        publish_prediction_output(
+            _render(result, arguments.output_format),
+            output_path=arguments.output_path,
+            stdout=sys.stdout.buffer,
+        )
     except (
         FundUnitPriceDatasetError,
         NavlensValidationError,
@@ -33,11 +39,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 1
 
-    if arguments.output_format == "json":
-        sys.stdout.buffer.write(serialize_single_return_prediction(result))
-        sys.stdout.buffer.write(b"\n")
-    else:
-        print(format_prediction_text(result))
     return 0
 
 
@@ -59,3 +60,9 @@ def _predict(
         model=arguments.model,
         freshness=arguments.freshness,
     )
+
+
+def _render(result: SingleReturnPredictionResult, output_format: str) -> bytes:
+    if output_format == "json":
+        return serialize_single_return_prediction(result)
+    return format_prediction_text(result).encode("utf-8")

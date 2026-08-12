@@ -13,6 +13,7 @@ follows Semantic Versioning from the first public release.
 - Explicit TEFAS unit-price freshness enforcement backed by Rust date arithmetic.
 - Calendar-aware TEFAS target-date selection with explicit closure overrides.
 - Sequential multi-fund TEFAS predictions with per-fund failure isolation.
+- Atomic, no-overwrite artifact output for single and batch TEFAS predictions.
 
 ## [0.1.0] - 2026-08-12
 

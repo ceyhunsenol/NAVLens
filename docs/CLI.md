@@ -176,6 +176,15 @@ navlens-predict-tefas AAL --days 365 --auto-target-date \
 
 NAVLens does not yet embed an official Turkish market-holiday provider.
 Use explicit `--target-date` when the future publication calendar is uncertain.
+Use `--output-format json` for the versioned single-prediction JSON schema.
+Use `--output PATH` to atomically store the selected text or JSON representation
+instead of writing it to standard output. Existing files are never overwritten.
+Historical TEFAS observations do not include individual publication
+timestamps, so this command conservatively treats every acquired observation
+as available at the current acquisition timestamp.
+The command rejects a latest unit price older than four calendar days by
+default. Use `--max-price-age-days` to set an explicit alternative for known
+market closures; the configured limit is never silently relaxed.
 
 ### Predict multiple TEFAS funds
 
@@ -197,13 +206,9 @@ existing single-prediction schema without recalculating prediction fields.
 Exit code `0` means every fund succeeded, `2` means partial success, and `1`
 means every requested fund failed.
 
-Use `--output-format json` for the versioned single-prediction JSON schema.
-Historical TEFAS observations do not include individual publication
-timestamps, so this command conservatively treats every acquired observation
-as available at the current acquisition timestamp.
-The command rejects a latest unit price older than four calendar days by
-default. Use `--max-price-age-days` to set an explicit alternative for known
-market closures; the configured limit is never silently relaxed.
+Batch output supports `--output PATH` with the same atomic, no-overwrite
+contract. This is the recommended form for retaining prediction artifacts that
+will later be compared with published NAV returns.
 
 ## Evaluate historical point-in-time NAV return predictions
 

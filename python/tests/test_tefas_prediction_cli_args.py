@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 
 import pytest
 from navlens.prediction.tefas_cli_args import parse_tefas_prediction_arguments
@@ -24,6 +25,8 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
             "6",
             "--output-format",
             "json",
+            "--output",
+            "artifacts/prediction.json",
         ],
         today=date(2026, 8, 12),
     )
@@ -37,6 +40,7 @@ def test_parses_acquisition_and_explicit_target_date() -> None:
     assert arguments.model.model_version == "baseline-v2"
     assert arguments.freshness.maximum_age_calendar_days == 6
     assert arguments.output_format == "json"
+    assert arguments.output_path == Path("artifacts/prediction.json")
 
 
 def test_rejects_target_on_prediction_date() -> None:

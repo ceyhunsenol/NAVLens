@@ -59,6 +59,24 @@ def test_batch_json_uses_versioned_schema(monkeypatch, capsys) -> None:
     assert payload["failures"][0]["fund_id"] == "BAD"
 
 
+def test_batch_writes_json_output_file(monkeypatch, capsys, tmp_path: Path) -> None:
+    monkeypatch.setattr(
+        tefas_batch_cli,
+        "AcquireTefasPrices",
+        lambda client, raw_root: _FakeAcquisition(),
+    )
+    output_path = tmp_path / "batch.json"
+
+    exit_code = tefas_batch_cli.main([*_arguments("json"), "--output", str(output_path)])
+
+    captured = capsys.readouterr()
+    payload = json.loads(output_path.read_bytes())
+    assert exit_code == 2
+    assert captured.out == ""
+    assert captured.err == ""
+    assert payload["total_count"] == 2
+
+
 def _arguments(output_format: str) -> list[str]:
     return [
         "AAL",

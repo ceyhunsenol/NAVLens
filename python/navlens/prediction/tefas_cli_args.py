@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
+from pathlib import Path
 
 from navlens import MarketDate
 from navlens.sources.tefas.cli_arguments import (
@@ -29,6 +30,7 @@ class TefasPredictionCliArguments:
     model: PredictionModelOptions
     freshness: FundUnitPriceFreshnessPolicy
     output_format: str
+    output_path: Path | None
 
 
 def parse_tefas_prediction_arguments(
@@ -53,4 +55,5 @@ def parse_tefas_prediction_arguments(
         options.model,
         options.freshness,
         options.output_format,
+        options.output_path,
     )
