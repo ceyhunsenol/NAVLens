@@ -17,6 +17,7 @@ from .live_history_comparison_output import (
     format_live_prediction_history_comparison,
     serialize_live_prediction_history_comparison,
 )
+from .live_history_grouping import load_grouped_live_prediction_histories
 from .live_history_loading import load_live_prediction_history
 from .output import publish_prediction_output
 
@@ -25,7 +26,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Load model-specific histories and report a fair native comparison."""
     arguments = parse_live_prediction_history_comparison_arguments(argv)
     try:
-        histories = tuple(load_live_prediction_history(group) for group in arguments.histories)
+        if arguments.evaluation_artifacts is not None:
+            histories = load_grouped_live_prediction_histories(arguments.evaluation_artifacts)
+        elif arguments.histories is not None:
+            histories = tuple(load_live_prediction_history(group) for group in arguments.histories)
+        else:
+            raise PredictionArtifactError("prediction history comparison input is missing")
         result = compare_live_prediction_histories(histories)
         publish_prediction_output(
             _render(result, arguments.output_format),

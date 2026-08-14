@@ -61,3 +61,20 @@ def write_evaluation_artifact(path: Path, **overrides) -> Path:
         encoding="utf-8",
     )
     return path
+
+
+def write_evaluation_batch_artifact(
+    path: Path,
+    items: list[dict[str, object]],
+) -> Path:
+    payload = {
+        "schema_version": "navlens-tefas-prediction-evaluation-batch-v1",
+        "evaluated_at": "2026-07-21T12:00:00+00:00",
+        "total_count": len(items),
+        "succeeded_count": len(items),
+        "failed_count": 0,
+        "successes": items,
+        "failures": [],
+    }
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path

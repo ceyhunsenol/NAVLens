@@ -293,8 +293,15 @@ there. File output is atomic and refuses to overwrite an existing artifact.
 
 ### Compare live model histories fairly
 
-Use one repeated `--history` group per model. Every group may contain single
-evaluation artifacts, batch evaluation artifacts, or a mixture:
+Comparison requires the same fund, source, prediction/target periods, realized
+returns, and confidence level. Model identities must be unique. NAVLens reports
+each model's Rust-produced error, direction, and interval metrics without
+declaring a subjective winner or silently ranking unlike samples.
+
+`navlens-compare-prediction-histories` supports two mutually exclusive input modes:
+
+1. **Explicit mode**: Use one repeated `--history` group per model. Every group
+   may contain single evaluation artifacts, batch evaluation artifacts, or a mixture:
 
 ```shell
 navlens-compare-prediction-histories \
@@ -303,10 +310,17 @@ navlens-compare-prediction-histories \
   --output-format json --output model-comparison.json
 ```
 
-Comparison requires the same fund, source, prediction/target periods, realized
-returns, and confidence level. Model identities must be unique. NAVLens reports
-each model's Rust-produced error, direction, and interval metrics without
-declaring a subjective winner or silently ranking unlike samples.
+2. **Automatic grouping mode**: Pass daily mixed-model evaluation artifacts using
+   `--evaluation-artifacts`. NAVLens automatically groups evaluations by exact
+   model identity while preserving period sequence:
+
+```shell
+navlens-compare-prediction-histories \
+  --evaluation-artifacts day1-suite-evaluation.json \
+                         day2-suite-evaluation.json \
+                         day3-suite-evaluation.json \
+  --output-format json --output model-comparison.json
+```
 
 ## Evaluate historical point-in-time NAV return predictions
 
