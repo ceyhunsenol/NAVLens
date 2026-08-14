@@ -22,6 +22,7 @@ follows Semantic Versioning from the first public release.
 - Selectable linear, historical-mean, and last-return live prediction baselines.
 - Same-snapshot TEFAS model-suite artifacts for fair multi-model evaluation.
 - Automatic grouping of mixed daily evaluation artifacts by exact model identity for fair history comparison.
+- Failure-isolated multi-fund live prediction history comparison workflow.
 
 ## [0.1.0] - 2026-08-12
 

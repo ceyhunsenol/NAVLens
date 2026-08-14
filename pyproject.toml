@@ -63,6 +63,7 @@ navlens-evaluate-tefas-prediction = "navlens.prediction.tefas_evaluation_cli:mai
 navlens-evaluate-tefas-prediction-batch = "navlens.prediction.tefas_evaluation_batch_cli:main"
 navlens-summarize-prediction-evaluations = "navlens.prediction.live_history_cli:main"
 navlens-compare-prediction-histories = "navlens.prediction.live_history_comparison_cli:main"
+navlens-compare-prediction-histories-batch = "navlens.prediction.live_history_comparison_batch_cli:main"
 
 
 [project.optional-dependencies]

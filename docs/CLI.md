@@ -322,6 +322,23 @@ navlens-compare-prediction-histories \
   --output-format json --output model-comparison.json
 ```
 
+### Failure-isolated multi-fund history comparison
+
+Use `navlens-compare-prediction-histories-batch` to compare daily mixed-model evaluation artifacts covering multiple funds and sources. NAVLens groups predictions first by fund/source scope and then by model identity. Each scope comparison is evaluated independently:
+
+```shell
+navlens-compare-prediction-histories-batch \
+  day1-multi-fund-suite.json \
+  day2-multi-fund-suite.json \
+  --output-format json \
+  --output multi-fund-comparison-batch.json
+```
+
+Batch exit codes:
+- `0`: All fund/source scopes succeeded.
+- `2`: Partial success (at least one scope succeeded and at least one scope failed validation).
+- `1`: All scopes failed or a global input failure occurred (e.g. malformed artifact JSON).
+
 ## Evaluate historical point-in-time NAV return predictions
 
 The `navlens-evaluate-historical-prediction-csv` CLI replays a chronological

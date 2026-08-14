@@ -5,6 +5,9 @@ EXPECTED_CONSOLE_SCRIPTS = {
     "navlens-backtest-batch": "navlens.evaluation.tefas_batch_cli:main",
     "navlens-backtest-tefas": "navlens.evaluation.tefas_cli:main",
     "navlens-compare-prediction-histories": ("navlens.prediction.live_history_comparison_cli:main"),
+    "navlens-compare-prediction-histories-batch": (
+        "navlens.prediction.live_history_comparison_batch_cli:main"
+    ),
     "navlens-evaluate-historical-fx-reconciliation-csv": (
         "navlens.reconciliation.historical_fx_cli:main"
     ),

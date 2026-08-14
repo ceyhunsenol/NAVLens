@@ -2,6 +2,7 @@
 
 import json
 
+from ._model_identity import ModelIdentity, model_identity
 from .artifact_schemas import LIVE_PREDICTION_HISTORY_COMPARISON_SCHEMA_VERSION
 from .live_history import LivePredictionHistoryResult
 from .live_history_comparison import LivePredictionHistoryComparisonResult
@@ -70,9 +71,9 @@ def _history_payload(history: LivePredictionHistoryResult) -> dict[str, object]:
     }
 
 
-def _model_identity(history: LivePredictionHistoryResult) -> tuple[str, str, str]:
+def _model_identity(history: LivePredictionHistoryResult) -> ModelIdentity:
     model = history.artifacts[0].prediction_artifact.prediction.model
-    return model.name, model.version, model.feature_set_version
+    return model_identity(model)
 
 
 def _confidence_level(history: LivePredictionHistoryResult) -> float:

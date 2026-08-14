@@ -3,6 +3,7 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from ._model_identity import ModelIdentity, model_identity
 from .errors import InvalidLivePredictionHistoryComparisonError
 from .live_history import LivePredictionHistoryResult
 
@@ -83,9 +84,9 @@ def _validate_confidence_level(
         )
 
 
-def _model_identity(history: LivePredictionHistoryResult) -> tuple[str, str, str]:
+def _model_identity(history: LivePredictionHistoryResult) -> ModelIdentity:
     model = history.artifacts[0].prediction_artifact.prediction.model
-    return model.name, model.version, model.feature_set_version
+    return model_identity(model)
 
 
 def _periods(history: LivePredictionHistoryResult) -> tuple[tuple[object, object], ...]:
