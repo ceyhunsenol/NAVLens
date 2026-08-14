@@ -19,6 +19,8 @@ follows Semantic Versioning from the first public release.
 - Failure-isolated batch evaluation for stored TEFAS prediction artifacts.
 - Direct chaining from batch prediction artifacts into batch evaluation.
 - Fair side-by-side comparison of live model histories over identical realized periods.
+- Selectable linear, historical-mean, and last-return live prediction baselines.
+- Same-snapshot TEFAS model-suite artifacts for fair multi-model evaluation.
 
 ## [0.1.0] - 2026-08-12
 

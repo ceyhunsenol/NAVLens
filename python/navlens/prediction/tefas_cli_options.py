@@ -33,13 +33,20 @@ class TefasPredictionCliOptions:
     output_path: Path | None
 
 
-def add_tefas_prediction_options(parser: argparse.ArgumentParser) -> None:
+def add_tefas_prediction_options(
+    parser: argparse.ArgumentParser,
+    *,
+    include_model_selection: bool = True,
+) -> None:
     """Add target, model, freshness, and output options to a parser."""
     target = parser.add_mutually_exclusive_group(required=True)
     target.add_argument("--target-date", type=_market_date)
     target.add_argument("--auto-target-date", action="store_true")
     parser.add_argument("--closed-date", type=_market_date, action="append", default=[])
-    add_prediction_model_options(parser)
+    add_prediction_model_options(
+        parser,
+        include_model_selection=include_model_selection,
+    )
     parser.add_argument("--max-price-age-days", type=_non_negative_integer, default=4)
     parser.add_argument("--output-format", choices=["text", "json"], default="text")
     parser.add_argument("--output", type=Path)

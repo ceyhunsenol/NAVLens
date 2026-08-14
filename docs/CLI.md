@@ -194,6 +194,25 @@ The command rejects a latest unit price older than four calendar days by
 default. Use `--max-price-age-days` to set an explicit alternative for known
 market closures; the configured limit is never silently relaxed.
 
+### Run every baseline over one TEFAS snapshot set
+
+`navlens-predict-tefas-suite` acquires one fund history once and runs all three
+implemented baselines with the same acquisition timestamp, selected snapshots,
+target date, confidence level, and model version:
+
+```shell
+navlens-predict-tefas-suite AAL --days 365 --auto-target-date \
+  --lookback 5 --confidence-level 0.90 --output-format json \
+  --output artifacts/predictions/aal-suite.json
+```
+
+The command intentionally has no `--model` option. Its deterministic
+`navlens-prediction-model-suite-v1` artifact embeds three canonical
+single-prediction artifacts in stable order: linear, historical-mean, then
+last-return. Existing multi-artifact evaluation loading can consume the suite
+directly, so all three outcomes can later be evaluated without splitting the
+file or losing their shared point-in-time provenance.
+
 ### Predict multiple TEFAS funds
 
 `navlens-predict-tefas-batch` applies one acquisition interval, target-date

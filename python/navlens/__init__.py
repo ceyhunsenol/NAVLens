@@ -112,6 +112,8 @@ from .prediction import (
     PredictionArtifactError,
     PredictionModelKind,
     PredictionModelOptions,
+    PredictionModelSuiteOptions,
+    PredictionModelSuiteResult,
     SingleReturnPredictionArtifact,
     SingleReturnPredictionResult,
     StaleFundUnitPriceHistoryError,
@@ -131,9 +133,11 @@ from .prediction import (
     predict_next_published_nav_return_from_csv,
     predict_next_published_nav_return_from_snapshots,
     predict_next_published_nav_return_from_tefas_acquisition,
+    predict_tefas_model_suite,
     serialize_live_prediction_evaluation,
     serialize_live_prediction_history,
     serialize_live_prediction_history_comparison,
+    serialize_prediction_model_suite,
     serialize_single_return_prediction,
 )
 from .reconciliation import (
@@ -229,6 +233,8 @@ __all__ = [
     "MissingRealizedPriceObservationError",
     "PredictionArtifactError",
     "PredictionModelKind",
+    "PredictionModelSuiteResult",
+    "PredictionModelSuiteOptions",
     "PredictionModelOptions",
     "StaleFundUnitPriceHistoryError",
     "PointInTimeReconciliationError",
@@ -292,6 +298,7 @@ __all__ = [
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",
     "predict_next_published_nav_return_from_tefas_acquisition",
+    "predict_tefas_model_suite",
     "read_fund_unit_prices_csv",
     "read_fx_rates_csv",
     "read_holdings_snapshots",
@@ -308,4 +315,5 @@ __all__ = [
     "serialize_live_prediction_evaluation",
     "serialize_live_prediction_history",
     "serialize_live_prediction_history_comparison",
+    "serialize_prediction_model_suite",
 ]

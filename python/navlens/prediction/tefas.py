@@ -3,6 +3,7 @@
 from datetime import datetime
 
 from navlens import MarketDate
+from navlens.datasets.fund_unit_price_snapshots import FundUnitPriceSnapshot
 from navlens.sources.tefas import (
     TEFAS_SOURCE_ID,
     TefasAcquisitionResult,
@@ -26,6 +27,37 @@ def predict_next_published_nav_return_from_tefas_acquisition(
     freshness: FundUnitPriceFreshnessPolicy | None = None,
 ) -> SingleReturnPredictionResult:
     """Predict from one acquired TEFAS artifact through the canonical pipeline."""
+    snapshots = prepare_tefas_prediction_snapshots(
+        acquisition,
+        acquired_at=acquired_at,
+        prediction_date=prediction_date,
+        freshness=freshness,
+    )
+    selected_model = model or PredictionModelOptions()
+    return predict_next_published_nav_return_from_snapshots(
+        snapshots,
+        fund_id=snapshots[0].fund_id,
+        source_id=TEFAS_SOURCE_ID,
+        prediction_timestamp=acquired_at,
+        prediction_date=prediction_date,
+        pricing_as_of_date=snapshots[-1].observation.date,
+        target_date=target_date,
+        lookback=selected_model.lookback,
+        minimum_training_returns=selected_model.minimum_training_returns,
+        confidence_level=selected_model.confidence_level,
+        model_version=selected_model.model_version,
+        model_kind=selected_model.model_kind,
+    )
+
+
+def prepare_tefas_prediction_snapshots(
+    acquisition: TefasAcquisitionResult,
+    *,
+    acquired_at: datetime,
+    prediction_date: MarketDate,
+    freshness: FundUnitPriceFreshnessPolicy | None = None,
+) -> tuple[FundUnitPriceSnapshot, ...]:
+    """Map and validate one acquisition for point-in-time prediction workflows."""
     snapshots = to_fund_unit_price_snapshots(acquisition, acquired_at=acquired_at)
     if not snapshots:
         raise NoEligibleSnapshotsError("TEFAS acquisition contains no fund unit-price records")
@@ -34,20 +66,6 @@ def predict_next_published_nav_return_from_tefas_acquisition(
         raise ValueError("TEFAS acquisition must contain records for exactly one fund")
 
     latest_market_date = max(snapshot.observation.date for snapshot in snapshots)
-    selected_model = model or PredictionModelOptions()
     selected_freshness = freshness or FundUnitPriceFreshnessPolicy()
     selected_freshness.validate(prediction_date, latest_market_date)
-    return predict_next_published_nav_return_from_snapshots(
-        snapshots,
-        fund_id=snapshots[0].fund_id,
-        source_id=TEFAS_SOURCE_ID,
-        prediction_timestamp=acquired_at,
-        prediction_date=prediction_date,
-        pricing_as_of_date=latest_market_date,
-        target_date=target_date,
-        lookback=selected_model.lookback,
-        minimum_training_returns=selected_model.minimum_training_returns,
-        confidence_level=selected_model.confidence_level,
-        model_version=selected_model.model_version,
-        model_kind=selected_model.model_kind,
-    )
+    return snapshots

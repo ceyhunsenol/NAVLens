@@ -46,6 +46,15 @@ from .live_history_output import (
     format_live_prediction_history,
     serialize_live_prediction_history,
 )
+from .model_suite import (
+    PredictionModelSuiteOptions,
+    PredictionModelSuiteResult,
+    predict_tefas_model_suite,
+)
+from .model_suite_output import (
+    format_prediction_model_suite,
+    serialize_prediction_model_suite,
+)
 from .options import PredictionModelKind, PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .prediction_artifact_collection import load_single_return_prediction_artifacts
@@ -65,6 +74,8 @@ __all__ = [
     "PointInTimePredictionError",
     "PredictionArtifactError",
     "PredictionModelKind",
+    "PredictionModelSuiteResult",
+    "PredictionModelSuiteOptions",
     "FundUnitPriceFreshnessPolicy",
     "PredictionModelOptions",
     "SingleReturnPredictionResult",
@@ -83,6 +94,7 @@ __all__ = [
     "format_live_prediction_history",
     "format_live_prediction_history_comparison",
     "format_prediction_text",
+    "format_prediction_model_suite",
     "load_single_return_prediction_artifact",
     "load_single_return_prediction_artifacts",
     "load_live_prediction_evaluation_artifact",
@@ -90,8 +102,10 @@ __all__ = [
     "predict_next_published_nav_return_from_csv",
     "predict_next_published_nav_return_from_snapshots",
     "predict_next_published_nav_return_from_tefas_acquisition",
+    "predict_tefas_model_suite",
     "serialize_single_return_prediction",
     "serialize_live_prediction_evaluation",
     "serialize_live_prediction_history",
     "serialize_live_prediction_history_comparison",
+    "serialize_prediction_model_suite",
 ]
