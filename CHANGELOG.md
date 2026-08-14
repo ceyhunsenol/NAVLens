@@ -23,6 +23,7 @@ follows Semantic Versioning from the first public release.
 - Same-snapshot TEFAS model-suite artifacts for fair multi-model evaluation.
 - Automatic grouping of mixed daily evaluation artifacts by exact model identity for fair history comparison.
 - Failure-isolated multi-fund live prediction history comparison workflow.
+- Failure-isolated multi-fund TEFAS prediction model-suite batch workflow.
 
 ## [0.1.0] - 2026-08-12
 

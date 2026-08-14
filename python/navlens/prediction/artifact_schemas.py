@@ -9,4 +9,5 @@ LIVE_PREDICTION_HISTORY_COMPARISON_BATCH_SCHEMA_VERSION = (
 )
 PREDICTION_MODEL_SUITE_SCHEMA_VERSION = "navlens-prediction-model-suite-v1"
 TEFAS_PREDICTION_BATCH_SCHEMA_VERSION = "navlens-tefas-prediction-batch-v1"
+TEFAS_PREDICTION_MODEL_SUITE_BATCH_SCHEMA_VERSION = "navlens-tefas-prediction-model-suite-batch-v1"
 TEFAS_PREDICTION_EVALUATION_BATCH_SCHEMA_VERSION = "navlens-tefas-prediction-evaluation-batch-v1"

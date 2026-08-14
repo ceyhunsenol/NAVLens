@@ -12,6 +12,7 @@ from .artifact_schemas import (
     PREDICTION_MODEL_SUITE_SCHEMA_VERSION,
     SINGLE_RETURN_PREDICTION_SCHEMA_VERSION,
     TEFAS_PREDICTION_BATCH_SCHEMA_VERSION,
+    TEFAS_PREDICTION_MODEL_SUITE_BATCH_SCHEMA_VERSION,
 )
 from .errors import InvalidPredictionArtifactError
 from .options import PredictionModelKind
@@ -22,10 +23,13 @@ def load_single_return_prediction_artifacts(
 ) -> tuple[SingleReturnPredictionArtifact, ...]:
     """Load one prediction or successful predictions from one batch artifact."""
     payload = read_prediction_artifact_payload(Path(path))
-    if payload.get("schema_version") == SINGLE_RETURN_PREDICTION_SCHEMA_VERSION:
+    schema = payload.get("schema_version")
+    if schema == SINGLE_RETURN_PREDICTION_SCHEMA_VERSION:
         return (build_single_return_prediction_artifact(payload),)
-    if payload.get("schema_version") == PREDICTION_MODEL_SUITE_SCHEMA_VERSION:
+    if schema == PREDICTION_MODEL_SUITE_SCHEMA_VERSION:
         return _load_model_suite(payload)
+    if schema == TEFAS_PREDICTION_MODEL_SUITE_BATCH_SCHEMA_VERSION:
+        return _load_model_suite_batch(payload)
     successes = require_batch_successes(
         payload,
         expected_schema=TEFAS_PREDICTION_BATCH_SCHEMA_VERSION,
@@ -36,6 +40,24 @@ def load_single_return_prediction_artifacts(
             "prediction batch must contain at least one successful prediction"
         )
     return tuple(build_single_return_prediction_artifact(item) for item in successes)
+
+
+def _load_model_suite_batch(
+    payload: dict[str, object],
+) -> tuple[SingleReturnPredictionArtifact, ...]:
+    successes = require_batch_successes(
+        payload,
+        expected_schema=TEFAS_PREDICTION_MODEL_SUITE_BATCH_SCHEMA_VERSION,
+        artifact_kind="prediction model suite",
+    )
+    if not successes:
+        raise InvalidPredictionArtifactError(
+            "prediction model suite batch must contain at least one successful suite"
+        )
+    artifacts: list[SingleReturnPredictionArtifact] = []
+    for item in successes:
+        artifacts.extend(_load_model_suite(item))
+    return tuple(artifacts)
 
 
 def _load_model_suite(

@@ -57,6 +57,7 @@ navlens-evaluate-historical-fx-reconciliation-csv = "navlens.reconciliation.hist
 navlens-predict-fund-csv = "navlens.prediction.cli:main"
 navlens-predict-tefas = "navlens.prediction.tefas_cli:main"
 navlens-predict-tefas-suite = "navlens.prediction.tefas_suite_cli:main"
+navlens-predict-tefas-suite-batch = "navlens.prediction.tefas_suite_batch_cli:main"
 navlens-predict-tefas-batch = "navlens.prediction.tefas_batch_cli:main"
 navlens-evaluate-historical-prediction-csv = "navlens.prediction.historical_cli:main"
 navlens-evaluate-tefas-prediction = "navlens.prediction.tefas_evaluation_cli:main"

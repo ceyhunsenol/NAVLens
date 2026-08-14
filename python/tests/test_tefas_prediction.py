@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -12,15 +12,7 @@ from navlens.prediction import (
     predict_next_published_nav_return_from_tefas_acquisition,
 )
 from navlens.sources.tefas import TefasAcquisitionResult, TefasPriceRecord
-
-
-def _acquisition(fund_code: str = "AAL", count: int = 14) -> TefasAcquisitionResult:
-    start = date(2026, 7, 20)
-    records = tuple(
-        TefasPriceRecord(start + timedelta(days=index), fund_code, 1.0 + index * 0.01)
-        for index in range(count)
-    )
-    return TefasAcquisitionResult(records, Path("raw.json"), False)
+from tefas_prediction_fixtures import make_tefas_prediction_acquisition as _acquisition
 
 
 def test_predicts_from_acquired_tefas_prices_through_canonical_pipeline() -> None:

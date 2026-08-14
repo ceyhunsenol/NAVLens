@@ -8,7 +8,7 @@ from navlens.sources.tefas import TEFAS_SOURCE_ID, TefasAcquisitionResult
 
 from .contracts import SingleReturnPredictionResult
 from .freshness import FundUnitPriceFreshnessPolicy
-from .options import PredictionModelKind
+from .options import PredictionModelKind, PredictionModelOptions
 from .orchestration import predict_next_published_nav_return_from_snapshots
 from .tefas import prepare_tefas_prediction_snapshots
 
@@ -21,6 +21,18 @@ class PredictionModelSuiteOptions:
     minimum_training_returns: int | None = None
     confidence_level: float = 0.90
     model_version: str = "v1"
+
+
+def prediction_model_suite_options_from_model_options(
+    options: PredictionModelOptions,
+) -> PredictionModelSuiteOptions:
+    """Extract model-suite options from prediction model options (omitting model_kind)."""
+    return PredictionModelSuiteOptions(
+        options.lookback,
+        options.minimum_training_returns,
+        options.confidence_level,
+        options.model_version,
+    )
 
 
 @dataclass(frozen=True, slots=True)

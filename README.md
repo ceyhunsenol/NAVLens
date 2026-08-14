@@ -102,6 +102,7 @@ cargo test --workspace
 | `navlens-predict-fund-csv` | Produce one point-in-time next-NAV prediction. |
 | `navlens-predict-tefas` | Acquire TEFAS prices and produce one next-NAV prediction. |
 | `navlens-predict-tefas-suite` | Run every baseline over one identical TEFAS snapshot set. |
+| `navlens-predict-tefas-suite-batch` | Produce failure-isolated model suites for multiple TEFAS funds. |
 | `navlens-predict-tefas-batch` | Produce isolated next-NAV predictions for multiple funds. |
 | `navlens-evaluate-tefas-prediction` | Compare a stored prediction with its published NAV. |
 | `navlens-evaluate-tefas-prediction-batch` | Evaluate multiple stored predictions with failure isolation. |

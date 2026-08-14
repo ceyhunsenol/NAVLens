@@ -13,7 +13,10 @@ from navlens.sources.tefas.cli_arguments import (
 )
 
 from .freshness import FundUnitPriceFreshnessPolicy
-from .model_suite import PredictionModelSuiteOptions
+from .model_suite import (
+    PredictionModelSuiteOptions,
+    prediction_model_suite_options_from_model_options,
+)
 from .tefas_cli_options import (
     add_tefas_prediction_options,
     tefas_prediction_options_from_namespace,
@@ -53,12 +56,7 @@ def parse_tefas_prediction_suite_arguments(
         acquisition,
         options.prediction_date,
         options.target_date,
-        PredictionModelSuiteOptions(
-            options.model.lookback,
-            options.model.minimum_training_returns,
-            options.model.confidence_level,
-            options.model.model_version,
-        ),
+        prediction_model_suite_options_from_model_options(options.model),
         options.freshness,
         options.output_format,
         options.output_path,

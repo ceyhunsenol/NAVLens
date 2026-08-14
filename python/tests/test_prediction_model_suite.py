@@ -1,35 +1,19 @@
 import json
-from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
-from navlens import MarketDate
 from navlens.prediction import (
     InvalidPredictionArtifactError,
     PredictionModelSuiteOptions,
     PredictionModelSuiteResult,
     load_single_return_prediction_artifacts,
-    predict_tefas_model_suite,
     serialize_prediction_model_suite,
 )
-from navlens.sources.tefas import TefasAcquisitionResult, TefasPriceRecord
-
-
-def _acquisition() -> TefasAcquisitionResult:
-    start = date(2026, 7, 20)
-    records = tuple(
-        TefasPriceRecord(start + timedelta(days=index), "AAL", 1.0 + index * 0.01)
-        for index in range(14)
-    )
-    return TefasAcquisitionResult(records, Path("raw.json"), False)
+from tefas_prediction_fixtures import make_prediction_model_suite
 
 
 def _suite() -> PredictionModelSuiteResult:
-    return predict_tefas_model_suite(
-        _acquisition(),
-        acquired_at=datetime(2026, 8, 12, 12, tzinfo=UTC),
-        prediction_date=MarketDate(2026, 8, 2),
-        target_date=MarketDate(2026, 8, 3),
+    return make_prediction_model_suite(
         options=PredictionModelSuiteOptions(model_version="suite-v1"),
     )
 

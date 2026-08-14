@@ -237,6 +237,27 @@ Batch output supports `--output PATH` with the same atomic, no-overwrite
 contract. This is the recommended form for retaining prediction artifacts that
 will later be compared with published NAV returns.
 
+### Predict model suites for multiple TEFAS funds
+
+Use `navlens-predict-tefas-suite-batch` to run every implemented baseline prediction model (`PredictionModelKind`) across multiple unique funds in one failure-isolated batch command:
+
+```shell
+navlens-predict-tefas-suite-batch AAL PHE TLY \
+  --days 365 \
+  --auto-target-date \
+  --lookback 5 \
+  --confidence-level 0.90 \
+  --output-format json \
+  --output artifacts/predictions/daily-suite-batch.json
+```
+
+Text output contains summary counts followed by a CSV-compatible audit table. `--output-format json` emits the versioned `navlens-tefas-prediction-model-suite-batch-v1` artifact. Existing prediction evaluation loading (`navlens-evaluate-tefas-prediction-batch`) can consume suite-batch artifacts directly, flattening fund success order first and model order inside each suite second.
+
+Exit codes:
+- `0`: Every requested fund succeeded.
+- `2`: Partial success (at least one fund succeeded and at least one failed).
+- `1`: Every requested fund failed or a global input/output failure occurred.
+
 ### Evaluate a stored TEFAS prediction
 
 `navlens-evaluate-tefas-prediction` loads a JSON artifact produced by
