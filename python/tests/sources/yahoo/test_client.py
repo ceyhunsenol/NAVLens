@@ -66,6 +66,74 @@ def test_maps_http_429_without_retrying(monkeypatch) -> None:  # type: ignore[no
         date(2026, 7, 22),
     )
 
-    with pytest.raises(YahooSecurityPriceRateLimitError, match="rate limit"):
+    with pytest.raises(YahooSecurityPriceRateLimitError, match="rate limit") as exc_info:
         client.fetch_chart_response(request)
     assert calls == 1
+    assert exc_info.value.retry_after is None
+    assert exc_info.value.retry_after_seconds is None
+
+
+def test_captures_retry_after_integer_seconds(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    def rate_limited(request, timeout):  # type: ignore[no-untyped-def]
+        headers = {"Retry-After": "120"}
+        raise HTTPError(request.full_url, 429, "Too Many Requests", headers, None)  # type: ignore[arg-type]
+
+    monkeypatch.setattr("navlens.sources.yahoo.client.urlopen", rate_limited)
+    client = YahooChartHttpClient()
+    request = YahooSecurityPriceRequest(
+        YahooSymbolMapping("SYNTH", "SYNTH.IS"),
+        date(2026, 7, 20),
+        date(2026, 7, 22),
+    )
+
+    with pytest.raises(YahooSecurityPriceRateLimitError) as exc_info:
+        client.fetch_chart_response(request)
+    assert exc_info.value.retry_after == "120"
+    assert exc_info.value.retry_after_seconds == 120
+
+
+def test_captures_retry_after_http_date_losslessly(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    date_str = "Wed, 21 Oct 2026 07:28:00 GMT"
+
+    def rate_limited(request, timeout):  # type: ignore[no-untyped-def]
+        headers = {"Retry-After": f"  {date_str}  "}
+        raise HTTPError(request.full_url, 429, "Too Many Requests", headers, None)  # type: ignore[arg-type]
+
+    monkeypatch.setattr("navlens.sources.yahoo.client.urlopen", rate_limited)
+    client = YahooChartHttpClient()
+    request = YahooSecurityPriceRequest(
+        YahooSymbolMapping("SYNTH", "SYNTH.IS"),
+        date(2026, 7, 20),
+        date(2026, 7, 22),
+    )
+
+    with pytest.raises(YahooSecurityPriceRateLimitError) as exc_info:
+        client.fetch_chart_response(request)
+    assert exc_info.value.retry_after == date_str
+    assert exc_info.value.retry_after_seconds is None
+
+
+def test_rate_limit_error_rejects_non_string_retry_after() -> None:
+    with pytest.raises(TypeError, match="retry_after must be a string or None"):
+        YahooSecurityPriceRateLimitError("rate limited", retry_after=120)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("raw_header", "expected_seconds"),
+    [
+        ("120", 120),
+        ("0", 0),
+        ("  45  ", 45),
+        ("-10", None),
+        ("12.5", None),
+        ("٢", None),  # Unicode digit rejected
+        ("invalid", None),
+        ("", None),
+    ],
+)
+def test_rate_limit_error_retry_after_seconds_parsing(
+    raw_header: str, expected_seconds: int | None
+) -> None:
+    error = YahooSecurityPriceRateLimitError("rate limited", retry_after=raw_header)
+    assert error.retry_after == raw_header
+    assert error.retry_after_seconds == expected_seconds

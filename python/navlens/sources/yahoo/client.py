@@ -38,6 +38,16 @@ def _build_chart_url(request: YahooSecurityPriceRequest) -> str:
     return f"{_CHART_ENDPOINT}/{symbol}?{query}"
 
 
+def _extract_retry_after(error: HTTPError) -> str | None:
+    if error.headers is None:
+        return None
+    raw = error.headers.get("Retry-After")
+    if raw is None or not isinstance(raw, str):
+        return None
+    stripped = raw.strip()
+    return stripped if stripped else None
+
+
 class YahooChartHttpClient:
     """Fetch chart payloads without parsing or normalizing financial fields."""
 
@@ -67,7 +77,11 @@ class YahooChartHttpClient:
                 body = response.read()
         except HTTPError as error:
             if error.code == 429:
-                raise YahooSecurityPriceRateLimitError("Yahoo chart rate limit reached") from error
+                retry_after = _extract_retry_after(error)
+                raise YahooSecurityPriceRateLimitError(
+                    "Yahoo chart rate limit reached",
+                    retry_after=retry_after,
+                ) from error
             raise YahooSecurityPriceTransportError(
                 f"Yahoo chart request returned HTTP {error.code}"
             ) from error
