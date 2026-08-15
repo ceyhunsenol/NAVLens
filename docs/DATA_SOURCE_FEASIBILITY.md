@@ -1,6 +1,6 @@
 # Data Source Feasibility
 
-Status: research note, verified on 2026-07-21.
+Status: research note, verified on 2026-08-14.
 
 This document records which external data sources can support NAVLens without
 silently coupling the domain to a provider. It is not an approval to automate
@@ -28,6 +28,7 @@ verified with representative samples.
 | TRY foreign-exchange reference rates | TCMB daily XML archive | Daily official indicative buying and selling rates; no rate on weekends and full/half-day holidays | No API key for the published XML files | Accepted for an implementation spike | Future `FxRateSource` |
 | Broad TCMB time series | EVDS web service | Series-dependent; JSON, XML, or CSV | Registration and API key required | Conditional and outside the no-key default | Optional future adapter |
 | Borsa Istanbul security and index prices | Borsa Istanbul data products | Official real-time, end-of-day, reference, and analytical products | No official keyless historical-price interface was verified | Unverified for the independent MVP | Keep behind a future `SecurityPriceSource` |
+| Experimental BIST equity prices | Yahoo Finance chart web endpoint | Daily unadjusted closes; sampled equities exposed more than ten years of history | No key; no documented public market-data API contract | Conditional; opt-in experimental adapter only | `YahooSecurityPriceSource` |
 
 ## Findings
 
@@ -174,6 +175,27 @@ The first holdings-aware model is not considered fully automated until both a
 holdings source and price coverage for its constituent securities pass these
 checks.
 
+### Experimental Yahoo equity prices
+
+The opt-in `YahooSecurityPriceSource` maps non-null daily `close` values to
+unadjusted `SecurityPriceSnapshot` objects. It uses an exact caller-supplied
+instrument-to-provider-symbol mapping, derives each market date in the
+provider-declared exchange timezone, and never maps `adjusted_close` because
+its adjustment policy is not a stable documented contract.
+
+Yahoo chart payloads do not prove when a historical bar was originally
+published. Every acquired observation is therefore considered available only
+at the UTC retrieval time captured by the client. This prevents freshly
+downloaded history from being presented as knowledge available to an earlier
+point-in-time backtest. Null bars are omitted because they cannot form a valid
+canonical price observation.
+
+This adapter is experimental rather than a default source: its web endpoint is
+undocumented, may be rate limited or changed without notice, and must not be
+used to bypass access controls. NAVLens does not commit or redistribute Yahoo
+market data. Users are responsible for ensuring that their use complies with
+the provider's current terms and applicable data licences.
+
 ## Official references
 
 - [SPK investment-fund guide: monthly Portfolio Allocation Reports](https://spk.gov.tr/kurumlar/fonlar/yatirim-fonlari/menkul-kiymet-yatirim-fonlari/tanitim-rehberi)
@@ -186,3 +208,4 @@ checks.
 - [TCMB indicative-rate publication rules](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB%2BTR/Main%2BMenu/Temel%2BFaaliyetler/Doviz%2BEfektif/Doviz%2Bve%2BEfektif%2BPiyasalari/Gosterge%2BNiteligindeki%2BKurlar)
 - [TCMB EVDS web-service guide](https://evds2.tcmb.gov.tr/help/videos/EVDS_Web_Servis_Kullanim_Kilavuzu.pdf)
 - [Borsa Istanbul data products](https://borsaistanbul.com/veriler/veri-yayini/veri-yayin-urunleri)
+- [Yahoo Terms of Service](https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html)
