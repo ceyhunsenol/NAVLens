@@ -27,6 +27,15 @@ from .security_price_snapshots import (
     SecurityPriceSnapshot,
     select_security_price_snapshots,
 )
+from .security_price_source import (
+    SecurityPriceCorruptedSourceDataError,
+    SecurityPriceQuery,
+    SecurityPriceQueryError,
+    SecurityPriceSource,
+    SecurityPriceSourceError,
+    SecurityPriceSourceUnavailableError,
+    SecurityPriceUnmappedInstrumentError,
+)
 from .tefas_returns import build_tefas_fund_returns
 
 __all__ = [
@@ -38,8 +47,15 @@ __all__ = [
     "FxRateSnapshot",
     "HoldingDatasetError",
     "HoldingSnapshot",
+    "SecurityPriceCorruptedSourceDataError",
     "SecurityPriceDatasetError",
+    "SecurityPriceQuery",
+    "SecurityPriceQueryError",
     "SecurityPriceSnapshot",
+    "SecurityPriceSource",
+    "SecurityPriceSourceError",
+    "SecurityPriceSourceUnavailableError",
+    "SecurityPriceUnmappedInstrumentError",
     "build_fund_return_dataset",
     "build_tefas_fund_returns",
     "dated_returns_to_series",

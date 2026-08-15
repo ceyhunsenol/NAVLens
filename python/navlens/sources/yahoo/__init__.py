@@ -1,5 +1,6 @@
 """Experimental, opt-in Yahoo Finance security-price source."""
 
+from .adapter import YahooSecurityPriceSourceAdapter
 from .batch import (
     YahooSecurityPriceBatchFailure,
     YahooSecurityPriceBatchOutcome,
@@ -48,6 +49,7 @@ __all__ = [
     "YahooSecurityPriceRequest",
     "YahooSecurityPriceRequestError",
     "YahooSecurityPriceSource",
+    "YahooSecurityPriceSourceAdapter",
     "YahooSecurityPriceSourceError",
     "YahooSecurityPriceTransportError",
     "YahooSymbolMapping",
