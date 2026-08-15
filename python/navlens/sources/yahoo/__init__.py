@@ -1,7 +1,16 @@
 """Experimental, opt-in Yahoo Finance security-price source."""
 
+from .batch import (
+    YahooSecurityPriceBatchFailure,
+    YahooSecurityPriceBatchOutcome,
+    YahooSecurityPriceBatchResult,
+    YahooSecurityPriceBatchSource,
+    YahooSecurityPriceBatchSuccess,
+    acquire_yahoo_security_price_batch,
+)
 from .client import YahooChartHttpClient
 from .errors import (
+    YahooSecurityPriceBatchError,
     YahooSecurityPriceCacheError,
     YahooSecurityPriceCacheIntegrityError,
     YahooSecurityPricePayloadError,
@@ -25,6 +34,12 @@ __all__ = [
     "YahooChartHttpClient",
     "YahooChartHttpResponse",
     "YahooChartResponseClient",
+    "YahooSecurityPriceBatchError",
+    "YahooSecurityPriceBatchFailure",
+    "YahooSecurityPriceBatchOutcome",
+    "YahooSecurityPriceBatchResult",
+    "YahooSecurityPriceBatchSource",
+    "YahooSecurityPriceBatchSuccess",
     "YahooSecurityPriceAcquisitionResult",
     "YahooSecurityPriceCacheError",
     "YahooSecurityPriceCacheIntegrityError",
@@ -36,4 +51,5 @@ __all__ = [
     "YahooSecurityPriceSourceError",
     "YahooSecurityPriceTransportError",
     "YahooSymbolMapping",
+    "acquire_yahoo_security_price_batch",
 ]

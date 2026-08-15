@@ -43,3 +43,7 @@ class YahooSecurityPriceCacheError(YahooSecurityPriceSourceError):
 
 class YahooSecurityPriceCacheIntegrityError(YahooSecurityPriceCacheError):
     """A cached Yahoo payload digest, sidecar metadata, or pairing violates integrity invariants."""
+
+
+class YahooSecurityPriceBatchError(YahooSecurityPriceSourceError):
+    """A Yahoo security-price batch violates its local execution contract."""
