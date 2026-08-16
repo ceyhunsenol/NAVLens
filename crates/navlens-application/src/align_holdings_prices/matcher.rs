@@ -78,7 +78,7 @@ fn align_holding(
     candidates: &CandidateMap<'_>,
     policy: &AlignmentPolicy,
 ) -> Result<HoldingAlignment, AlignHoldingsPricesError> {
-    if !is_supported_asset_class(holding.asset_class()) {
+    if !is_security_price_alignment_supported(holding.asset_class()) {
         return Ok(uncovered(
             holding,
             CoverageGapReason::UnsupportedAssetClass {
@@ -192,7 +192,9 @@ fn uncovered(holding: &HoldingPosition, reason: CoverageGapReason) -> HoldingAli
     HoldingAlignment::Uncovered(UncoveredHolding::new(holding.clone(), reason))
 }
 
-fn is_supported_asset_class(asset_class: AssetClass) -> bool {
+/// Returns `true` if the asset class is supported for security-price alignment.
+#[must_use]
+pub fn is_security_price_alignment_supported(asset_class: AssetClass) -> bool {
     matches!(
         asset_class,
         AssetClass::Equity | AssetClass::ExchangeTradedFund

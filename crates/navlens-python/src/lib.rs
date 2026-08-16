@@ -59,7 +59,10 @@ mod uncovered_holding;
 mod unit_price;
 mod utc_timestamp;
 
-use align_holdings_prices::align_holdings_prices as align_holdings_prices_fn;
+use align_holdings_prices::{
+    align_holdings_prices as align_holdings_prices_fn,
+    is_security_price_alignment_supported as is_security_price_alignment_supported_fn,
+};
 use alignment_policy::PyAlignmentPolicy;
 use asset_class::PyAssetClass;
 use backtest_metrics::{PyBacktestMetrics, PyIntervalMetrics};
@@ -172,6 +175,10 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
         module
     )?)?;
     module.add_function(wrap_pyfunction!(align_holdings_prices_fn, module)?)?;
+    module.add_function(wrap_pyfunction!(
+        is_security_price_alignment_supported_fn,
+        module
+    )?)?;
     module.add_function(wrap_pyfunction!(
         calculate_return_contribution::calculate_return_contribution,
         module

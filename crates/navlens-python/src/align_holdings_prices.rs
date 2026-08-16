@@ -27,3 +27,11 @@ pub(crate) fn align_holdings_prices(
 
     Ok(PyPortfolioCoverageReport::from_inner(report))
 }
+
+#[pyfunction]
+#[pyo3(signature = (asset_class))]
+pub(crate) fn is_security_price_alignment_supported(
+    asset_class: crate::asset_class::PyAssetClass,
+) -> bool {
+    navlens_application::is_security_price_alignment_supported(asset_class.into_inner())
+}

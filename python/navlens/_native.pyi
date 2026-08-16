@@ -440,6 +440,7 @@ def align_holdings_prices(
     candidates: Sequence[SecurityPriceHistoryCandidate],
     policy: AlignmentPolicy,
 ) -> PortfolioCoverageReport: ...
+def is_security_price_alignment_supported(asset_class: AssetClass) -> bool: ...
 
 class PortfolioComponentContribution:
     @property

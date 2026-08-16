@@ -12,6 +12,7 @@ pub use align_holdings_prices::{
     AlignHoldingsPricesError, AlignmentContractError, AlignmentPolicy, CoverageGapReason,
     CoveredHoldingPrice, PortfolioCoverageReport, PriceCurrencyPolicy,
     SecurityPriceHistoryCandidate, UncoveredHolding, align_holdings_prices,
+    is_security_price_alignment_supported,
 };
 pub use calculate_fx_adjusted_return_contribution::{
     CurrencyReturnAdjustment, FxAdjustedComponentContribution, FxAdjustedReturnContributionResult,

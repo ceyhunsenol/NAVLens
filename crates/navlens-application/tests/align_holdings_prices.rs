@@ -165,3 +165,29 @@ fn coverage_gap_reason_taxonomy() {
             && pricing_as_of_date == MarketDate::new(2023, 1, 10).unwrap()
     ));
 }
+
+#[test]
+fn supported_asset_class_predicate_covers_all_variants() {
+    use navlens_application::is_security_price_alignment_supported;
+
+    assert!(is_security_price_alignment_supported(AssetClass::Equity));
+    assert!(is_security_price_alignment_supported(
+        AssetClass::ExchangeTradedFund
+    ));
+    assert!(!is_security_price_alignment_supported(
+        AssetClass::DebtSecurity
+    ));
+    assert!(!is_security_price_alignment_supported(AssetClass::Repo));
+    assert!(!is_security_price_alignment_supported(AssetClass::Deposit));
+    assert!(!is_security_price_alignment_supported(
+        AssetClass::InvestmentFund
+    ));
+    assert!(!is_security_price_alignment_supported(
+        AssetClass::PreciousMetal
+    ));
+    assert!(!is_security_price_alignment_supported(
+        AssetClass::Derivative
+    ));
+    assert!(!is_security_price_alignment_supported(AssetClass::Cash));
+    assert!(!is_security_price_alignment_supported(AssetClass::Other));
+}
