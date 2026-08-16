@@ -11,8 +11,15 @@ from navlens import (
     ReturnPeriod,
 )
 from navlens.alignment import PointInTimeAlignmentRequest
+from navlens.datasets import (
+    FundUnitPriceSnapshot,
+    FxRateSnapshot,
+    HoldingSnapshot,
+    SecurityPriceSnapshot,
+)
 from navlens.reconciliation.historical import (
     HistoricalFxReconciliationRecord,
+    HistoricalFxReconciliationRequest,
     HistoricalReconciliationRecord,
     HistoricalReconciliationRequest,
     build_historical_fx_reconciliation_dataset,
@@ -265,3 +272,55 @@ def test_zero_fx_return_parity_with_legacy_builder() -> None:
     assert legacy_rec.published_fund_return == fx_rec.published_fund_return
     assert legacy_rec.observed_portfolio_contribution == fx_rec.observed_portfolio_contribution
     assert legacy_rec.reconciliation_residual == fx_rec.reconciliation_residual
+
+
+def test_legacy_fx_builder_materialization_order() -> None:
+    from collections.abc import Iterator
+
+    tz1 = datetime(2026, 1, 2, 10, tzinfo=UTC)
+    p1 = ReturnPeriod(MarketDate(2026, 1, 1), MarketDate(2026, 1, 2))
+    req = make_fx_request(MarketDate(2026, 1, 2), tz1, p1)
+    holding = make_holding_snap(MarketDate(2026, 1, 1), tz1)
+    price = make_security_price_snap(MarketDate(2026, 1, 1), 100.0, tz1)
+    fx = make_fx_rate_snap(MarketDate(2026, 1, 1), 30.0, tz1)
+    fund_p1 = make_fund_price_snap(MarketDate(2026, 1, 1), 10.0, tz1)
+    fund_p2 = make_fund_price_snap(MarketDate(2026, 1, 2), 11.0, tz1)
+
+    consumption_order: list[str] = []
+
+    def req_iter() -> Iterator[HistoricalFxReconciliationRequest]:
+        consumption_order.append("requests")
+        yield req
+
+    def holdings_iter() -> Iterator[HoldingSnapshot]:
+        consumption_order.append("holdings")
+        yield holding
+
+    def prices_iter() -> Iterator[SecurityPriceSnapshot]:
+        consumption_order.append("security_prices")
+        yield price
+
+    def fx_iter() -> Iterator[FxRateSnapshot]:
+        consumption_order.append("fx_rates")
+        yield fx
+
+    def fund_iter() -> Iterator[FundUnitPriceSnapshot]:
+        consumption_order.append("fund_prices")
+        yield fund_p1
+        yield fund_p2
+
+    build_historical_fx_reconciliation_dataset(
+        req_iter(),
+        holdings_iter(),
+        prices_iter(),
+        fx_iter(),
+        fund_iter(),
+    )
+
+    assert consumption_order == [
+        "requests",
+        "holdings",
+        "security_prices",
+        "fx_rates",
+        "fund_prices",
+    ]

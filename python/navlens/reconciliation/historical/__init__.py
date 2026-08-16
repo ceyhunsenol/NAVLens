@@ -32,6 +32,9 @@ from .fx_schedule_csv import (
     HistoricalFxReconciliationRunConfiguration,
     read_historical_fx_reconciliation_requests_csv,
 )
+from .fx_source_builder import (
+    build_historical_fx_reconciliation_dataset_from_security_price_source,
+)
 from .outcome import (
     HistoricalReconciliationOutcome,
     HistoricalReconciliationRecord,
@@ -85,6 +88,7 @@ __all__ = [
     "UnknownSkipReasonError",
     "UnsupportedHistoricalReconciliationDatasetError",
     "build_historical_fx_reconciliation_dataset",
+    "build_historical_fx_reconciliation_dataset_from_security_price_source",
     "build_historical_reconciliation_dataset",
     "build_historical_reconciliation_dataset_from_source",
     "evaluate_historical_reconciliation_dataset",
