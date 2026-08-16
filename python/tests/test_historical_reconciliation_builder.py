@@ -367,3 +367,44 @@ def test_invalid_request_fields_reject(field: str, value: object) -> None:
 
     with pytest.raises(InvalidHistoricalReconciliationRequestError):
         HistoricalReconciliationRequest(**kwargs)  # type: ignore[arg-type]
+
+
+def test_legacy_builder_materialization_order() -> None:
+    tz = datetime(2026, 1, 2, 10, tzinfo=UTC)
+    req = HistoricalReconciliationRequest(
+        alignment_request=_make_alignment_req(MarketDate(2026, 1, 1), tz),
+        period=ReturnPeriod(MarketDate(2026, 1, 1), MarketDate(2026, 1, 2)),
+        fund_price_source_id="src_f",
+    )
+    holding = _make_holding_snap(MarketDate(2026, 1, 1), tz)
+    sec_price = _make_security_price(MarketDate(2026, 1, 1), 10.0, tz)
+    fund_p1 = _make_fund_price(MarketDate(2026, 1, 1), 100.0, tz)
+    fund_p2 = _make_fund_price(MarketDate(2026, 1, 2), 110.0, tz)
+
+    consumption_order: list[str] = []
+
+    def req_iter() -> typing.Iterator[HistoricalReconciliationRequest]:
+        consumption_order.append("requests")
+        yield req
+
+    def holdings_iter() -> typing.Iterator[HoldingSnapshot]:
+        consumption_order.append("holdings")
+        yield holding
+
+    def prices_iter() -> typing.Iterator[SecurityPriceSnapshot]:
+        consumption_order.append("security_prices")
+        yield sec_price
+
+    def fund_iter() -> typing.Iterator[FundUnitPriceSnapshot]:
+        consumption_order.append("fund_prices")
+        yield fund_p1
+        yield fund_p2
+
+    build_historical_reconciliation_dataset(
+        req_iter(),
+        holdings_iter(),
+        prices_iter(),
+        fund_iter(),
+    )
+
+    assert consumption_order == ["requests", "holdings", "security_prices", "fund_prices"]

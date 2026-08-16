@@ -51,6 +51,7 @@ from .scope import (
     HistoricalReconciliationKind,
 )
 from .serialization import serialize_historical_reconciliation_evaluation
+from .source_builder import build_historical_reconciliation_dataset_from_source
 
 __all__ = [
     "CsvHistoricalScheduleSourceError",
@@ -85,6 +86,7 @@ __all__ = [
     "UnsupportedHistoricalReconciliationDatasetError",
     "build_historical_fx_reconciliation_dataset",
     "build_historical_reconciliation_dataset",
+    "build_historical_reconciliation_dataset_from_source",
     "evaluate_historical_reconciliation_dataset",
     "format_historical_reconciliation_evaluation",
     "read_historical_fx_reconciliation_requests_csv",
