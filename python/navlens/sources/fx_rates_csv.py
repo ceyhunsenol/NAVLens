@@ -21,6 +21,10 @@ class CsvFxRateSourceError(ValueError):
     """A CSV file cannot be mapped to valid FX rate snapshots."""
 
 
+class CsvFxRateUnavailableError(CsvFxRateSourceError):
+    """A CSV file cannot be accessed or read from the filesystem."""
+
+
 REQUIRED_COLUMNS = frozenset(
     {
         "source_id",
@@ -53,7 +57,7 @@ def _read_rows(source_path: Path) -> list[CsvRow]:
             _validate_columns(reader.fieldnames, source_path)
             rows = list(reader)
     except OSError as error:
-        raise CsvFxRateSourceError(f"cannot read CSV file {source_path}: {error}") from error
+        raise CsvFxRateUnavailableError(f"cannot read CSV file {source_path}: {error}") from error
 
     if not rows:
         raise CsvFxRateSourceError(f"CSV file {source_path} contains no FX rate rows")

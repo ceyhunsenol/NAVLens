@@ -1,8 +1,13 @@
 """Data source adapters for acquiring holdings and pricing payloads."""
 
+from .csv_fx_rate_source import CsvFxRateSource
 from .csv_security_price_source import CsvSecurityPriceSource
 from .fund_unit_prices_csv import CsvFundUnitPriceSourceError, read_fund_unit_prices_csv
-from .fx_rates_csv import CsvFxRateSourceError, read_fx_rates_csv
+from .fx_rates_csv import (
+    CsvFxRateSourceError,
+    CsvFxRateUnavailableError,
+    read_fx_rates_csv,
+)
 from .holdings_csv import CsvHoldingsSourceError, read_holdings_snapshots
 from .security_prices_csv import (
     CsvSecurityPriceSourceError,
@@ -12,7 +17,9 @@ from .security_prices_csv import (
 
 __all__ = [
     "CsvFundUnitPriceSourceError",
+    "CsvFxRateSource",
     "CsvFxRateSourceError",
+    "CsvFxRateUnavailableError",
     "CsvHoldingsSourceError",
     "CsvSecurityPriceSource",
     "CsvSecurityPriceSourceError",

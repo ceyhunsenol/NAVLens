@@ -20,6 +20,16 @@ from .fx_rate_snapshots import (
     FxRateSnapshot,
     select_fx_rate_snapshots,
 )
+from .fx_rate_source import (
+    FxRateCorruptedSourceDataError,
+    FxRateQuery,
+    FxRateQueryError,
+    FxRateSource,
+    FxRateSourceError,
+    FxRateSourceUnavailableError,
+    FxRateUnmappedPairError,
+    FxRateUnsupportedKindError,
+)
 from .holding_snapshots import HoldingSnapshot, select_latest_holdings_snapshot
 from .pandas_returns import dated_returns_to_series
 from .return_series import validated_decimal_returns
@@ -43,8 +53,16 @@ __all__ = [
     "FundReturnDatasetError",
     "FundUnitPriceDatasetError",
     "FundUnitPriceSnapshot",
+    "FxRateCorruptedSourceDataError",
     "FxRateDatasetError",
+    "FxRateQuery",
+    "FxRateQueryError",
     "FxRateSnapshot",
+    "FxRateSource",
+    "FxRateSourceError",
+    "FxRateSourceUnavailableError",
+    "FxRateUnmappedPairError",
+    "FxRateUnsupportedKindError",
     "HoldingDatasetError",
     "HoldingSnapshot",
     "SecurityPriceCorruptedSourceDataError",
