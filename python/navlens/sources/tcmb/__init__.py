@@ -48,6 +48,12 @@ from .revision_index import (
     record_tcmb_revision,
 )
 from .snapshot_materialization import materialize_tcmb_fx_rate_snapshots
+from .source import (
+    TcmbAcquisitionContextFactory,
+    TcmbDailySnapshotLoader,
+    TcmbFxRateSource,
+    TcmbOrchestrationSnapshotLoader,
+)
 
 __all__ = [
     "TCMB_AVAILABILITY_POLICY_ID",
@@ -56,17 +62,21 @@ __all__ = [
     "TCMB_SOURCE_ID",
     "TcmbAcquiredDailyRates",
     "TcmbAcquisitionContext",
+    "TcmbAcquisitionContextFactory",
     "TcmbAcquisitionError",
     "TcmbAcquisitionProvenance",
     "TcmbCacheMissError",
     "TcmbCachePolicy",
     "TcmbCurrencyRecord",
     "TcmbDailyRatesDocument",
+    "TcmbDailySnapshotLoader",
+    "TcmbFxRateSource",
     "TcmbHttpClient",
     "TcmbHttpResponse",
     "TcmbMappingError",
     "TcmbFxRateSnapshotResult",
     "TcmbOrchestrationError",
+    "TcmbOrchestrationSnapshotLoader",
     "TcmbRawCacheEntry",
     "TcmbRawCacheError",
     "TcmbRawCacheIntegrityError",
