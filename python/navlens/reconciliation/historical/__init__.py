@@ -34,6 +34,7 @@ from .fx_schedule_csv import (
 )
 from .fx_source_builder import (
     build_historical_fx_reconciliation_dataset_from_security_price_source,
+    build_historical_fx_reconciliation_dataset_from_sources,
 )
 from .outcome import (
     HistoricalReconciliationOutcome,
@@ -89,6 +90,7 @@ __all__ = [
     "UnsupportedHistoricalReconciliationDatasetError",
     "build_historical_fx_reconciliation_dataset",
     "build_historical_fx_reconciliation_dataset_from_security_price_source",
+    "build_historical_fx_reconciliation_dataset_from_sources",
     "build_historical_reconciliation_dataset",
     "build_historical_reconciliation_dataset_from_source",
     "evaluate_historical_reconciliation_dataset",

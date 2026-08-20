@@ -65,6 +65,7 @@ from ._native import (
     reconcile_fx_adjusted_fund_return,
 )
 from .alignment import (
+    FxRateSourceMismatchError,
     InvalidPointInTimeAlignmentRequestError,
     InvalidPointInTimeFxReturnContributionRequestError,
     InvalidPriceHistoryStartError,
@@ -79,6 +80,7 @@ from .alignment import (
     align_point_in_time,
     align_point_in_time_from_source,
     calculate_point_in_time_fx_adjusted_return_contribution,
+    calculate_point_in_time_fx_adjusted_return_contribution_from_source,
     calculate_point_in_time_return_contribution,
     format_fx_return_contribution_result,
     format_return_contribution_result,
@@ -195,6 +197,7 @@ __all__ = [
     "FxRate",
     "FxRateDatasetError",
     "FxRateKind",
+    "FxRateSourceMismatchError",
     "FxRateObservation",
     "FxRateSeries",
     "FxRateSnapshot",
@@ -278,6 +281,7 @@ __all__ = [
     "align_point_in_time_from_source",
     "calculate_fx_adjusted_return_contribution",
     "calculate_point_in_time_fx_adjusted_return_contribution",
+    "calculate_point_in_time_fx_adjusted_return_contribution_from_source",
     "calculate_point_in_time_return_contribution",
     "calculate_price_period_returns",
     "calculate_price_returns",

@@ -16,7 +16,7 @@ from navlens import (
     ReturnPeriod,
 )
 from navlens.alignment import PointInTimeAlignmentRequest
-from navlens.datasets import FxRateSnapshot
+from navlens.datasets import FxRateQuery, FxRateSnapshot
 from navlens.reconciliation.historical import HistoricalFxReconciliationRequest
 from tests.historical_reconciliation_source_fixtures import (
     FakeRecordingSecurityPriceSource,
@@ -33,6 +33,7 @@ from tests.historical_reconciliation_source_fixtures import (
 )
 
 __all__ = [
+    "FakeRecordingFxRateSource",
     "FakeRecordingSecurityPriceSource",
     "make_cash_position",
     "make_deposit_position",
@@ -49,6 +50,37 @@ __all__ = [
     "make_security_price_snapshot",
     "make_utc_timestamp",
 ]
+
+
+class FakeRecordingFxRateSource:
+    """Recording test fake implementing the consumer-owned FxRateSource protocol."""
+
+    def __init__(
+        self,
+        data: dict[tuple[str, str, str], tuple[FxRateSnapshot, ...]] | None = None,
+        *,
+        source_id: str = "src_fx",
+        error: Exception | None = None,
+    ) -> None:
+        self._data = data or {}
+        self._source_id = source_id
+        self._error = error
+        self.queries: list[FxRateQuery] = []
+
+    @property
+    def source_id(self) -> str:
+        return self._source_id
+
+    def fetch_fx_rates(self, query: FxRateQuery) -> tuple[FxRateSnapshot, ...]:
+        self.queries.append(query)
+        if self._error is not None:
+            raise self._error
+        key = (
+            query.pair.base_currency.code,
+            query.pair.quote_currency.code,
+            query.kind.name,
+        )
+        return self._data.get(key, ())
 
 
 def make_fx_alignment_policy(

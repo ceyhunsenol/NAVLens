@@ -33,5 +33,9 @@ class SecurityPriceSourceMismatchError(PointInTimeAlignmentError):
     """Raised when source_id does not match request.security_price_source_id."""
 
 
+class FxRateSourceMismatchError(PointInTimeAlignmentError):
+    """Raised when source_id does not match request.fx_source_id."""
+
+
 class InvalidPriceHistoryStartError(PointInTimeAlignmentError):
     """Raised when price_history_start_date is not an exact date or is after pricing_as_of_date."""

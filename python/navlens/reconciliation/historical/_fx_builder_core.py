@@ -5,6 +5,7 @@ from typing import TypeAlias
 
 from navlens.alignment import (
     PointInTimeAlignmentResult,
+    PointInTimeFxAdjustedReturnContributionResult,
     PointInTimeFxReturnContributionRequest,
     calculate_point_in_time_fx_adjusted_return_contribution,
 )
@@ -26,23 +27,31 @@ from .outcome import MissingFundPriceSkip, MissingHoldingsSkip
 _HistoricalFxAlignmentResolver: TypeAlias = Callable[
     [HistoricalFxReconciliationRequest], PointInTimeAlignmentResult
 ]
+_HistoricalFxContributionResolver: TypeAlias = Callable[
+    [HistoricalFxReconciliationRequest, PointInTimeAlignmentResult],
+    PointInTimeFxAdjustedReturnContributionResult,
+]
 
 
 def _execute_historical_fx_reconciliation(
     requests: Iterable[HistoricalFxReconciliationRequest],
-    fx_rate_snapshots: Iterable[FxRateSnapshot],
     fund_price_snapshots: Iterable[FundUnitPriceSnapshot],
     alignment_resolver: _HistoricalFxAlignmentResolver,
+    contribution_resolver: _HistoricalFxContributionResolver,
 ) -> HistoricalFxReconciliationDataset:
     """Execute the canonical historical FX-aware reconciliation loop."""
     materialized_requests = tuple(requests)
-    fx_rates = tuple(fx_rate_snapshots)
     fund_prices = tuple(fund_price_snapshots)
 
     validate_chronological_periods(tuple(req.period for req in materialized_requests))
 
     outcomes: list[HistoricalFxReconciliationOutcome] = [
-        _reconcile_single_fx_request(req, fx_rates, fund_prices, alignment_resolver)
+        _reconcile_single_fx_request(
+            req,
+            fund_prices,
+            alignment_resolver,
+            contribution_resolver,
+        )
         for req in materialized_requests
     ]
     return HistoricalFxReconciliationDataset(outcomes=tuple(outcomes))
@@ -50,19 +59,13 @@ def _execute_historical_fx_reconciliation(
 
 def _reconcile_single_fx_request(
     request: HistoricalFxReconciliationRequest,
-    fx_rates: tuple[FxRateSnapshot, ...],
     fund_prices: tuple[FundUnitPriceSnapshot, ...],
     alignment_resolver: _HistoricalFxAlignmentResolver,
+    contribution_resolver: _HistoricalFxContributionResolver,
 ) -> HistoricalFxReconciliationOutcome:
     try:
         alignment = alignment_resolver(request)
-        fx_req = PointInTimeFxReturnContributionRequest(
-            alignment_result=alignment,
-            target_period=request.period,
-            fx_source_id=request.fx_source_id,
-            fx_policy=request.fx_policy,
-        )
-        contribution = calculate_point_in_time_fx_adjusted_return_contribution(fx_req, fx_rates)
+        contribution = contribution_resolver(request, alignment)
         reconciliation = reconcile_point_in_time_fx_adjusted_fund_return(
             contribution,
             fund_prices,
@@ -75,3 +78,26 @@ def _reconcile_single_fx_request(
         return SkippedFxReconciliationRecord(
             request=request, reason=MissingFundPriceSkip(exc.required_date)
         )
+
+
+def calculate_fx_contribution_from_snapshots(
+    request: HistoricalFxReconciliationRequest,
+    alignment: PointInTimeAlignmentResult,
+    fx_rates: tuple[FxRateSnapshot, ...],
+) -> PointInTimeFxAdjustedReturnContributionResult:
+    """Build the per-period request and delegate to canonical snapshot orchestration."""
+    fx_request = build_fx_contribution_request(request, alignment)
+    return calculate_point_in_time_fx_adjusted_return_contribution(fx_request, fx_rates)
+
+
+def build_fx_contribution_request(
+    request: HistoricalFxReconciliationRequest,
+    alignment: PointInTimeAlignmentResult,
+) -> PointInTimeFxReturnContributionRequest:
+    """Map a historical request and alignment result to the point-in-time contract."""
+    return PointInTimeFxReturnContributionRequest(
+        alignment_result=alignment,
+        target_period=request.period,
+        fx_source_id=request.fx_source_id,
+        fx_policy=request.fx_policy,
+    )

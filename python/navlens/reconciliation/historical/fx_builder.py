@@ -10,7 +10,10 @@ from navlens.datasets import (
     SecurityPriceSnapshot,
 )
 
-from ._fx_builder_core import _execute_historical_fx_reconciliation
+from ._fx_builder_core import (
+    _execute_historical_fx_reconciliation,
+    calculate_fx_contribution_from_snapshots,
+)
 from .fx_dataset import HistoricalFxReconciliationDataset
 from .fx_request import HistoricalFxReconciliationRequest
 
@@ -31,11 +34,15 @@ def build_historical_fx_reconciliation_dataset(
 
     return _execute_historical_fx_reconciliation(
         requests=materialized_requests,
-        fx_rate_snapshots=fx_rates,
         fund_price_snapshots=fund_prices,
         alignment_resolver=lambda req: align_point_in_time(
             req.alignment_request,
             holdings,
             security_prices,
+        ),
+        contribution_resolver=lambda req, alignment: calculate_fx_contribution_from_snapshots(
+            req,
+            alignment,
+            fx_rates,
         ),
     )
