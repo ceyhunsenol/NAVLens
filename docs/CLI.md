@@ -128,6 +128,84 @@ navlens-fx-reconcile-fund-csv \
 
 Expected output includes the FX-adjusted component contributions, currency adjustments, coverage ratios, and exact decimal values for the reconciliation terms.
 
+## Evaluate historical FX reconciliation from TCMB exchange rates
+
+The `navlens-evaluate-historical-fx-reconciliation-tcmb` CLI evaluates historical
+FX-adjusted fund-return reconciliation over a multi-period schedule using
+provider-neutral `SecurityPriceSource` and `TcmbFxRateSource` boundaries together.
+
+```shell
+navlens-evaluate-historical-fx-reconciliation-tcmb \
+  --schedule-csv schedule.csv \
+  --holdings-csv holdings.csv \
+  --security-prices-csv security_prices.csv \
+  --fund-unit-prices-csv fund_prices.csv \
+  --fund-id FUND1 \
+  --holdings-source-id tefas \
+  --security-price-source-id kap \
+  --fund-price-source-id tefas \
+  --fund-base-currency TRY \
+  --price-adjustment unadjusted \
+  --minimum-observations 2 \
+  --max-staleness-calendar-days 5 \
+  --required-fx-rate-kind non_cash_buying \
+  --max-fx-staleness-calendar-days 3 \
+  --price-history-start-date 2026-01-01 \
+  --tcmb-cache-root data/raw/tcmb \
+  --tcmb-cache-policy prefer_cache \
+  --tcmb-http-timeout-seconds 30.0 \
+  --output-format text
+```
+
+### Cache policies and network behavior
+
+The `--tcmb-cache-policy` option is mandatory and must be one of:
+
+- `cache_only`: Never performs network requests. Requires all requested market
+  dates to already exist in the raw TCMB cache. A cache miss results in a typed
+  operational failure (exit code 1).
+- `prefer_cache`: Uses cached revisions when available, and fetches from TCMB
+  only when a market date has no cached revision index.
+- `refresh`: Fetches from TCMB for every open market date before materializing
+  snapshots.
+
+### Retrospective provenance and point-in-time guarantees
+
+- `retrieved_at` records the UTC timestamp when NAVLens actually fetched the
+  raw XML document from TCMB.
+- `cache_only` historical evaluation uses retained cache provenance and verified
+  publication rules without live network access.
+- Refreshing historical dates today creates new observation records stamped with
+  today's retrieval time; it does not prove the user possessed that revision
+  historically.
+- Point-in-time filtering enforces `available_at <= prediction_timestamp`. No
+  future snapshot or later revision becomes visible merely because the CLI is
+  being run at a later time.
+
+### Market calendar overrides
+
+NAVLens does not embed an official Turkish holiday calendar. Declare known
+market holidays or exceptional closures using repeatable `--closed-date` arguments:
+
+```shell
+navlens-evaluate-historical-fx-reconciliation-tcmb \
+  ... \
+  --closed-date 2026-01-01 \
+  --closed-date 2026-04-23
+```
+
+Each closed date creates a `SessionOverride(date, SessionKind("closed"))` in
+the single `MarketCalendar` instance shared across FX candidate queries and
+acquisition contexts.
+
+### Exit codes
+
+- `0`: Every scheduled period was evaluated without skips.
+- `2`: Evaluation finished but at least one period was skipped (e.g. missing fund
+  unit price or missing holdings).
+- `1`: Operational failure (e.g. invalid arguments, missing CSV, cache miss under
+  `cache_only`, or corrupted data).
+
 ## Predict next published NAV return from CSV fund unit price snapshots
 
 The `navlens-predict-fund-csv` CLI runs the provider-neutral point-in-time prediction pipeline for a single fund return.

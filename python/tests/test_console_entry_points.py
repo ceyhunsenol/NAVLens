@@ -11,6 +11,9 @@ EXPECTED_CONSOLE_SCRIPTS = {
     "navlens-evaluate-historical-fx-reconciliation-csv": (
         "navlens.reconciliation.historical_fx_cli:main"
     ),
+    "navlens-evaluate-historical-fx-reconciliation-tcmb": (
+        "navlens.reconciliation.historical_fx_tcmb_cli:main"
+    ),
     "navlens-evaluate-historical-prediction-csv": ("navlens.prediction.historical_cli:main"),
     "navlens-evaluate-historical-reconciliation-csv": (
         "navlens.reconciliation.historical_cli:main"

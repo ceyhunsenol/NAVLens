@@ -99,6 +99,7 @@ cargo test --workspace
 | `navlens-fx-reconcile-fund-csv` | Reconcile an FX-adjusted contribution. |
 | `navlens-evaluate-historical-reconciliation-csv` | Evaluate historical reconciliation periods. |
 | `navlens-evaluate-historical-fx-reconciliation-csv` | Evaluate FX-aware historical reconciliation periods. |
+| `navlens-evaluate-historical-fx-reconciliation-tcmb` | Evaluate TCMB-backed historical FX reconciliation periods. |
 | `navlens-predict-fund-csv` | Produce one point-in-time next-NAV prediction. |
 | `navlens-predict-tefas` | Acquire TEFAS prices and produce one next-NAV prediction. |
 | `navlens-predict-tefas-suite` | Run every baseline over one identical TEFAS snapshot set. |
