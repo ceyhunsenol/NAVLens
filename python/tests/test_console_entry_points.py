@@ -26,6 +26,9 @@ EXPECTED_CONSOLE_SCRIPTS = {
     "navlens-fetch-tefas": "navlens.sources.tefas.cli:main",
     "navlens-fx-reconcile-fund-csv": "navlens.reconciliation.fx_cli:main",
     "navlens-fx-return-contribution-csv": ("navlens.alignment.fx_return_contribution_cli:main"),
+    "navlens-fx-return-contribution-tcmb": (
+        "navlens.alignment.fx_return_contribution_tcmb_cli:main"
+    ),
     "navlens-predict-fund-csv": "navlens.prediction.cli:main",
     "navlens-predict-tefas": "navlens.prediction.tefas_cli:main",
     "navlens-predict-tefas-batch": "navlens.prediction.tefas_batch_cli:main",

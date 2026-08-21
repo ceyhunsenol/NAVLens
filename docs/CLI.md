@@ -128,6 +128,68 @@ navlens-fx-reconcile-fund-csv \
 
 Expected output includes the FX-adjusted component contributions, currency adjustments, coverage ratios, and exact decimal values for the reconciliation terms.
 
+## Calculate FX-adjusted portfolio return contribution from TCMB exchange rates
+
+The `navlens-fx-return-contribution-tcmb` CLI calculates point-in-time, FX-adjusted
+portfolio return contribution for a single period using CSV holdings snapshots,
+`CsvSecurityPriceSource`, and `TcmbFxRateSource` together.
+
+```shell
+navlens-fx-return-contribution-tcmb \
+  --holdings-csv holdings.csv \
+  --security-prices-csv security_prices.csv \
+  --fund-id FUND1 \
+  --holdings-source-id tefas \
+  --security-price-source-id kap \
+  --fund-base-currency TRY \
+  --price-adjustment unadjusted \
+  --prediction-timestamp 2026-01-02T10:00:00Z \
+  --pricing-as-of-date 2026-01-02 \
+  --minimum-observations 2 \
+  --max-staleness-calendar-days 5 \
+  --return-start-date 2026-01-01 \
+  --return-end-date 2026-01-02 \
+  --required-fx-rate-kind non_cash_buying \
+  --max-fx-staleness-calendar-days 3 \
+  --price-history-start-date 2026-01-01 \
+  --tcmb-cache-root data/raw/tcmb \
+  --tcmb-cache-policy prefer_cache \
+  --tcmb-http-timeout-seconds 30.0
+```
+
+### Mandatory Execution Path and Boundaries
+
+The command executes strictly through provider-neutral source abstractions:
+
+```text
+CSV holdings
+    → read_holdings_snapshots
+
+CSV security prices
+    → CsvSecurityPriceSource
+    → align_point_in_time_from_source
+
+TCMB FX rates
+    → TcmbFxRateSource
+    → calculate_point_in_time_fx_adjusted_return_contribution_from_source
+```
+
+This command computes covered return contribution and currency adjustments only;
+it does not read fund unit prices or perform fund-return reconciliation.
+
+### Cache Policies and Calendar Closures
+
+- `--tcmb-cache-policy` is mandatory (`cache_only`, `prefer_cache`, `refresh`).
+  In `cache_only` mode, no HTTP client is constructed and no clock is queried.
+- `--closed-date YYYY-MM-DD` can be repeated to register known market closures.
+  A single `MarketCalendar` is constructed and shared across FX candidate queries.
+
+### Exit Codes
+
+- `0`: Calculation succeeded and formatted contribution report printed to stdout.
+- `1`: Typed operational failure (e.g. invalid arguments, cache miss under `cache_only`, missing source data).
+- `2`: Command-line syntax error reported by argparse.
+
 ## Evaluate historical FX reconciliation from TCMB exchange rates
 
 The `navlens-evaluate-historical-fx-reconciliation-tcmb` CLI evaluates historical

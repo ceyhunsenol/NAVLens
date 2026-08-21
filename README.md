@@ -95,6 +95,7 @@ cargo test --workspace
 | `navlens-align-holdings-csv` | Align holdings with point-in-time security prices. |
 | `navlens-return-contribution-csv` | Calculate covered portfolio return contribution. |
 | `navlens-fx-return-contribution-csv` | Calculate FX-adjusted return contribution. |
+| `navlens-fx-return-contribution-tcmb` | Calculate FX-adjusted return contribution using TCMB rates. |
 | `navlens-reconcile-fund-csv` | Reconcile contribution with a published fund return. |
 | `navlens-fx-reconcile-fund-csv` | Reconcile an FX-adjusted contribution. |
 | `navlens-evaluate-historical-reconciliation-csv` | Evaluate historical reconciliation periods. |

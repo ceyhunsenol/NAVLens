@@ -1,22 +1,19 @@
 """TCMB-backed workflow orchestration for historical FX reconciliation evaluation."""
 
-from collections.abc import Callable
-from datetime import UTC, date, datetime
+from datetime import UTC, datetime
 
-from navlens import MarketCalendar, MarketDate, SessionKind, SessionOverride
 from navlens.sources import (
     CsvSecurityPriceSource,
     read_fund_unit_prices_csv,
     read_holdings_snapshots,
 )
-from navlens.sources.tcmb import (
-    TcmbAcquisitionContext,
-    TcmbAcquisitionContextFactory,
-    TcmbCachePolicy,
-    TcmbFxRateSource,
-    TcmbHttpClient,
-    TcmbOrchestrationSnapshotLoader,
-    TcmbResponseClient,
+from navlens.sources.tcmb import TcmbResponseClient
+from navlens.sources.tcmb.composition import (
+    Clock,
+    TcmbSourceSettings,
+    build_tcmb_fx_rate_source,
+    build_tcmb_market_calendar,
+    create_tcmb_acquisition_context_factory,
 )
 
 from .historical.evaluation import (
@@ -31,28 +28,15 @@ from .historical.fx_source_builder import (
 )
 from .historical_fx_tcmb_cli_args import HistoricalFxTcmbCliArguments
 
-Clock = Callable[[], datetime]
+__all__ = [
+    "Clock",
+    "create_tcmb_acquisition_context_factory",
+    "evaluate_historical_fx_reconciliation_from_tcmb",
+]
 
 
 def _system_utc_clock() -> datetime:
     return datetime.now(UTC)
-
-
-def create_tcmb_acquisition_context_factory(
-    calendar: MarketCalendar,
-    client: TcmbResponseClient,
-    clock: Clock = _system_utc_clock,
-) -> TcmbAcquisitionContextFactory:
-    """Create a factory that produces a fresh TcmbAcquisitionContext per market date."""
-
-    def factory(market_date: MarketDate) -> TcmbAcquisitionContext:
-        return TcmbAcquisitionContext(
-            client=client,
-            calendar=calendar,
-            retrieved_at=clock(),
-        )
-
-    return factory
 
 
 def evaluate_historical_fx_reconciliation_from_tcmb(
@@ -72,9 +56,14 @@ def evaluate_historical_fx_reconciliation_from_tcmb(
         arguments.base_arguments.security_prices_csv,
         source_id=arguments.config.base.security_price_source_id,
     )
-    calendar = _build_market_calendar(arguments.closed_dates)
-    fx_rate_source = _build_tcmb_fx_rate_source(
-        arguments=arguments,
+    calendar = build_tcmb_market_calendar(arguments.closed_dates)
+    settings = TcmbSourceSettings(
+        cache_root=arguments.tcmb_cache_root,
+        cache_policy=arguments.tcmb_cache_policy,
+        http_timeout_seconds=arguments.tcmb_http_timeout_seconds,
+    )
+    fx_rate_source = build_tcmb_fx_rate_source(
+        settings=settings,
         calendar=calendar,
         client=client,
         clock=clock,
@@ -97,38 +86,3 @@ def evaluate_historical_fx_reconciliation_from_tcmb(
     )
 
     return evaluate_historical_reconciliation_dataset(dataset)
-
-
-def _build_tcmb_fx_rate_source(
-    arguments: HistoricalFxTcmbCliArguments,
-    calendar: MarketCalendar,
-    client: TcmbResponseClient | None,
-    clock: Clock,
-) -> TcmbFxRateSource:
-    context_factory: TcmbAcquisitionContextFactory | None = None
-    if arguments.tcmb_cache_policy is not TcmbCachePolicy.cache_only:
-        http_client = (
-            client
-            if client is not None
-            else TcmbHttpClient(timeout_seconds=arguments.tcmb_http_timeout_seconds)
-        )
-        context_factory = create_tcmb_acquisition_context_factory(
-            calendar=calendar,
-            client=http_client,
-            clock=clock,
-        )
-
-    loader = TcmbOrchestrationSnapshotLoader(
-        root=arguments.tcmb_cache_root,
-        policy=arguments.tcmb_cache_policy,
-        acquisition_context_factory=context_factory,
-    )
-    return TcmbFxRateSource(calendar, loader)
-
-
-def _build_market_calendar(closed_dates: tuple[date, ...]) -> MarketCalendar:
-    overrides = [
-        SessionOverride(MarketDate(value.year, value.month, value.day), SessionKind("closed"))
-        for value in closed_dates
-    ]
-    return MarketCalendar(overrides)
